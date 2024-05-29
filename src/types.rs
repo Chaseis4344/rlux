@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub enum LiteralType {
     Number(f64),
     Boolean(bool),
@@ -5,6 +6,7 @@ pub enum LiteralType {
     Nil, //This will be wrapped in an option,
 }
 
+#[derive(Clone)]
 pub enum TokenType {
     //Single Character Tokens
     LeftParen,
@@ -53,4 +55,14 @@ pub enum TokenType {
     While,
 
     Eof,
+}
+
+impl PartialEq for TokenType {
+    fn eq(&self, rhs: &Self) -> bool {
+        self.to_string() == rhs.to_string()
+    }
+
+    fn ne(&self, other: &Self) -> bool {
+        self.to_string() != other.to_string()
+    }
 }

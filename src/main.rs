@@ -6,8 +6,9 @@ use std::{
 
 pub mod ast;
 mod display_traits;
+mod parser;
 mod scanner;
-mod tests;
+//mod tests;
 mod token;
 mod types;
 
