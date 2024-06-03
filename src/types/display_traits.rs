@@ -111,6 +111,13 @@ impl std::fmt::Display for crate::types::Expression {
                     unary.operator, unary.operand
                 )
             }
+            Self::Ternary(tern) => {
+                write!(
+                    f,
+                    "(ternary: Evaluator:({}) , leftHand side:({}),  rightHand side:({}) )",
+                    tern.evaluator, tern.left, tern.right
+                )
+            }
         }
     }
 }
