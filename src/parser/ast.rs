@@ -1,28 +1,31 @@
-use crate::token::Token;
-use crate::types::LiteralType;
+use crate::types::{token::Token, Expression, LiteralType};
 
-pub enum Expression {
-    Grouping(Box<Grouping>),
-    Unary(Box<Unary>),
-    Binary(Box<Binary>),
-    Literal(Box<Literal>),
+#[derive(Clone)]
+pub struct Ternary {
+    pub evaluator: Expression,
+    pub left: Expression,
+    pub right: Expression,
 }
 
+#[derive(Clone)]
 pub struct Literal {
     pub value: LiteralType,
 }
 
+#[derive(Clone)]
 pub struct Unary {
     pub operator: Token,
     pub operand: Expression,
 }
 
+#[derive(Clone)]
 pub struct Binary {
     pub operator: Token,
     pub left: Expression,
     pub right: Expression,
 }
 
+#[derive(Clone)]
 pub struct Grouping {
     pub expression: Expression,
 }
@@ -32,10 +35,17 @@ pub trait Visitor<T> {
     fn visit_binary(&mut self, bin: Box<&mut Binary>) -> T;
     fn visit_unary(&mut self, unary: Box<&mut Unary>) -> T;
     fn visit_literal(&mut self, lit: Box<&mut Literal>) -> T;
+    fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> T;
 }
 
 pub trait Visitable<T> {
     fn accept(&mut self, visitor: &mut dyn Visitor<T>) -> String;
+}
+
+impl Visitable<String> for Ternary {
+    fn accept(&mut self, visitor: &mut dyn Visitor<String>) -> String {
+        visitor.visit_ternary(Box::new(self))
+    }
 }
 
 impl Visitable<String> for Grouping {
@@ -72,7 +82,7 @@ impl Visitor<String> for Expression {
     }
 
     fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> String {
-        self.parenthesize(String::from("group"), vec![&mut group.expression])
+        self.parenthesize("group".to_string(), vec![&mut group.expression])
     }
 
     fn visit_literal(&mut self, lit: Box<&mut Literal>) -> String {
@@ -81,6 +91,13 @@ impl Visitor<String> for Expression {
 
     fn visit_unary(&mut self, unary: Box<&mut Unary>) -> String {
         self.parenthesize(unary.operator.lexeme.clone(), vec![&mut unary.operand])
+    }
+
+    fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> String {
+        self.parenthesize(
+            "ternary".to_string(),
+            vec![&mut tern.evaluator, &mut tern.left, &mut tern.right],
+        )
     }
 }
 impl Expression {
@@ -110,6 +127,7 @@ impl Visitable<String> for Expression {
             Expression::Literal(lit) => lit.accept(visitor),
             Expression::Grouping(group) => group.accept(visitor),
             Expression::Unary(unary) => unary.accept(visitor),
+            Expression::Ternary(tern) => tern.accept(visitor),
         }
     }
 }

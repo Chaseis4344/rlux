@@ -1,9 +1,10 @@
-use crate::types::LiteralType;
-use crate::types::TokenType;
+use crate::types;
+use std::error::Error;
+use std::fmt::{write, Display as DisplayTrait};
 
 //Token Display implementation moved to token.rs because of private field implementation
 
-impl std::fmt::Display for LiteralType {
+impl DisplayTrait for types::LiteralType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Number(num) => write!(f, "{}", num),
@@ -14,7 +15,7 @@ impl std::fmt::Display for LiteralType {
     }
 }
 
-impl std::fmt::Display for TokenType {
+impl DisplayTrait for types::TokenType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
             Self::LeftBrace => write!(f, "Left Brace"),
@@ -30,6 +31,8 @@ impl std::fmt::Display for TokenType {
             Self::Semicolon => write!(f, "Semicolon"),
             Self::Slash => write!(f, "Slash"),
             Self::Star => write!(f, "Star"),
+            Self::Question => write!(f, "Question"),
+            Self::Colon => write!(f, "Colon"),
             Self::Bang => write!(f, "Bang"),
             Self::BangEqual => write!(f, "Bang Equal"),
             Self::Equal => write!(f, "Equal"),
@@ -60,6 +63,54 @@ impl std::fmt::Display for TokenType {
             Self::Var => write!(f, "Var"),
             Self::While => write!(f, "While"),
             Self::Eof => write!(f, "Eof"),
+        }
+    }
+}
+
+impl std::error::Error for types::ParserError {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        None
+    }
+}
+impl DisplayTrait for types::ParserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Parser Error occured on Token: {} at line {}",
+            self.source, self.source.line
+        )
+    }
+}
+
+impl std::fmt::Debug for types::ParserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "ParserError; \nself.source:{};", self.source)
+    }
+}
+
+impl std::fmt::Display for crate::types::Expression {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match (*self).clone() {
+            Self::Grouping(group) => {
+                write!(f, "(group {})", group.expression)
+            }
+            Self::Binary(bin) => {
+                write!(
+                    f,
+                    "(binary: l: {} op: ({}) r:{}) ",
+                    bin.left, bin.operator, bin.right
+                )
+            }
+            Self::Literal(lit) => {
+                write!(f, "(literal: {})", lit.value)
+            }
+            Self::Unary(unary) => {
+                write!(
+                    f,
+                    "(unary:  Operator:({}) Operand:{})",
+                    unary.operator, unary.operand
+                )
+            }
         }
     }
 }

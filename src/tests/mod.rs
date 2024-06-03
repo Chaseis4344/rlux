@@ -1,24 +1,23 @@
 #[cfg(test)]
-use crate::ast;
-use crate::token::Token;
-use crate::types::{LiteralType, TokenType};
+use crate::parser::ast;
+use crate::types::{token::Token, Expression, Expression::*, LiteralType, TokenType};
 
 macro_rules! new_expression {
     ($left:expr, $operator:expr,$right:expr) => {
-        ast::Expression::Binary(Box::new(ast::Binary {
+        Expression::Binary(Box::new(ast::Binary {
             operator: $operator,
             left: $left,
             right: $right,
         }))
     };
     ($operator:expr, $operand:expr) => {
-        ast::Expression::Unary(Box::new(ast::Unary {
+        Expression::Unary(Box::new(ast::Unary {
             operator: $operator,
             operand: $operand,
         }))
     };
     ($expression:expr) => {
-        ast::Expression::Grouping(Box::new(ast::Grouping {
+        Expression::Grouping(Box::new(ast::Grouping {
             expression: $expression,
         }))
     };
@@ -26,7 +25,7 @@ macro_rules! new_expression {
 
 macro_rules! new_literal {
     ($value:expr) => {
-        ast::Expression::Literal(Box::new(ast::Literal { value: $value }))
+        Expression::Literal(Box::new(ast::Literal { value: $value }))
     };
 }
 
