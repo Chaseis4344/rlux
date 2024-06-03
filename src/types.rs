@@ -1,3 +1,8 @@
+use crate::parser::ast::*;
+
+mod display_traits;
+pub mod token;
+
 #[derive(Clone)]
 pub enum LiteralType {
     Number(f64),
@@ -20,6 +25,8 @@ pub enum TokenType {
     Semicolon,
     Slash,
     Star,
+    Question,
+    Colon,
 
     //One Or Two Character Tokens
     Bang,
@@ -65,4 +72,17 @@ impl PartialEq for TokenType {
     fn ne(&self, other: &Self) -> bool {
         self.to_string() != other.to_string()
     }
+}
+
+#[derive(Clone)]
+pub enum Expression {
+    Grouping(Box<Grouping>),
+    Unary(Box<Unary>),
+    Binary(Box<Binary>),
+    Ternary(Box<Ternary>),
+    Literal(Box<Literal>),
+}
+
+pub struct ParserError {
+    pub source: token::Token,
 }

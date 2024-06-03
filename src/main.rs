@@ -4,14 +4,13 @@ use std::{
     process::exit,
 };
 
-pub mod ast;
-mod display_traits;
 mod parser;
 mod scanner;
-//mod tests;
-mod token;
+mod tests;
 mod types;
 
+//mod token;
+//mod display_traits;
 //sends error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Result<i32, Error> {
     eprintln!(" [Line {}]Error{}: {}", line, place, message);
@@ -27,22 +26,41 @@ fn error(line: u32, message: String) -> Result<i32, Error> {
     //exit(65);
 }
 
+//Runs source string provided, may be multi-line string
 fn run(source: String) -> Result<i32, Error> {
-    let mut scanner = scanner::Scanner::new(source, None, None, None);
+    let mut scanner = scanner::Scanner::new(source, None, None);
+    //Scan in & Store token string
+    let mut tokens: Vec<types::token::Token> = scanner.scan_tokens();
 
-    let mut tokens: Vec<token::Token> = scanner.scan_tokens();
-
-    tokens.push(token::Token {
+    //Push Final EOF token
+    tokens.push(types::token::Token {
         token_type: types::TokenType::Eof,
         lexeme: String::from(""),
         literal: None,
         line: scanner.line,
     });
 
-    for token in tokens {
+    for token in tokens.clone() {
         print!(">");
         println!("{}", token);
     }
+
+    println!("Tokens Scanned, Starting Parsing...");
+
+    /*Parser goes here */
+    let mut parser = parser::Parser::new(tokens, 0);
+    let expressions = parser.parse();
+
+    match expressions {
+        Some(exp) => {
+            println!("Parsing Finished Successfully: \n{}", exp);
+        }
+        None => {
+            println!("Parsing Error!")
+        }
+    }
+
+    //Print for dev purposes
 
     Result::Ok(65)
 }
@@ -54,6 +72,7 @@ fn get_extension_from_filename(filename: &str) -> Option<&str> {
     Path::new(filename).extension().and_then(OsStr::to_str)
 }
 
+//On Startup - Runs source from provided filepath
 pub fn run_file(filepath: String) {
     let source = fs::read_to_string(filepath);
     match source {
@@ -87,6 +106,7 @@ pub fn run_file(filepath: String) {
     }
 }
 
+//On startup - Enters Interactive Mode
 pub fn run_prompt() {
     loop {
         let input: &mut String = &mut String::new();
@@ -99,7 +119,6 @@ pub fn run_prompt() {
             Ok(_) => {
                 match run(input.to_string()) {
                     Ok(number) => {
-                        //exit(number);
                         if number == 0 {
                             exit(64)
                         } else {
@@ -112,12 +131,11 @@ pub fn run_prompt() {
                     }
                 };
             }
-            Err(_) => {}
+            Err(err) => {
+                eprintln!("{}", err);
+                exit(65);
+            }
         }
-
-        //Evaluate & Print
-
-        //Reset Buffer, all code is run line-by-line, no memory
     }
 }
 

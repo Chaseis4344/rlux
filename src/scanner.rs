@@ -1,8 +1,6 @@
-use crate::token::Token;
-use crate::types::{LiteralType, TokenType};
+use crate::types::{token::Token, LiteralType, TokenType};
 pub struct Scanner {
     source: String,
-    start: u32,
     current: u32,
     pub line: u32,
 }
@@ -34,19 +32,13 @@ macro_rules! new_literal {
 }
 
 impl Scanner {
-    pub fn new(
-        source: String,
-        start: Option<u32>,
-        current: Option<u32>,
-        line: Option<u32>,
-    ) -> Scanner {
-        init_value!(start, 0);
+    pub fn new(source: String, current: Option<u32>, line: Option<u32>) -> Scanner {
         init_value!(current, 0);
         init_value!(line, 1);
 
         return Scanner {
             source,
-            start,
+
             current,
             line,
         };
@@ -87,6 +79,8 @@ impl Scanner {
             '+' => new_character!(TokenType::Plus, "+", self.line),
             ';' => new_character!(TokenType::Semicolon, ";", self.line),
             '*' => new_character!(TokenType::Star, "*", self.line),
+            '?' => new_character!(TokenType::Question, "?", self.line),
+            ':' => new_character!(TokenType::Colon, ":", self.line),
             '!' => {
                 if self.peek() == '=' {
                     let _ = self.advance();
@@ -119,6 +113,7 @@ impl Scanner {
                     return new_character!(TokenType::Greater, ">", self.line);
                 }
             }
+
             'a'..='z' | 'A'..='Z' | '_' => self.keywords(),
 
             '0'..='9' => self.numbers(),
