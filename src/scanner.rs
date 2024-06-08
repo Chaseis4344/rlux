@@ -73,7 +73,7 @@ impl Scanner {
             ')' => new_character!(TokenType::RightParen, ")", self.line),
             '{' => new_character!(TokenType::LeftBrace, "{", self.line),
             '}' => new_character!(TokenType::RightBrace, "}", self.line),
-            ',' => new_character!(TokenType::Comma, ",", self.line),
+            //',' => new_character!(TokenType::Comma, ",", self.line),
             '.' => new_character!(TokenType::Dot, ".", self.line),
             '-' => new_character!(TokenType::Minus, "-", self.line),
             '+' => new_character!(TokenType::Plus, "+", self.line),

@@ -1,6 +1,7 @@
 use crate::parser::ast::*;
 
 mod display_traits;
+pub mod functional_traits;
 pub mod token;
 
 #[derive(Clone)]
@@ -62,16 +63,6 @@ pub enum TokenType {
     While,
 
     Eof,
-}
-
-impl PartialEq for TokenType {
-    fn eq(&self, rhs: &Self) -> bool {
-        self.to_string() == rhs.to_string()
-    }
-
-    fn ne(&self, other: &Self) -> bool {
-        self.to_string() != other.to_string()
-    }
 }
 
 #[derive(Clone)]

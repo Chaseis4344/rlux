@@ -39,7 +39,7 @@ pub trait Visitor<T> {
 }
 
 pub trait Visitable<T> {
-    fn accept(&mut self, visitor: &mut dyn Visitor<T>) -> String;
+    fn accept(&mut self, visitor: &mut dyn Visitor<T>) -> T;
 }
 
 impl Visitable<String> for Ternary {

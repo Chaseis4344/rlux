@@ -4,11 +4,11 @@ use std::{
     process::exit,
 };
 
+//mod interpreter;
 mod parser;
 mod scanner;
 mod tests;
 mod types;
-
 //mod token;
 //mod display_traits;
 //sends error report to user with specific additonal details

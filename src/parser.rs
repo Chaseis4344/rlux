@@ -3,6 +3,7 @@ use crate::types::token::Token;
 use crate::types::Expression;
 use crate::types::*;
 pub mod ast;
+mod interpreter;
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {
@@ -104,7 +105,7 @@ impl Parser {
     }
 
     fn comparison(&mut self) -> Result<Expression, ParserError> {
-        let mut expression = self.term();
+        let expression = self.term();
         let mut expression = pass_up!(expression);
         while self.match_token_type(vec![
             TokenType::Greater,
