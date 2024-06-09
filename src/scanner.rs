@@ -310,7 +310,7 @@ impl Scanner {
         self.source.as_bytes()[(self.current) as usize] as char
     }
     //Extract tokens from source
-    pub fn scan_tokens(&mut self) -> Vec<Token> {
+    pub(crate) fn scan_tokens(&mut self) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
         //let mut current_line = 0;
 
@@ -328,6 +328,6 @@ impl Scanner {
     }
 }
 
-pub fn is_ascii_num(ch: char) -> bool {
+pub(crate) fn is_ascii_num(ch: char) -> bool {
     ch >= '0' && ch <= '9'
 }

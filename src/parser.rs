@@ -2,7 +2,7 @@
 use crate::types::token::Token;
 use crate::types::Expression;
 use crate::types::*;
-pub mod ast;
+pub(crate) mod ast;
 mod interpreter;
 
 macro_rules! new_ternary {
@@ -272,7 +272,7 @@ impl Parser {
         }
     }
 
-    pub fn parse(&mut self) -> Option<Expression> {
+    pub(crate) fn parse(&mut self) -> Option<Expression> {
         match self.expression() {
             Ok(exp) => Some(exp),
             Err(err) => {

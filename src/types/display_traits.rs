@@ -67,7 +67,7 @@ impl DisplayTrait for types::TokenType {
     }
 }
 
-impl std::error::Error for types::ParserError {
+impl Error for types::ParserError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         None
     }
@@ -88,7 +88,7 @@ impl std::fmt::Debug for types::ParserError {
     }
 }
 
-impl std::fmt::Display for crate::types::Expression {
+impl DisplayTrait for crate::types::Expression {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match (*self).clone() {
             Self::Grouping(group) => {

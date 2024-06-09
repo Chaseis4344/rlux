@@ -3,7 +3,10 @@ use crate::{
     types::{token::Token, Expression, LiteralType},
 };
 
-use super::ast::{self, Visitor};
+use super::{
+    ast::{self, Visitor},
+    TokenType,
+};
 
 impl Visitable<LiteralType> for Expression {
     fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {
@@ -61,10 +64,18 @@ impl Visitor<LiteralType> for Interpreter {
         let right = self.evaluate(&mut bin.right);
         let operator = &bin.operator;
 
+        //We can abstract all this logic away to rust's traits
         match operator.token_type {
-            super::TokenType::Plus => left + right,
-            super::TokenType::Star => left * right,
-            super::TokenType::Slash => left / right,
+            TokenType::Plus => left + right,
+            TokenType::Star => left * right,
+            TokenType::Slash => left / right,
+            TokenType::Minus => left - right,
+            TokenType::Greater => LiteralType::Boolean(left > right),
+            TokenType::GreaterEqual => LiteralType::Boolean(left >= right),
+            TokenType::Less => LiteralType::Boolean(left < right),
+            TokenType::LessEqual => LiteralType::Boolean(left <= right),
+            TokenType::EqualEqual => LiteralType::Boolean(left == right),
+            TokenType::BangEqual => LiteralType::Boolean(left != right),
             _ => left,
         }
     }

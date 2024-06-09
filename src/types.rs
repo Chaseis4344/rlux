@@ -1,11 +1,13 @@
+use std::string::ParseError;
+
 use crate::parser::ast::*;
 
 mod display_traits;
-pub mod functional_traits;
-pub mod token;
+pub(crate) mod functional_traits;
+pub(crate) mod token;
 
 #[derive(Clone)]
-pub enum LiteralType {
+pub(crate) enum LiteralType {
     Number(f64),
     Boolean(bool),
     String(String),
@@ -13,7 +15,7 @@ pub enum LiteralType {
 }
 
 #[derive(Clone)]
-pub enum TokenType {
+pub(crate) enum TokenType {
     //Single Character Tokens
     LeftParen,
     RightParen,
@@ -66,7 +68,7 @@ pub enum TokenType {
 }
 
 #[derive(Clone)]
-pub enum Expression {
+pub(crate) enum Expression {
     Grouping(Box<Grouping>),
     Unary(Box<Unary>),
     Binary(Box<Binary>),
@@ -75,5 +77,14 @@ pub enum Expression {
 }
 
 pub struct ParserError {
-    pub source: token::Token,
+    pub(crate) source: token::Token,
+}
+
+pub(crate) struct RuntimeError {
+    pub(crate) source: token::Token,
+}
+
+pub(crate) enum LuxErrors {
+    ParserError(ParserError),
+    RuntimeError(RuntimeError),
 }
