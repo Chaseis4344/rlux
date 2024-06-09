@@ -53,6 +53,7 @@ fn run(source: String) -> Result<i32, Error> {
 
     match expressions {
         Some(mut exp) => {
+            println!("Parsing Finished Successfully: \n{}", exp);
             let mut interpreter = parser::interpreter::Interpreter::new();
             interpreter.interpret(&mut exp);
         }

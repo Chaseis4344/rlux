@@ -186,6 +186,11 @@ impl Parser {
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
             };
             return Ok(return_val);
+        } else if self.match_token_type(vec![TokenType::LeftParen]) {
+            let expression = self.expression();
+            let expression = pass_up!(expression);
+            let _ = self.consume(TokenType::LeftParen, "Expect ')' after expression.");
+            return Ok(new_expression!(expression));
         } else {
             return Err(ParserError {
                 source: self.peek(),
