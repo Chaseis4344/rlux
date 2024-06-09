@@ -80,6 +80,7 @@ pub struct ParserError {
     pub(crate) source: token::Token,
 }
 
+#[derive(Clone)]
 pub(crate) struct RuntimeError {
     pub(crate) source: token::Token,
 }

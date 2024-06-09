@@ -5,9 +5,23 @@ macro_rules! number_op {
         match $self {
             Self::Number(left_num) => match $rhs {
                 Self::Number(right_num) => LiteralType::Number(left_num $op right_num),
-                _ => LiteralType::Number(left_num),
+                _ => {
+                    eprintln!(
+                        "Error: Type Mismatch! \n\tReturned \"{}\" from {}!",
+                        $self,
+                        stringify!($op)
+                    );
+                    LiteralType::Number(left_num)
+                },
             },
-            _ => $self,
+            _ => {
+                eprintln!(
+                "Error: Type Mismatch! \n\tReturned \"{}\" from {}!",
+                $self,
+                stringify!($op)
+            );
+            $self
+        },
         }
 
     };
@@ -41,24 +55,38 @@ impl std::ops::Add for LiteralType {
             /*
              * if left is number and right is number, add them together
              */
-            Self::Number(left_num) => match rhs {
-                Self::Number(right_num) => LiteralType::Number(left_num / right_num),
-                _ => LiteralType::Number(left_num),
-            },
+            Self::Number(left_num) => {
+                match rhs {
+                    Self::Number(right_num) => LiteralType::Number(left_num / right_num),
+                    _ => {
+                        eprintln!("Error: Type Mismatch! \n\tReturned {} from a Number while trying to add!", left_num);
+                        LiteralType::Number(left_num)
+                    }
+                }
+            }
 
             /*
              *if left is String and Right is string, concatonate
              */
             Self::String(thing1) => match rhs {
                 Self::String(thing2) => LiteralType::String(thing1.to_owned() + &thing2.to_owned()),
-                _ => LiteralType::String(thing1),
+                _ => {
+                    eprintln!("Error: Type Mismatch! \n\tReturned \"{}\" from a String while trying to add!", thing1);
+                    LiteralType::String(thing1)
+                }
             },
 
             /*
              *   Return yourself if something unexpected happens.
              *   This give all programs written in rlux a little more resilience at the cost of predicatbility.
              */
-            _ => self,
+            _ => {
+                eprintln!(
+                    "Error: Type Mismatch! \n\tReturned \"{}\" while trying to add!",
+                    self
+                );
+                self
+            }
         }
     }
 }
@@ -95,6 +123,7 @@ impl PartialEq for LiteralType {
                 Self::Boolean(right_boolean) => *left_boolean == *right_boolean,
                 _ => {
                     /*Type Mismatch*/
+                    eprintln!("Error: Type Mismatch! \n\tReturned false from a boolean while trying to check equality!");
                     false
                 }
             },
@@ -102,6 +131,7 @@ impl PartialEq for LiteralType {
                 Self::Number(right_num) => *left_num == *right_num,
                 _ => {
                     /*Type Mismatch*/
+                    eprintln!("Error: Type Mismatch! \n\tReturned false from a Number while trying to check equality!");
                     false
                 }
             },
@@ -111,6 +141,7 @@ impl PartialEq for LiteralType {
                     Self::String(right_string) => *left_string == *right_string,
                     _ => {
                         /*Type Mismatch*/
+                        eprintln!("Error: Type Mismatch! \n\tReturned false from a String while trying to check equality!");
                         false
                     }
                 }
@@ -133,9 +164,15 @@ macro_rules! boolean_op {
         match $self {
             Self::Number(left_num) => match $other {
                 Self::Number(right_num) => *left_num $op *right_num,
-                _ => /*TODO: Figure out how to pass errors up here*/ false,
+                _ =>  {
+                    eprintln!("Error: Type Mismatch! \n\tReturned false from a Number while trying to perform: {}" , stringify!($op));
+                    false
+                },
             },
-            _ =>  /*TODO: Figure out how to pass errors up here*/ false,
+            _ =>  {
+                    eprintln!("Error: Type Mismatch! \n\tReturned false while trying to perform: {}", stringify!($op));
+                    false
+                },
         }
     };
 }

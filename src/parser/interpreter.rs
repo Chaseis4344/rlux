@@ -1,3 +1,5 @@
+use std::result;
+
 use crate::{
     parser::ast::Visitable,
     types::{token::Token, Expression, LiteralType},
@@ -5,7 +7,7 @@ use crate::{
 
 use super::{
     ast::{self, Visitor},
-    TokenType,
+    RuntimeError, TokenType,
 };
 
 impl Visitable<LiteralType> for Expression {
@@ -56,6 +58,16 @@ impl Interpreter {
     fn evaluate(&mut self, expr: &mut Expression) -> LiteralType {
         expr.accept(self)
     }
+    fn new() -> Interpreter {
+        Interpreter {}
+    }
+}
+
+pub fn interpret(expresssion: &mut Expression) -> LiteralType {
+    let mut interpter = Interpreter::new();
+    let value = interpter.evaluate(expresssion);
+    println!("{}", value);
+    value
 }
 
 impl Visitor<LiteralType> for Interpreter {
@@ -65,6 +77,7 @@ impl Visitor<LiteralType> for Interpreter {
         let operator = &bin.operator;
 
         //We can abstract all this logic away to rust's traits
+        /*TODO: ARCHITECT WAY FOR TYPE ERRORS TO BE PASSED UP FROM HERE TO USER */
         match operator.token_type {
             TokenType::Plus => left + right,
             TokenType::Star => left * right,

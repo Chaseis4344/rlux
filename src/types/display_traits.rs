@@ -2,6 +2,8 @@ use crate::types;
 use std::error::Error;
 use std::fmt::{write, Display as DisplayTrait};
 
+use super::RuntimeError;
+
 //Token Display implementation moved to token.rs because of private field implementation
 
 impl DisplayTrait for types::LiteralType {
@@ -12,6 +14,12 @@ impl DisplayTrait for types::LiteralType {
             Self::String(string) => write!(f, "{}", string),
             Self::Nil => write!(f, "NIL"),
         }
+    }
+}
+
+impl DisplayTrait for RuntimeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Error on: {}", self.source)
     }
 }
 
