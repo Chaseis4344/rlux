@@ -55,19 +55,17 @@ impl Visitable<LiteralType> for ast::Unary {
 pub struct Interpreter {}
 
 impl Interpreter {
-    fn evaluate(&mut self, expr: &mut Expression) -> LiteralType {
+    pub(crate) fn evaluate(&mut self, expr: &mut Expression) -> LiteralType {
         expr.accept(self)
     }
-    fn new() -> Interpreter {
+    pub(crate) fn new() -> Interpreter {
         Interpreter {}
     }
-}
-
-pub fn interpret(expresssion: &mut Expression) -> LiteralType {
-    let mut interpter = Interpreter::new();
-    let value = interpter.evaluate(expresssion);
-    println!("{}", value);
-    value
+    pub fn interpret(&mut self, expresssion: &mut Expression) -> LiteralType {
+        let value = self.evaluate(expresssion);
+        println!("{}", value);
+        value
+    }
 }
 
 impl Visitor<LiteralType> for Interpreter {

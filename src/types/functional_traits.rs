@@ -57,7 +57,7 @@ impl std::ops::Add for LiteralType {
              */
             Self::Number(left_num) => {
                 match rhs {
-                    Self::Number(right_num) => LiteralType::Number(left_num / right_num),
+                    Self::Number(right_num) => LiteralType::Number(left_num + right_num),
                     _ => {
                         eprintln!("Error: Type Mismatch! \n\tReturned {} from a Number while trying to add!", left_num);
                         LiteralType::Number(left_num)

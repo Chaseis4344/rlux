@@ -3,7 +3,7 @@ use crate::types::token::Token;
 use crate::types::Expression;
 use crate::types::*;
 pub(crate) mod ast;
-mod interpreter;
+pub(crate) mod interpreter;
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {

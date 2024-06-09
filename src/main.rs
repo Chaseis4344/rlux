@@ -52,8 +52,9 @@ fn run(source: String) -> Result<i32, Error> {
     let expressions = parser.parse();
 
     match expressions {
-        Some(exp) => {
-            println!("Parsing Finished Successfully: \n{}", exp);
+        Some(mut exp) => {
+            let mut interpreter = parser::interpreter::Interpreter::new();
+            interpreter.interpret(&mut exp);
         }
         None => {
             println!("Parsing Error!")
