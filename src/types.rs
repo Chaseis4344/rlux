@@ -1,6 +1,4 @@
-use std::string::ParseError;
-
-use crate::parser::ast::*;
+use crate::parser::ast::expression::{Binary, Grouping, Literal, Ternary, Unary};
 
 mod display_traits;
 pub(crate) mod functional_traits;
@@ -88,4 +86,17 @@ pub(crate) struct RuntimeError {
 pub(crate) enum LuxErrors {
     ParserError(ParserError),
     RuntimeError(RuntimeError),
+}
+
+pub(crate) struct PrintStatement {
+    pub(crate) expression: Expression,
+}
+
+pub(crate) struct ExpressionStatement {
+    pub(crate) expression: Expression,
+}
+
+pub(crate) enum Statement {
+    PrintStatement(PrintStatement),
+    ExpressionStatement(ExpressionStatement),
 }

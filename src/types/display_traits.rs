@@ -1,6 +1,6 @@
 use crate::types;
 use std::error::Error;
-use std::fmt::{write, Display as DisplayTrait};
+use std::fmt::Display as DisplayTrait;
 
 use super::RuntimeError;
 

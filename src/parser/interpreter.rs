@@ -1,14 +1,7 @@
-use std::result;
+use crate::types::{Expression, LiteralType, TokenType};
 
-use crate::{
-    parser::ast::Visitable,
-    types::{token::Token, Expression, LiteralType},
-};
-
-use super::{
-    ast::{self, Visitor},
-    RuntimeError, TokenType,
-};
+use super::ast::expression::{Binary, Grouping, Literal, Ternary, Unary};
+use super::ast::{Visitable, Visitor};
 
 impl Visitable<LiteralType> for Expression {
     fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {
@@ -22,31 +15,31 @@ impl Visitable<LiteralType> for Expression {
     }
 }
 
-impl Visitable<LiteralType> for ast::Literal {
-    fn accept(&mut self, visitor: &mut dyn ast::Visitor<LiteralType>) -> LiteralType {
+impl Visitable<LiteralType> for Literal {
+    fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {
         visitor.visit_literal(Box::new(self))
     }
 }
 
-impl Visitable<LiteralType> for ast::Grouping {
+impl Visitable<LiteralType> for Grouping {
     fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {
         visitor.visit_grouping(Box::new(self))
     }
 }
 
-impl Visitable<LiteralType> for ast::Binary {
+impl Visitable<LiteralType> for Binary {
     fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {
         visitor.visit_binary(Box::new(self))
     }
 }
 
-impl Visitable<LiteralType> for ast::Ternary {
+impl Visitable<LiteralType> for Ternary {
     fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {
         visitor.visit_ternary(Box::new(self))
     }
 }
 
-impl Visitable<LiteralType> for ast::Unary {
+impl Visitable<LiteralType> for Unary {
     fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {
         visitor.visit_unary(Box::new(self))
     }
@@ -69,7 +62,7 @@ impl Interpreter {
 }
 
 impl Visitor<LiteralType> for Interpreter {
-    fn visit_binary(&mut self, bin: Box<&mut ast::Binary>) -> LiteralType {
+    fn visit_binary(&mut self, bin: Box<&mut Binary>) -> LiteralType {
         let left = self.evaluate(&mut bin.left);
         let right = self.evaluate(&mut bin.right);
         let operator = &bin.operator;
@@ -90,13 +83,13 @@ impl Visitor<LiteralType> for Interpreter {
             _ => left,
         }
     }
-    fn visit_grouping(&mut self, group: Box<&mut ast::Grouping>) -> LiteralType {
+    fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> LiteralType {
         self.evaluate(&mut group.expression)
     }
-    fn visit_literal(&mut self, lit: Box<&mut ast::Literal>) -> LiteralType {
+    fn visit_literal(&mut self, lit: Box<&mut Literal>) -> LiteralType {
         lit.value.clone()
     }
-    fn visit_ternary(&mut self, tern: Box<&mut ast::Ternary>) -> LiteralType {
+    fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> LiteralType {
         let evaluator = self.evaluate(&mut tern.evaluator);
         let mut left = &mut tern.left;
         let mut right = &mut tern.right;
@@ -112,7 +105,7 @@ impl Visitor<LiteralType> for Interpreter {
             _ => evaluator,
         }
     }
-    fn visit_unary(&mut self, unary: Box<&mut ast::Unary>) -> LiteralType {
+    fn visit_unary(&mut self, unary: Box<&mut Unary>) -> LiteralType {
         //let right =
         let right = self.evaluate(&mut unary.operand);
 

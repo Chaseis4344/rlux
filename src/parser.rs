@@ -2,12 +2,15 @@
 use crate::types::token::Token;
 use crate::types::Expression;
 use crate::types::*;
+
 pub(crate) mod ast;
+use ast::expression;
+
 pub(crate) mod interpreter;
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {
-        Expression::Ternary(Box::new(ast::Ternary {
+        Expression::Ternary(Box::new(expression::Ternary {
             evaluator: $eval,
             left: $lhs,
             right: $rhs,
@@ -17,20 +20,20 @@ macro_rules! new_ternary {
 
 macro_rules! new_expression {
     ($left:expr, $operator:expr,$right:expr) => {
-        Expression::Binary(Box::new(ast::Binary {
+        Expression::Binary(Box::new(expression::Binary {
             operator: $operator,
             left: $left,
             right: $right,
         }))
     };
     ($operator:expr, $operand:expr) => {
-        Expression::Unary(Box::new(ast::Unary {
+        Expression::Unary(Box::new(expression::Unary {
             operator: $operator,
             operand: $operand,
         }))
     };
     ($expression:expr) => {
-        Expression::Grouping(Box::new(ast::Grouping {
+        Expression::Grouping(Box::new(expression::Grouping {
             expression: $expression,
         }))
     };
@@ -38,7 +41,7 @@ macro_rules! new_expression {
 
 macro_rules! new_literal {
     ($value:expr) => {
-        Expression::Literal(Box::new(ast::Literal { value: $value }))
+        Expression::Literal(Box::new(expression::Literal { value: $value }))
     };
 }
 
@@ -61,6 +64,30 @@ pub struct Parser {
 impl Parser {
     pub fn new(tokens: Vec<Token>, current: i32) -> Parser {
         Parser { tokens, current }
+    }
+
+    fn print_statement(&mut self) -> Result<Statement, ParserError> {
+        let value = self.expression();
+        let expression = pass_up!(value);
+        self.consume(TokenType::Semicolon, "Expect ';' after value.");
+        return Ok(Statement::PrintStatement(PrintStatement { expression }));
+    }
+
+    fn expression_statement(&mut self) -> Result<Statement, ParserError> {
+        let value = self.expression();
+        let expression = pass_up!(value);
+        self.consume(TokenType::Semicolon, "Expect ';' after value.");
+        return Ok(Statement::ExpressionStatement(ExpressionStatement {
+            expression,
+        }));
+    }
+
+    fn statement(&mut self) -> Result<Statement, ParserError> {
+        if self.match_token_type(vec![TokenType::Print]) {
+            self.print_statement()
+        } else {
+            self.expression_statement()
+        }
     }
     fn expression(&mut self) -> Result<Expression, ParserError> {
         self.ternary()
@@ -277,13 +304,21 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse(&mut self) -> Option<Expression> {
-        match self.expression() {
-            Ok(exp) => Some(exp),
-            Err(err) => {
-                eprintln!("ParserError: \n\t{}", err);
-                None
-            }
+    pub(crate) fn parse(&mut self) -> Vec<Statement> {
+        let mut statements: Vec<Statement> = vec![];
+        while !self.is_at_end() {
+            let state = self.statement();
+            let state = match state {
+                Ok(state) => {
+                    statements.push(state);
+                }
+                Err(err) => {
+                    eprintln!("{}", err);
+                    return statements;
+                }
+            };
         }
+
+        statements
     }
 }

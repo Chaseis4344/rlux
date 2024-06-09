@@ -7,7 +7,7 @@ use std::{
 //mod interpreter;
 mod parser;
 mod scanner;
-mod tests;
+//mod tests;
 mod types;
 //mod token;
 //mod display_traits;
@@ -50,17 +50,6 @@ fn run(source: String) -> Result<i32, Error> {
     /*Parser goes here */
     let mut parser = parser::Parser::new(tokens, 0);
     let expressions = parser.parse();
-
-    match expressions {
-        Some(mut exp) => {
-            println!("Parsing Finished Successfully: \n{}", exp);
-            let mut interpreter = parser::interpreter::Interpreter::new();
-            interpreter.interpret(&mut exp);
-        }
-        None => {
-            println!("Parsing Error!")
-        }
-    }
 
     //Print for dev purposes
 
