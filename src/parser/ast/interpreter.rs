@@ -55,13 +55,13 @@ impl Interpreter {
     pub(crate) fn new() -> Interpreter {
         Interpreter {}
     }
-    pub fn interpret(&mut self, statements: Vec<&mut Statement>) {
+    pub fn interpret(&mut self, statements: Vec<Statement>) {
         for statement in statements {
             self.execute(statement);
         }
     }
 
-    pub fn execute(&mut self, statement: &mut Statement) {
+    pub fn execute(&mut self, mut statement: Statement) {
         use super::expression::Visitable;
 
         statement.accept(self);

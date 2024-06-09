@@ -4,7 +4,7 @@ use crate::types::Expression;
 use crate::types::*;
 
 pub(crate) mod ast;
-use ast::{expression, statement};
+use ast::expression;
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {
@@ -242,13 +242,11 @@ impl Parser {
         }
     }
 
-    fn advance(&mut self) -> Option<Token> {
+    fn advance(&mut self) -> Token {
         if !self.is_at_end() {
             self.current += 1;
-            None
-        } else {
-            Some(self.previous())
         }
+        self.previous()
     }
 
     fn is_at_end(&self) -> bool {
@@ -265,7 +263,7 @@ impl Parser {
 
     fn consume(&mut self, type_: TokenType, message: &str) -> Result<Token, (Token, String)> {
         if self.check(type_) {
-            Ok(self.advance().unwrap())
+            Ok(self.advance())
         } else {
             Err((self.peek(), message.to_string()))
         }
@@ -302,15 +300,15 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse(&mut self) -> Vec<&mut Statement> {
-        let mut statements: Vec<&mut Statement> = vec![];
+    pub(crate) fn parse(&mut self) -> Vec<Statement> {
+        let mut statements: Vec<Statement> = vec![];
         while !self.is_at_end() {
             let state = self.statement();
             match state {
-                Ok(mut statement) => {
-                    statements.push(&mut statement);
+                Ok(statement) => {
+                    statements.push(statement);
                 }
-                Err(err) => {}
+                Err(_err) => {}
             }
         }
 
