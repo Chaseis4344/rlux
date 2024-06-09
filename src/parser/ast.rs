@@ -1,6 +1,8 @@
 use crate::types::Expression;
 
 pub(crate) mod expression;
+pub(crate) mod interpreter;
+pub(crate) mod statement;
 use expression::{Binary, Grouping, Literal, Ternary, Unary};
 
 pub trait Visitor<T> {

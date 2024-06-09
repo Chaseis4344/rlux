@@ -1,7 +1,8 @@
 use crate::types::{Expression, LiteralType, TokenType};
 
-use super::ast::expression::{Binary, Grouping, Literal, Ternary, Unary};
-use super::ast::{Visitable, Visitor};
+use super::super::Statement;
+use super::expression::{Binary, Grouping, Literal, Ternary, Unary};
+use super::{statement, Visitable, Visitor};
 
 impl Visitable<LiteralType> for Expression {
     fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {
@@ -54,10 +55,16 @@ impl Interpreter {
     pub(crate) fn new() -> Interpreter {
         Interpreter {}
     }
-    pub fn interpret(&mut self, expresssion: &mut Expression) -> LiteralType {
-        let value = self.evaluate(expresssion);
-        println!("{}", value);
-        value
+    pub fn interpret(&mut self, statements: Vec<&mut Statement>) {
+        for statement in statements {
+            self.execute(statement);
+        }
+    }
+
+    pub fn execute(&mut self, statement: &mut Statement) {
+        use super::expression::Visitable;
+
+        statement.accept(self);
     }
 }
 
@@ -110,11 +117,11 @@ impl Visitor<LiteralType> for Interpreter {
         let right = self.evaluate(&mut unary.operand);
 
         match unary.operator.token_type {
-            super::TokenType::Minus => match right {
+            TokenType::Minus => match right {
                 LiteralType::Number(num) => LiteralType::Number(-num),
                 _ => right,
             },
-            super::TokenType::Bang => match right {
+            TokenType::Bang => match right {
                 LiteralType::Boolean(boolean) => LiteralType::Boolean(!boolean),
                 _ => right,
             },

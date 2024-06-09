@@ -1,3 +1,5 @@
+use std::clone;
+
 use crate::parser::ast::expression::{Binary, Grouping, Literal, Ternary, Unary};
 
 mod display_traits;
@@ -88,14 +90,17 @@ pub(crate) enum LuxErrors {
     RuntimeError(RuntimeError),
 }
 
+#[derive(Clone)]
 pub(crate) struct PrintStatement {
     pub(crate) expression: Expression,
 }
 
+#[derive(Clone)]
 pub(crate) struct ExpressionStatement {
     pub(crate) expression: Expression,
 }
 
+#[derive(Clone)]
 pub(crate) enum Statement {
     PrintStatement(PrintStatement),
     ExpressionStatement(ExpressionStatement),

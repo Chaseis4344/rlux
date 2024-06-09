@@ -4,9 +4,7 @@ use crate::types::Expression;
 use crate::types::*;
 
 pub(crate) mod ast;
-use ast::expression;
-
-pub(crate) mod interpreter;
+use ast::{expression, statement};
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {
@@ -69,14 +67,14 @@ impl Parser {
     fn print_statement(&mut self) -> Result<Statement, ParserError> {
         let value = self.expression();
         let expression = pass_up!(value);
-        self.consume(TokenType::Semicolon, "Expect ';' after value.");
+        let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
         return Ok(Statement::PrintStatement(PrintStatement { expression }));
     }
 
     fn expression_statement(&mut self) -> Result<Statement, ParserError> {
         let value = self.expression();
         let expression = pass_up!(value);
-        self.consume(TokenType::Semicolon, "Expect ';' after value.");
+        let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
         return Ok(Statement::ExpressionStatement(ExpressionStatement {
             expression,
         }));
@@ -304,19 +302,16 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse(&mut self) -> Vec<Statement> {
-        let mut statements: Vec<Statement> = vec![];
+    pub(crate) fn parse(&mut self) -> Vec<&mut Statement> {
+        let mut statements: Vec<&mut Statement> = vec![];
         while !self.is_at_end() {
             let state = self.statement();
-            let state = match state {
-                Ok(state) => {
-                    statements.push(state);
+            match state {
+                Ok(mut statement) => {
+                    statements.push(&mut statement);
                 }
-                Err(err) => {
-                    eprintln!("{}", err);
-                    return statements;
-                }
-            };
+                Err(err) => {}
+            }
         }
 
         statements
