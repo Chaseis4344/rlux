@@ -7,7 +7,7 @@ use std::{
 //mod interpreter;
 mod parser;
 mod scanner;
-//mod tests;
+mod tests;
 mod types;
 //mod token;
 //mod display_traits;
@@ -39,13 +39,6 @@ fn run(source: String) -> Result<i32, Error> {
         literal: None,
         line: scanner.line,
     });
-
-    for token in tokens.clone() {
-        print!(">");
-        println!("{}", token);
-    }
-
-    println!("Tokens Scanned, Starting Parsing...");
 
     /*Parser goes here */
     let mut parser = parser::Parser::new(tokens, 0);
