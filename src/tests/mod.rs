@@ -15,20 +15,20 @@ macro_rules! new_ternary {
 
 macro_rules! new_expression {
     ($left:expr, $operator:expr,$right:expr) => {
-        Expression::Binary(Box::new(expression::Binary {
+        Expression::Binary(Box::new(Binary {
             operator: $operator,
             left: $left,
             right: $right,
         }))
     };
     ($operator:expr, $operand:expr) => {
-        Expression::Unary(Box::new(expression::Unary {
+        Expression::Unary(Box::new(Unary {
             operator: $operator,
             operand: $operand,
         }))
     };
     ($expression:expr) => {
-        Expression::Grouping(Box::new(expression::Grouping {
+        Expression::Grouping(Box::new(Grouping {
             expression: $expression,
         }))
     };
@@ -36,7 +36,7 @@ macro_rules! new_expression {
 
 macro_rules! new_literal {
     ($value:expr) => {
-        Expression::Literal(Box::new(expression::Literal { value: $value }))
+        Expression::Literal(Box::new(Literal { value: $value }))
     };
 }
 
