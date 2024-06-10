@@ -261,12 +261,13 @@ impl Parser {
         self.tokens[(self.current - 1) as usize].clone()
     }
 
-    fn consume(&mut self, type_: TokenType, message: &str) -> Result<Token, (Token, String)> {
+    fn consume(&mut self, type_: TokenType, message: &str) -> Result<Token, ParserError> {
         if self.check(type_) {
             Ok(self.advance())
         } else {
-            println!("{}", message);
-            Err((self.peek(), message.to_string()))
+            let mut token = self.peek();
+            token.line -= 1;
+            Err(Self::error(token, message))
         }
     }
 

@@ -42,9 +42,9 @@ fn run(source: String) -> Result<i32, Error> {
 
     /*Parser goes here */
     let mut parser = parser::Parser::new(tokens, 0);
-    let expressions = parser.parse();
+    let statements = parser.parse();
     let mut interpreter = interpreter::Interpreter::new();
-    interpreter.interpret(expressions);
+    interpreter.interpret(statements);
 
     //Print for dev purposes
 
@@ -54,7 +54,7 @@ fn run(source: String) -> Result<i32, Error> {
 use std::ffi::OsStr;
 use std::path::Path;
 
-use parser::ast::interpreter;
+use parser::ast::{interpreter, statement};
 
 fn get_extension_from_filename(filename: &str) -> Option<&str> {
     Path::new(filename).extension().and_then(OsStr::to_str)
