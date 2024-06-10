@@ -203,15 +203,19 @@ impl Scanner {
         );
     }
 
+    fn is_ascii_ident(ch: char) -> bool {
+        (ch >= 'a' && ch <= 'z')
+            || (ch >= 'A' && ch <= 'Z')
+            || (ch >= '0' && ch <= '9')
+            || ch == '_'
+    }
+
     fn keywords(&mut self) -> Option<Token> {
         let mut current_char: char = self.source.as_bytes()[(self.current - 1) as usize] as char;
         let mut word_built = String::from("");
 
         //Read in full word
-        while ((current_char >= 'a' && current_char <= 'z')
-            || (current_char >= 'A' && current_char <= 'Z'))
-            && (self.current <= self.source.len() as u32)
-        {
+        while Self::is_ascii_ident(current_char) && (self.current <= self.source.len() as u32) {
             word_built.push(current_char);
             self.current += 1;
             current_char = self.source.as_bytes()[(self.current - 1) as usize] as char
@@ -271,6 +275,16 @@ impl Scanner {
                 result_string.push(current_char);
                 current_char = self.advance();
             }
+        }
+
+        //Skip the dot at the end, just in case the user slips up / forgets
+        if current_char == '.' {
+            self.current += 1;
+        }
+
+        //Undiscard next character if we have not used it
+        if !is_ascii_num(current_char) {
+            self.current -= 1;
         }
 
         return new_literal!(
