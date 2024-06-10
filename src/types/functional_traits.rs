@@ -68,12 +68,13 @@ impl std::ops::Add for LiteralType {
             /*
              *if left is String and Right is string, concatonate
              */
-            Self::String(thing1) => match rhs {
-                Self::String(thing2) => LiteralType::String(thing1.to_owned() + &thing2.to_owned()),
-                _ => {
-                    eprintln!("Error: Type Mismatch! \n\tReturned \"{}\" from a String while trying to add!", thing1);
-                    LiteralType::String(thing1)
+            Self::String(left_string) => match rhs {
+                Self::String(right_string) => {
+                    LiteralType::String(left_string.to_owned() + &right_string.to_owned())
                 }
+                Self::Boolean(boolean) => LiteralType::String(left_string + &boolean.to_string()),
+                Self::Number(num) => LiteralType::String(left_string + &num.to_string()),
+                Self::Nil => LiteralType::String(left_string + &Self::Nil.to_string()),
             },
 
             /*
