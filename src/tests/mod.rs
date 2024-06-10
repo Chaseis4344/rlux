@@ -1,7 +1,6 @@
 #[cfg(test)]
-use crate::parser::ast::expression::Expression::*;
-use crate::parser::ast::expression::{Binary, Unary, Ternary, Grouping}
-use crate::types::{token::Token, Expression, Expression::*, LiteralType, TokenType};
+use crate::parser::ast::expression::{Binary, Grouping, Ternary, Unary};
+use crate::types::Expression;
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {
@@ -41,9 +40,7 @@ macro_rules! new_literal {
 }
 
 #[test]
-fn test_ast() {
- 
-}
+fn test_ast() {}
 
 #[test]
 fn test_scanner() {}

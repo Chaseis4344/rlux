@@ -1,9 +1,5 @@
-use super::expression::{
-    self, Binary, ExpressionVisitor, Grouping, Literal, Ternary, Unary, Visitable,
-};
+use super::expression::Visitable;
 use super::interpreter::Interpreter;
-use crate::types::Expression;
-
 use crate::types::{ExpressionStatement, PrintStatement, Statement};
 
 trait StatementVisitor {

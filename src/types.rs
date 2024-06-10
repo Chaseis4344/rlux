@@ -1,5 +1,3 @@
-use std::clone;
-
 use crate::parser::ast::expression::{Binary, Grouping, Literal, Ternary, Unary};
 
 mod display_traits;

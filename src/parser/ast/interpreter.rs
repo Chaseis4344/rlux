@@ -2,7 +2,7 @@ use crate::types::{Expression, LiteralType, TokenType};
 
 use super::super::Statement;
 use super::expression::{Binary, Grouping, Literal, Ternary, Unary};
-use super::{statement, Visitable, Visitor};
+use super::{Visitable, Visitor};
 
 impl Visitable<LiteralType> for Expression {
     fn accept(&mut self, visitor: &mut dyn Visitor<LiteralType>) -> LiteralType {

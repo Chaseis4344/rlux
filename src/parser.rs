@@ -265,6 +265,7 @@ impl Parser {
         if self.check(type_) {
             Ok(self.advance())
         } else {
+            println!("{}", message);
             Err((self.peek(), message.to_string()))
         }
     }

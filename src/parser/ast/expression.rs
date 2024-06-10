@@ -1,36 +1,36 @@
 use crate::types::{token::Token, Expression, LiteralType};
 
 #[derive(Clone)]
-pub struct Ternary {
-    pub evaluator: Expression,
-    pub left: Expression,
-    pub right: Expression,
+pub(crate) struct Ternary {
+    pub(crate) evaluator: Expression,
+    pub(crate) left: Expression,
+    pub(crate) right: Expression,
 }
 
 #[derive(Clone)]
-pub struct Literal {
-    pub value: LiteralType,
+pub(crate) struct Literal {
+    pub(crate) value: LiteralType,
 }
 
 #[derive(Clone)]
-pub struct Unary {
-    pub operator: Token,
-    pub operand: Expression,
+pub(crate) struct Unary {
+    pub(crate) operator: Token,
+    pub(crate) operand: Expression,
 }
 
 #[derive(Clone)]
 pub struct Binary {
-    pub operator: Token,
-    pub left: Expression,
-    pub right: Expression,
+    pub(crate) operator: Token,
+    pub(crate) left: Expression,
+    pub(crate) right: Expression,
 }
 
 #[derive(Clone)]
 pub struct Grouping {
-    pub expression: Expression,
+    pub(crate) expression: Expression,
 }
 
-pub trait ExpressionVisitor<T> {
+pub(crate) trait ExpressionVisitor<T> {
     fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> T;
     fn visit_binary(&mut self, bin: Box<&mut Binary>) -> T;
     fn visit_unary(&mut self, unary: Box<&mut Unary>) -> T;
@@ -38,7 +38,7 @@ pub trait ExpressionVisitor<T> {
     fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> T;
 }
 
-pub trait Visitable<T, U> {
+pub(crate) trait Visitable<T, U> {
     fn accept(&mut self, visitor: &mut U) -> T;
 }
 
