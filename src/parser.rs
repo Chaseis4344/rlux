@@ -74,6 +74,7 @@ impl Parser {
         let value = self.expression();
         let expression = pass_up!(value);
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
+
         return Ok(Statement::Print(PrintStatement { expression }));
     }
 
@@ -81,6 +82,7 @@ impl Parser {
         let value = self.expression();
         let expression = pass_up!(value);
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
+
         return Ok(Statement::Expression(ExpressionStatement { expression }));
     }
 
@@ -96,56 +98,52 @@ impl Parser {
         let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable");
         let name = pass_up!(name);
 
-        let mut initalizer: Expression;
-        if self.match_token_type(vec![TokenType::Equal]) {
-            let result = self.expression();
-
-            if result.is_ok() {
-                initalizer = result.unwrap();
-                self.consume(TokenType::Semicolon, "Expexted \";\" following statement");
-
-                Ok(Statement::Variable(VariableStatement {
-                    name,
-                    initalizer: Some(initalizer),
-                }))
-            } else {
-                Err(result.unwrap_err())
-            }
-        } else {
-            Err(ParserError {
+        let initalizer: Expression;
+        if !self.match_token_type(vec![TokenType::Equal]) {
+            return Err(ParserError {
                 source: self.peek(),
-            })
+            });
         }
+
+        let result = self.expression();
+        if result.is_err() {
+            return Err(result.unwrap_err());
+        }
+
+        initalizer = result.unwrap();
+        self.consume(TokenType::Semicolon, "Expexted \";\" following statement");
+
+        let statement = VariableStatement {
+            name,
+            initalizer: Some(initalizer),
+        };
+
+        Ok(Statement::Variable(statement))
     }
 
     fn declaration(&mut self) -> Result<Statement, ParserError> {
         if self.match_token_type(vec![TokenType::Var]) {
             let result = self.variable_decalration();
 
-            match result {
-                Ok(statement) => {
-                    return Ok(statement);
-                }
-                Err(err) => {
-                    eprintln!("{}", err);
-                    self.synchronize();
-                    return self.declaration();
-                    // return Err(err);
-                }
+            if result.is_err() {
+                let err = result.unwrap_err();
+                eprintln!("{}", err);
+                self.synchronize();
+                return self.declaration();
             }
+
+            return result;
         } else {
             let result = self.statement();
 
-            match result {
-                Ok(statement) => {
-                    return Ok(statement);
-                }
-                Err(err) => {
-                    eprintln!("{}", err);
-                    self.synchronize();
-                    return self.declaration();
-                }
+            if result.is_err() {
+                let err = result.unwrap_err();
+                eprintln!("{}", err);
+                self.synchronize();
+                return self.declaration();
             }
+
+            return result;
         }
     }
 
@@ -163,12 +161,10 @@ impl Parser {
             let lhs = pass_up!(lhs);
 
             /*Consume ":"/ Enforces Grammar */
-            if !self.match_token_type(vec![TokenType::Colon]) {
-                /*return Parse Error for user */
-                return Err(ParserError {
-                    source: self.peek(),
-                });
-            }
+            self.consume(
+                TokenType::Colon,
+                &(format!("Expected \":\" instead of {}", self.peek())),
+            );
 
             let rhs = self.equality();
             let rhs = pass_up!(rhs);

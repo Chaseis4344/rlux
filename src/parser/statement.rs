@@ -4,23 +4,23 @@ use super::token::Token;
 use super::LiteralType;
 use crate::types::Expression;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) struct PrintStatement {
     pub(crate) expression: Expression,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) struct ExpressionStatement {
     pub(crate) expression: Expression,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) enum Statement {
     Print(PrintStatement),
     Expression(ExpressionStatement),
     Variable(VariableStatement),
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) struct VariableStatement {
     pub(crate) name: Token,
     pub(crate) initalizer: Option<Expression>,
