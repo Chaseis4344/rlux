@@ -1,6 +1,5 @@
 #[cfg(test)]
-use crate::parser::ast::expression::{Binary, Grouping, Ternary, Unary};
-use crate::types::Expression;
+use crate::parser::expression::{Binary, Grouping, Ternary, Unary};
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {

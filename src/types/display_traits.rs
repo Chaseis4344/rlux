@@ -126,6 +126,9 @@ impl DisplayTrait for crate::types::Expression {
                     tern.evaluator, tern.left, tern.right
                 )
             }
+            Self::Variable(var) => {
+                write!(f, "(variable:{})", var.name)
+            }
         }
     }
 }

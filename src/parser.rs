@@ -1,10 +1,15 @@
+use std::result;
+
 //use crate::token::Token;
 use crate::types::token::Token;
 use crate::types::Expression;
 use crate::types::*;
+use expression::Variable;
+use statement::{ExpressionStatement, PrintStatement, Statement, VariableStatement};
 
-pub(crate) mod ast;
-use ast::expression;
+pub(crate) mod expression;
+pub(crate) mod interpreter;
+pub(crate) mod statement;
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {
@@ -64,20 +69,19 @@ impl Parser {
         Parser { tokens, current }
     }
 
+    /*Statement Grammar is Here Down */
     fn print_statement(&mut self) -> Result<Statement, ParserError> {
         let value = self.expression();
         let expression = pass_up!(value);
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
-        return Ok(Statement::PrintStatement(PrintStatement { expression }));
+        return Ok(Statement::Print(PrintStatement { expression }));
     }
 
     fn expression_statement(&mut self) -> Result<Statement, ParserError> {
         let value = self.expression();
         let expression = pass_up!(value);
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
-        return Ok(Statement::ExpressionStatement(ExpressionStatement {
-            expression,
-        }));
+        return Ok(Statement::Expression(ExpressionStatement { expression }));
     }
 
     fn statement(&mut self) -> Result<Statement, ParserError> {
@@ -87,6 +91,65 @@ impl Parser {
             self.expression_statement()
         }
     }
+
+    fn variable_decalration(&mut self) -> Result<Statement, ParserError> {
+        let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable");
+        let name = pass_up!(name);
+
+        let mut initalizer: Expression;
+        if self.match_token_type(vec![TokenType::Equal]) {
+            let result = self.expression();
+
+            if result.is_ok() {
+                initalizer = result.unwrap();
+                self.consume(TokenType::Semicolon, "Expexted \";\" following statement");
+
+                Ok(Statement::Variable(VariableStatement {
+                    name,
+                    initalizer: Some(initalizer),
+                }))
+            } else {
+                Err(result.unwrap_err())
+            }
+        } else {
+            Err(ParserError {
+                source: self.peek(),
+            })
+        }
+    }
+
+    fn declaration(&mut self) -> Result<Statement, ParserError> {
+        if self.match_token_type(vec![TokenType::Var]) {
+            let result = self.variable_decalration();
+
+            match result {
+                Ok(statement) => {
+                    return Ok(statement);
+                }
+                Err(err) => {
+                    eprintln!("{}", err);
+                    self.synchronize();
+                    return self.declaration();
+                    // return Err(err);
+                }
+            }
+        } else {
+            let result = self.statement();
+
+            match result {
+                Ok(statement) => {
+                    return Ok(statement);
+                }
+                Err(err) => {
+                    eprintln!("{}", err);
+                    self.synchronize();
+                    return self.declaration();
+                }
+            }
+        }
+    }
+
+    /*Expression Grammar is Here Down */
     fn expression(&mut self) -> Result<Expression, ParserError> {
         self.ternary()
     }
@@ -216,6 +279,10 @@ impl Parser {
             let expression = pass_up!(expression);
             let _ = self.consume(TokenType::LeftParen, "Expect ')' after expression.");
             return Ok(new_expression!(expression));
+        } else if self.match_token_type(vec![TokenType::Identifier]) {
+            return Ok(new_expression!(Expression::Variable(Box::new(Variable {
+                name: self.previous()
+            }))));
         } else {
             return Err(ParserError {
                 source: self.peek(),
@@ -305,7 +372,7 @@ impl Parser {
     pub(crate) fn parse(&mut self) -> Vec<Statement> {
         let mut statements: Vec<Statement> = vec![];
         while !self.is_at_end() {
-            let state = self.statement();
+            let state = self.declaration();
             match state {
                 Ok(statement) => {
                     statements.push(statement);

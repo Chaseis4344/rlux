@@ -1,10 +1,13 @@
-use crate::parser::ast::expression::{Binary, Grouping, Literal, Ternary, Unary};
+use crate::parser::{
+    expression::Variable,
+    expression::{Binary, Grouping, Literal, Ternary, Unary},
+};
 
 mod display_traits;
 pub(crate) mod functional_traits;
 pub(crate) mod token;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) enum LiteralType {
     Number(f64),
     Boolean(bool),
@@ -12,7 +15,7 @@ pub(crate) enum LiteralType {
     Nil, //This will be wrapped in an option,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) enum TokenType {
     //Single Character Tokens
     LeftParen,
@@ -65,13 +68,14 @@ pub(crate) enum TokenType {
     Eof,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) enum Expression {
     Grouping(Box<Grouping>),
     Unary(Box<Unary>),
     Binary(Box<Binary>),
     Ternary(Box<Ternary>),
     Literal(Box<Literal>),
+    Variable(Box<Variable>),
 }
 
 pub struct ParserError {
@@ -86,20 +90,4 @@ pub(crate) struct RuntimeError {
 pub(crate) enum LuxErrors {
     ParserError(ParserError),
     RuntimeError(RuntimeError),
-}
-
-#[derive(Clone)]
-pub(crate) struct PrintStatement {
-    pub(crate) expression: Expression,
-}
-
-#[derive(Clone)]
-pub(crate) struct ExpressionStatement {
-    pub(crate) expression: Expression,
-}
-
-#[derive(Clone)]
-pub(crate) enum Statement {
-    PrintStatement(PrintStatement),
-    ExpressionStatement(ExpressionStatement),
 }
