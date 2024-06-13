@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 
-use crate::enviroment::{self, Enviroment};
+use crate::enviroment::Enviroment;
 use crate::types::{Expression, LiteralType, TokenType};
 
-use super::expression::ExpressionVisitor;
+use super::expression::{Assignment, ExpressionVisitor};
 use super::expression::{Binary, Grouping, Literal, Ternary, Unary, Variable};
 use super::Statement;
 
 pub(crate) struct Interpreter {
-    pub(crate) enviroment: Enviroment,
+    pub(crate) enviroment: Box<Enviroment>,
 }
 
 pub(crate) trait Visitable<T> {
@@ -24,7 +24,14 @@ impl Visitable<LiteralType> for Expression {
             Expression::Unary(unary) => unary.accept(visitor),
             Expression::Ternary(tern) => tern.accept(visitor),
             Expression::Variable(var) => var.accept(visitor),
+            Expression::Assignment(assign) => assign.accept(visitor),
         }
+    }
+}
+
+impl Visitable<LiteralType> for Assignment {
+    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
+        visitor.visit_assignment(Box::new(self))
     }
 }
 
@@ -69,8 +76,8 @@ impl Interpreter {
         expr.accept(self)
     }
     pub(crate) fn new() -> Interpreter {
-        let map: HashMap<String, LiteralType> = HashMap::new();
-        let enviroment = Enviroment { variable_map: map };
+        let map = HashMap::new();
+        let enviroment = Box::new(Enviroment { variable_map: map });
         Interpreter { enviroment }
     }
     pub(crate) fn interpret(&mut self, statements: Vec<Statement>) {
@@ -86,6 +93,7 @@ impl Interpreter {
     }
 }
 
+///Logic for how the Interpreter acts with each Data Type
 impl ExpressionVisitor<LiteralType> for Interpreter {
     fn visit_binary(&mut self, bin: Box<&mut Binary>) -> LiteralType {
         let left = self.evaluate(&mut bin.left);
@@ -148,12 +156,21 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     }
 
     fn visit_variable(&mut self, var: Box<&mut Variable>) -> LiteralType {
-        let result = self.enviroment.get(var.name.clone());
-
+        let result = self.enviroment.to_owned().get(var.to_owned().name);
         if result.is_ok() {
             return result.unwrap();
         } else {
             return LiteralType::Nil;
         }
+    }
+
+    fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> LiteralType {
+        //Decompose assignment to avoid excess cloning
+        let (name, value) = (assign.name.to_owned(), &mut assign.value);
+        //Evaluate expression inside
+        let value = self.evaluate(value);
+        //Copy the value then echo out for the rest of the syntax tress
+        self.enviroment.assign(name, value.clone());
+        value
     }
 }

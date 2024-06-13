@@ -35,6 +35,12 @@ pub struct Variable {
     pub(crate) name: Token,
 }
 
+#[derive(Clone, Debug)]
+pub struct Assignment {
+    pub(crate) name: Token,
+    pub(crate) value: Expression,
+}
+
 pub(crate) trait ExpressionVisitor<T> {
     fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> T;
     fn visit_binary(&mut self, bin: Box<&mut Binary>) -> T;
@@ -42,6 +48,7 @@ pub(crate) trait ExpressionVisitor<T> {
     fn visit_literal(&mut self, lit: Box<&mut Literal>) -> T;
     fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> T;
     fn visit_variable(&mut self, var: Box<&mut Variable>) -> T;
+    fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> T;
 }
 
 pub(crate) trait Visitable<T, U> {
@@ -105,7 +112,10 @@ impl ExpressionVisitor<String> for Expression {
             vec![&mut tern.evaluator, &mut tern.left, &mut tern.right],
         )
     }
-    fn visit_variable(&mut self, var: Box<&mut Variable>) -> String {
+    fn visit_variable(&mut self, _var: Box<&mut Variable>) -> String {
+        String::from("")
+    }
+    fn visit_assignment(&mut self, _assign: Box<&mut Assignment>) -> String {
         String::from("")
     }
 }
@@ -116,6 +126,11 @@ impl Visitable<String, Expression> for Variable {
     }
 }
 
+impl Visitable<String, Expression> for Assignment {
+    fn accept(&mut self, visitor: &mut Expression) -> String {
+        visitor.visit_assignment(Box::new(self))
+    }
+}
 impl Visitable<String, Expression> for Expression {
     fn accept(&mut self, visitor: &mut Expression) -> String {
         match self {
@@ -125,12 +140,13 @@ impl Visitable<String, Expression> for Expression {
             Expression::Unary(unary) => unary.accept(visitor),
             Expression::Ternary(tern) => tern.accept(visitor),
             Expression::Variable(var) => var.accept(visitor),
+            Expression::Assignment(assign) => assign.accept(visitor),
         }
     }
 }
 
 impl Expression {
-    fn parenthesize(&mut self, name: String, terms: Vec<&mut Expression>) -> String {
+    fn parenthesize(&mut self, _name: String, _terms: Vec<&mut Expression>) -> String {
         todo!("Implement Parenthesization for grouping vision");
     }
 }

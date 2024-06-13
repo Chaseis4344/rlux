@@ -48,7 +48,6 @@ impl StatementVisitor for Interpreter {
     }
 
     fn visit_variable(&mut self, var: Box<&mut VariableStatement>) -> Statement {
-        // self.evaluate(&mut var.initalizer);
         let init: LiteralType;
         if var.initalizer.is_some() {
             init = self.evaluate(&mut var.initalizer.as_mut().unwrap());

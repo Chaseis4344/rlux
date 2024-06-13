@@ -1,7 +1,4 @@
-use crate::parser::{
-    expression::Variable,
-    expression::{Binary, Grouping, Literal, Ternary, Unary},
-};
+use crate::parser::expression::{Assignment, Binary, Grouping, Literal, Ternary, Unary, Variable};
 
 mod display_traits;
 pub(crate) mod functional_traits;
@@ -76,6 +73,7 @@ pub(crate) enum Expression {
     Ternary(Box<Ternary>),
     Literal(Box<Literal>),
     Variable(Box<Variable>),
+    Assignment(Box<Assignment>),
 }
 
 pub struct ParserError {

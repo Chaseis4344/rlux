@@ -296,10 +296,8 @@ impl Scanner {
     }
 
     fn check(&mut self, expected: char) -> bool {
-        if self.is_at_end() {
-            return false;
-        }
-        if (self.source.as_bytes()[(self.current) as usize] as char) != expected {
+        if self.is_at_end() || (self.source.as_bytes()[(self.current) as usize] as char) != expected
+        {
             return false;
         }
 

@@ -1,5 +1,3 @@
-use std::result;
-
 //use crate::token::Token;
 use crate::types::token::Token;
 use crate::types::Expression;
@@ -17,6 +15,15 @@ macro_rules! new_ternary {
             evaluator: $eval,
             left: $lhs,
             right: $rhs,
+        }))
+    };
+}
+
+macro_rules! new_assignment {
+    ($name:expr, $value:expr) => {
+        Expression::Assignment(Box::new(expression::Assignment {
+            name: $name,
+            value: $value,
         }))
     };
 }
@@ -111,7 +118,7 @@ impl Parser {
         }
 
         initalizer = result.unwrap();
-        self.consume(TokenType::Semicolon, "Expexted \";\" following statement");
+        let _ = self.consume(TokenType::Semicolon, "Expexted \";\" following statement");
 
         let statement = VariableStatement {
             name,
@@ -129,7 +136,7 @@ impl Parser {
                 let err = result.unwrap_err();
                 eprintln!("{}", err);
                 self.synchronize();
-                return self.declaration();
+                return Err(err);
             }
 
             return result;
@@ -140,7 +147,7 @@ impl Parser {
                 let err = result.unwrap_err();
                 eprintln!("{}", err);
                 self.synchronize();
-                return self.declaration();
+                return Err(err);
             }
 
             return result;
@@ -151,22 +158,47 @@ impl Parser {
     fn expression(&mut self) -> Result<Expression, ParserError> {
         self.ternary()
     }
+    fn assignment(&mut self) -> Result<Expression, ParserError> {
+        let expression = self.equality();
+
+        if self.match_token_type(vec![TokenType::Equal]) {
+            let equals = self.previous();
+            let value = self.assignment();
+            let value = pass_up!(value);
+
+            match value.clone() {
+                Expression::Variable(var) => {
+                    let name = var.name;
+                    return Ok(Expression::Assignment(Box::new(expression::Assignment {
+                        name: name,
+                        value: value,
+                    })));
+                }
+
+                _ => {
+                    return Err(ParserError { source: equals });
+                }
+            }
+        }
+
+        expression
+    }
 
     fn ternary(&mut self) -> Result<Expression, ParserError> {
-        let ternary = self.equality();
+        let ternary = self.assignment();
         let mut ternary = pass_up!(ternary);
 
         while self.match_token_type(vec![TokenType::Question]) {
-            let lhs = self.equality();
+            let lhs = self.assignment();
             let lhs = pass_up!(lhs);
 
             /*Consume ":"/ Enforces Grammar */
-            self.consume(
+            let _ = self.consume(
                 TokenType::Colon,
                 &(format!("Expected \":\" instead of {}", self.peek())),
             );
 
-            let rhs = self.equality();
+            let rhs = self.assignment();
             let rhs = pass_up!(rhs);
             ternary = new_ternary!(ternary, lhs, rhs);
         }
