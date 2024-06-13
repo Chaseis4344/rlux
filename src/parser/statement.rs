@@ -15,10 +15,18 @@ pub(crate) struct ExpressionStatement {
 }
 
 #[derive(Clone, Debug)]
+pub(crate) struct IfStatement {
+    pub(crate) condition: Expression,
+    pub(crate) then_branch: Box<Statement>,
+    pub(crate) else_branch: Box<Option<Statement>>,
+}
+
+#[derive(Clone, Debug)]
 pub(crate) enum Statement {
     Print(PrintStatement),
     Expression(ExpressionStatement),
     Variable(VariableStatement),
+    If(IfStatement),
 }
 #[derive(Clone, Debug)]
 pub(crate) struct VariableStatement {
@@ -30,6 +38,7 @@ trait StatementVisitor {
     fn visit_print(&mut self, print: Box<&mut PrintStatement>) -> Statement;
     fn visit_expression(&mut self, expression: Box<&mut ExpressionStatement>) -> Statement;
     fn visit_variable(&mut self, var: Box<&mut VariableStatement>) -> Statement;
+    fn visit_if(&mut self, if_statement: Box<&mut IfStatement>) -> Statement;
 }
 
 impl StatementVisitor for Interpreter {
@@ -63,6 +72,26 @@ impl StatementVisitor for Interpreter {
             initalizer: clone.initalizer,
         })
     }
+    fn visit_if(&mut self, if_statement: Box<&mut IfStatement>) -> Statement {
+        if self.evaluate(&mut if_statement.condition) == LiteralType::Boolean(true) {
+            self.execute(*if_statement.then_branch.clone());
+        } else {
+            match (*(if_statement.else_branch)).clone() {
+                Some(statement) => {
+                    self.execute(statement);
+                    return (*(if_statement.else_branch)).to_owned().unwrap();
+                }
+                None => {}
+            }
+        }
+        *if_statement.then_branch.to_owned()
+    }
+}
+
+impl Visitable<Statement, Interpreter> for IfStatement {
+    fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
+        visitor.visit_if(Box::new(self))
+    }
 }
 
 impl Visitable<Statement, Interpreter> for PrintStatement {
@@ -89,6 +118,7 @@ impl Visitable<Statement, Interpreter> for Statement {
             Statement::Print(statement) => statement.accept(visitor),
             Statement::Expression(statement) => statement.accept(visitor),
             Statement::Variable(statement) => statement.accept(visitor),
+            Statement::If(statement) => statement.accept(visitor),
         }
     }
 }

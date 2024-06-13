@@ -93,8 +93,31 @@ impl Parser {
         return Ok(Statement::Expression(ExpressionStatement { expression }));
     }
 
+    fn if_statement(&mut self) -> Result<Statement, ParserError> {
+        let _ = self.consume(TokenType::LeftParen, "Expected \"(\" after if statement");
+        let condition = self.expression()?;
+        let _ = self.consume(TokenType::RightParen, "Expected \")\" after if statement");
+
+        let then_branch = Box::new(self.statement()?);
+        let else_branch: Option<Statement> = if self.match_token_type(vec![TokenType::Else]) {
+            Some(self.statement()?)
+        } else {
+            None
+        };
+
+        let else_branch = Box::new(else_branch);
+
+        Ok(Statement::If(statement::IfStatement {
+            condition,
+            then_branch,
+            else_branch,
+        }))
+    }
+
     fn statement(&mut self) -> Result<Statement, ParserError> {
-        if self.match_token_type(vec![TokenType::Print]) {
+        if self.match_token_type(vec![TokenType::If]) {
+            self.if_statement()
+        } else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
         } else {
             self.expression_statement()
