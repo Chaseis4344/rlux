@@ -55,17 +55,6 @@ macro_rules! new_literal {
     };
 }
 
-macro_rules! pass_up {
-    ($right: ident) => {
-        match $right {
-            Ok(good) => good,
-            Err(err) => {
-                return Err(err);
-            }
-        }
-    };
-}
-
 pub struct Parser {
     tokens: Vec<Token>,
     current: i32,
@@ -78,16 +67,16 @@ impl Parser {
 
     /*Statement Grammar is Here Down */
     fn print_statement(&mut self) -> Result<Statement, ParserError> {
-        let value = self.expression();
-        let expression = pass_up!(value);
+        let expression = self.expression()?;
+        //let expression = pass_up!(value);
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
 
         return Ok(Statement::Print(PrintStatement { expression }));
     }
 
     fn expression_statement(&mut self) -> Result<Statement, ParserError> {
-        let value = self.expression();
-        let expression = pass_up!(value);
+        let expression = self.expression()?;
+        //let expression = pass_up!(value);
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
 
         return Ok(Statement::Expression(ExpressionStatement { expression }));
@@ -125,8 +114,8 @@ impl Parser {
     }
 
     fn variable_decalration(&mut self) -> Result<Statement, ParserError> {
-        let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable");
-        let name = pass_up!(name);
+        let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable")?;
+        //let name = pass_up!(name);
 
         let initalizer: Expression;
         if !self.match_token_type(vec![TokenType::Equal]) {
@@ -186,8 +175,8 @@ impl Parser {
 
         if self.match_token_type(vec![TokenType::Equal]) {
             let equals = self.previous();
-            let value = self.assignment();
-            let value = pass_up!(value);
+            let value = self.assignment()?;
+            //let value = pass_up!(value);
 
             match value.clone() {
                 Expression::Variable(var) => {
@@ -208,12 +197,10 @@ impl Parser {
     }
 
     fn ternary(&mut self) -> Result<Expression, ParserError> {
-        let ternary = self.assignment();
-        let mut ternary = pass_up!(ternary);
+        let mut ternary = self.assignment()?;
 
         while self.match_token_type(vec![TokenType::Question]) {
-            let lhs = self.assignment();
-            let lhs = pass_up!(lhs);
+            let lhs = self.assignment()?;
 
             /*Consume ":"/ Enforces Grammar */
             let _ = self.consume(
@@ -221,8 +208,7 @@ impl Parser {
                 &(format!("Expected \":\" instead of {}", self.peek())),
             );
 
-            let rhs = self.assignment();
-            let rhs = pass_up!(rhs);
+            let rhs = self.assignment()?;
             ternary = new_ternary!(ternary, lhs, rhs);
         }
 
@@ -230,13 +216,12 @@ impl Parser {
     }
 
     fn equality(&mut self) -> Result<Expression, ParserError> {
-        let expression = self.comparison();
-        let mut expression = pass_up!(expression);
+        let mut expression = self.comparison()?;
+        //let mut expression = pass_up!(expression);
 
         while self.match_token_type(vec![TokenType::BangEqual, TokenType::EqualEqual]) {
             let operator = self.previous();
-            let right = self.comparison();
-            let right = pass_up!(right);
+            let right = self.comparison()?;
             expression = new_expression!(expression, operator, right);
         }
 
@@ -244,8 +229,8 @@ impl Parser {
     }
 
     fn comparison(&mut self) -> Result<Expression, ParserError> {
-        let expression = self.term();
-        let mut expression = pass_up!(expression);
+        let mut expression = self.term()?;
+
         while self.match_token_type(vec![
             TokenType::Greater,
             TokenType::GreaterEqual,
@@ -253,21 +238,18 @@ impl Parser {
             TokenType::LessEqual,
         ]) {
             let operator = self.previous();
-            let right = self.term();
-            let right = pass_up!(right);
+            let right = self.term()?;
             expression = new_expression!(expression, operator, right);
         }
 
         Ok(expression)
     }
     fn term(&mut self) -> Result<Expression, ParserError> {
-        let expression = self.factor();
-        let mut expression = pass_up!(expression);
+        let mut expression = self.factor()?;
 
         while self.match_token_type(vec![TokenType::Minus, TokenType::Plus]) {
             let operator = self.previous();
-            let right = self.factor();
-            let right = pass_up!(right);
+            let right = self.factor()?;
             expression = new_expression!(expression, operator, right);
         }
 
@@ -277,8 +259,7 @@ impl Parser {
     fn unary(&mut self) -> Result<Expression, ParserError> {
         if self.match_token_type(vec![TokenType::Bang, TokenType::Minus]) {
             let operator = self.previous();
-            let right = self.unary();
-            let right = pass_up!(right);
+            let right = self.unary()?;
             return Ok(new_expression!(operator, right));
         }
 
@@ -289,13 +270,11 @@ impl Parser {
     }
 
     fn factor(&mut self) -> Result<Expression, ParserError> {
-        let expression = self.unary();
-        let mut expression = pass_up!(expression);
+        let mut expression = self.unary()?;
 
         while self.match_token_type(vec![TokenType::Slash, TokenType::Star]) {
             let operator = self.previous();
-            let right = self.unary();
-            let right = pass_up!(right);
+            let right = self.unary()?;
             expression = new_expression!(expression, operator, right);
         }
 
@@ -326,9 +305,8 @@ impl Parser {
             };
             return Ok(return_val);
         } else if self.match_token_type(vec![TokenType::LeftParen]) {
-            let expression = self.expression();
-            let expression = pass_up!(expression);
-            let _ = self.consume(TokenType::LeftParen, "Expect ')' after expression.");
+            let expression = self.expression()?;
+            let _ = self.consume(TokenType::RightParen, "Expect \')\' after expression.");
             return Ok(new_expression!(expression));
         } else if self.match_token_type(vec![TokenType::Identifier]) {
             return Ok(new_expression!(Expression::Variable(Box::new(Variable {
@@ -384,7 +362,6 @@ impl Parser {
             Ok(self.advance())
         } else {
             let mut token = self.peek();
-            token.line -= 1;
             Err(Self::error(token, message))
         }
     }
