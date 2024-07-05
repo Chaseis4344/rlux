@@ -1,2 +1,30 @@
-var _arg = (1+1)-1;
+var _arg = 4/2;
+var cat = 0;
+var dog = 12*4;
+var turt = (13/2);
+var tester="strung";
+var goolean45 = false;
+var vardoolean = true;
+var threshold =5;
+var adder = 1+0-5;
+
 print _arg;
+print cat;
+print dog;
+print turt;
+print tester;
+print goolean45;
+print vardoolean;
+print threshold;
+print adder;
+
+
+
+if (_arg>threshold) 
+    print "Greater"; 
+else  
+    print "Lesser";
+
+
+//This should throw a Runtime error - then print NIL
+print not_found_test;
