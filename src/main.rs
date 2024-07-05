@@ -30,9 +30,12 @@ fn error(line: u32, message: String) -> Result<i32, Error> {
 
 //Runs source string provided, may be multi-line string
 fn run(source: String) -> Result<i32, Error> {
-    let mut scanner = scanner::Scanner::new(source, None, None);
+    let mut scanner = scanner::Scanner::new(source, None, Some(1));
+
     //Scan in & Store token string
     let mut tokens: Vec<types::token::Token> = scanner.scan_tokens();
+
+    let mut token_debug = tokens.clone();
 
     //Push Final EOF token
     tokens.push(types::token::Token {
@@ -42,25 +45,38 @@ fn run(source: String) -> Result<i32, Error> {
         line: scanner.line,
     });
 
-    /*Parser goes here */
     let mut parser = parser::Parser::new(tokens, 0);
+    println!("Parser Green!");
     let statements = parser.parse();
+
     let mut interpreter = parser::interpreter::Interpreter::new();
     interpreter.interpret(statements);
-
+    //println!("Interpreter Green!");
     Result::Ok(65)
 }
 
-use std::ffi::OsStr;
 use std::path::Path;
-
-fn get_extension_from_filename(filename: &str) -> Option<&str> {
-    Path::new(filename).extension().and_then(OsStr::to_str)
-}
 
 //On Startup - Runs source from provided filepath
 pub fn run_file(filepath: String) {
-    let source = fs::read_to_string(filepath);
+    let file_path = Path::new(&filepath);
+    // println!("File Path: {}", filepath);
+    if !file_path.exists() {
+        println!("Please provide a valid file.");
+        return;
+    }
+
+    let unvalidated_extension = file_path.extension();
+    if unvalidated_extension.is_some() {
+        let extension = unvalidated_extension.unwrap();
+
+        if extension != "lux" {
+            println!("Please provide a lux source file");
+        }
+    }
+
+    let source = fs::read_to_string(file_path);
+
     //Check source for OS Errors
     if source.is_err() {
         let error = source.unwrap_err();
@@ -69,19 +85,6 @@ pub fn run_file(filepath: String) {
     }
 
     let valid_source = source.unwrap();
-
-    //Check that we get an extension & its the right one
-    let invalid_extension = get_extension_from_filename(&valid_source);
-    if invalid_extension.is_none() {
-        println!("Please provide a lox source file.");
-        exit(65);
-    }
-
-    let valid_extension = invalid_extension.unwrap();
-    if valid_extension != "lox" {
-        println!("Please provide a lox source file.");
-        exit(65);
-    }
 
     //Run the code
     match run(valid_source) {
