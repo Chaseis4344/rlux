@@ -1,17 +1,14 @@
-use std::{
+ std::{
     env, fs,
     io::{stdin, Error},
     process::exit,
 };
 
-//mod interpreter;
 mod enviroment;
 mod parser;
 mod scanner;
 mod tests;
 mod types;
-//mod token;
-//mod display_traits;
 //sends error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Result<i32, Error> {
     eprintln!(" [Line {}]Error{}: {}", line, place, message);
@@ -25,7 +22,6 @@ fn report(line: u32, place: String, message: String) -> Result<i32, Error> {
 //Sends an error report to user - semantic sugar
 fn error(line: u32, message: String) -> Result<i32, Error> {
     report(line, String::from(""), message)
-    //exit(65);
 }
 
 //Runs source string provided, may be multi-line string
