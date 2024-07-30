@@ -1,4 +1,4 @@
- std::{
+ use std::{
     env, fs,
     io::{stdin, Error},
     process::exit,
@@ -56,7 +56,7 @@ use std::path::Path;
 //On Startup - Runs source from provided filepath
 pub fn run_file(filepath: String) {
     let file_path = Path::new(&filepath);
-    // println!("File Path: {}", filepath);
+    println!("File Path: {}", filepath);
     if !file_path.exists() {
         println!("Please provide a valid file.");
         return;

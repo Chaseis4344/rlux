@@ -84,15 +84,15 @@ impl DisplayTrait for types::ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Parser Error occured on Token: {:?} at line {}",
-            self.source, self.source.line
+            "Parser Error occured on Token: \n\t {:?} at line {} because {}",
+            self.source, self.source.line, self.cause
         )
     }
 }
 
 impl std::fmt::Debug for types::ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ParserError; \nself.source:{};", self.source)
+        write!(f, "ParserError: \n\t self.source: \n\t{:?};", self.source)
     }
 }
 

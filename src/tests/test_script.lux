@@ -19,12 +19,12 @@ print threshold;
 print adder;
 
 
-
+/*
 if (_arg>threshold) 
     print "Greater"; 
 else  
     print "Lesser";
-
+*/
 
 //This should throw a Runtime error - then print NIL
-print not_found_test;
+//print not_found_test;

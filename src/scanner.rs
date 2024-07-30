@@ -220,6 +220,7 @@ impl Scanner {
             self.current += 1;
             current_char = self.source.as_bytes()[(self.current - 1) as usize] as char
         }
+        self.current -= 1;
         let matching = word_built.to_ascii_lowercase();
         //Fat Match lol - Match to keywords
         match matching.as_str() {

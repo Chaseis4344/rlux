@@ -78,6 +78,7 @@ pub(crate) enum Expression {
 
 pub struct ParserError {
     pub(crate) source: token::Token,
+    pub(crate) cause: String,
 }
 
 #[derive(Clone)]
