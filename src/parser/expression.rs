@@ -41,6 +41,13 @@ pub struct Assignment {
     pub(crate) value: Expression,
 }
 
+#[derive(Clone, Debug)]
+pub struct Logical {
+    pub(crate) left: Expression,
+    pub(crate) right: Expression,
+    pub(crate) operator: Token,
+}
+
 pub(crate) trait ExpressionVisitor<T> {
     fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> T;
     fn visit_binary(&mut self, bin: Box<&mut Binary>) -> T;
@@ -49,10 +56,17 @@ pub(crate) trait ExpressionVisitor<T> {
     fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> T;
     fn visit_variable(&mut self, var: Box<&mut Variable>) -> T;
     fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> T;
+    fn visit_logical(&mut self, logical: Box<&mut Logical>) -> T;
 }
 
 pub(crate) trait Visitable<T, U> {
     fn accept(&mut self, visitor: &mut U) -> T;
+}
+
+impl Visitable<String, Expression> for Logical {
+    fn accept(&mut self, visitor: &mut Logical) -> String {
+        visitor.visit_logical(Box::new(self)
+    }
 }
 
 impl Visitable<String, Expression> for Ternary {

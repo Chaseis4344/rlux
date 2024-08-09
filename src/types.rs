@@ -68,6 +68,7 @@ pub(crate) enum TokenType {
 #[derive(Clone, Debug)]
 pub(crate) enum Expression {
     Grouping(Box<Grouping>),
+    Logical(Box<Logical>)
     Unary(Box<Unary>),
     Binary(Box<Binary>),
     Ternary(Box<Ternary>),

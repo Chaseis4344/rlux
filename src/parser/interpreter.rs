@@ -25,7 +25,15 @@ impl Visitable<LiteralType> for Expression {
             Expression::Ternary(tern) => tern.accept(visitor),
             Expression::Variable(var) => var.accept(visitor),
             Expression::Assignment(assign) => assign.accept(visitor),
+            Expression::Logical(logic) => logic.accept(visitor),
         }
+    }
+}
+
+
+impl Visitable<LiteralType> for Logical {
+    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
+        visitor.visit_logical(Box::new(self))
     }
 }
 
@@ -172,5 +180,23 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         //Copy the value then echo out for the rest of the syntax tress
         self.enviroment.assign(name, value.clone());
         value
+    }
+
+    fn visit_logical(&mut self, logical: Box<&mut Logical>) -> LiteralType {
+        let left = self.evaluate(logical.left);
+        
+        //Short Cirucuit if we can
+        if logical.operator.type == TokenType::Or {
+            // True or X will alway be True, so if True, then return True
+            if left {
+                return left;
+            }
+        } else {
+            // False AND X will always be False, so return False if is_and && is_false
+            if !left { return left; }
+        }
+
+        //traverse it otherwise
+        self.evaluate(logical.right)
     }
 }

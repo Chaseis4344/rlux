@@ -19,12 +19,13 @@ print threshold;
 print adder;
 
 
-/*
-if (_arg>threshold) 
+if (_arg> threshold) 
     print "Greater"; 
 else  
     print "Lesser";
-*/
+
+while(adder< 10 ) 
+  adder = adder+1;
 
 //This should throw a Runtime error - then print NIL
-//print not_found_test;
+print not_found_test;
