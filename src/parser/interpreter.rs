@@ -3,8 +3,7 @@ use std::collections::HashMap;
 use crate::enviroment::Enviroment;
 use crate::types::{Expression, LiteralType, TokenType};
 
-use super::expression::{Assignment, ExpressionVisitor};
-use super::expression::{Binary, Grouping, Literal, Ternary, Unary, Variable};
+use super::expression::*;
 use super::Statement;
 
 pub(crate) struct Interpreter {
@@ -29,7 +28,6 @@ impl Visitable<LiteralType> for Expression {
         }
     }
 }
-
 
 impl Visitable<LiteralType> for Logical {
     fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
@@ -183,20 +181,22 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     }
 
     fn visit_logical(&mut self, logical: Box<&mut Logical>) -> LiteralType {
-        let left = self.evaluate(logical.left);
-        
+        let left = self.evaluate(&mut logical.left);
+
         //Short Cirucuit if we can
-        if logical.operator.type == TokenType::Or {
+        if logical.operator.token_type == TokenType::Or {
             // True or X will alway be True, so if True, then return True
-            if left {
+            if bool::from(left.clone()) {
                 return left;
             }
         } else {
             // False AND X will always be False, so return False if is_and && is_false
-            if !left { return left; }
+            if !(bool::from(left.clone())) {
+                return left;
+            }
         }
 
         //traverse it otherwise
-        self.evaluate(logical.right)
+        self.evaluate(&mut logical.right)
     }
 }

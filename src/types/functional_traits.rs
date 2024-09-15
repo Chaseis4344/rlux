@@ -160,6 +160,15 @@ impl PartialEq for LiteralType {
     }
 }
 
+impl From<LiteralType> for bool {
+    fn from(value: LiteralType) -> Self {
+        match value {
+            LiteralType::Boolean(ret) => ret,
+            _ => panic!("Coecercing Non-Bool into Bool"),
+        }
+    }
+}
+
 macro_rules! boolean_op {
     ($self:ident, $other:ident, $op:tt) => {
         match $self {

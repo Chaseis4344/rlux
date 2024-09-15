@@ -129,7 +129,9 @@ impl DisplayTrait for crate::types::Expression {
             Self::Variable(var) => {
                 write!(f, "(variable:{})", var.name)
             }
+            //TODO: IMPLEMENT BELOW
             Self::Assignment(_) => todo!(),
+            Self::Logical(_) => todo!(),
         }
     }
 }

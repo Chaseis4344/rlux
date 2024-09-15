@@ -48,6 +48,10 @@ pub struct Logical {
     pub(crate) operator: Token,
 }
 
+/*
+    fn visit_X(&mut self, Y: Box<&mut X>) -> T;
+*/
+
 pub(crate) trait ExpressionVisitor<T> {
     fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> T;
     fn visit_binary(&mut self, bin: Box<&mut Binary>) -> T;
@@ -64,8 +68,8 @@ pub(crate) trait Visitable<T, U> {
 }
 
 impl Visitable<String, Expression> for Logical {
-    fn accept(&mut self, visitor: &mut Logical) -> String {
-        visitor.visit_logical(Box::new(self)
+    fn accept(&mut self, visitor: &mut Expression) -> String {
+        visitor.visit_logical(Box::new(self))
     }
 }
 
@@ -132,6 +136,9 @@ impl ExpressionVisitor<String> for Expression {
     fn visit_assignment(&mut self, _assign: Box<&mut Assignment>) -> String {
         String::from("")
     }
+    fn visit_logical(&mut self, _assign: Box<&mut Logical>) -> String {
+        String::from("")
+    }
 }
 
 impl Visitable<String, Expression> for Variable {
@@ -145,6 +152,7 @@ impl Visitable<String, Expression> for Assignment {
         visitor.visit_assignment(Box::new(self))
     }
 }
+
 impl Visitable<String, Expression> for Expression {
     fn accept(&mut self, visitor: &mut Expression) -> String {
         match self {
@@ -155,6 +163,7 @@ impl Visitable<String, Expression> for Expression {
             Expression::Ternary(tern) => tern.accept(visitor),
             Expression::Variable(var) => var.accept(visitor),
             Expression::Assignment(assign) => assign.accept(visitor),
+            Expression::Logical(logic) => logic.accept(visitor),
         }
     }
 }

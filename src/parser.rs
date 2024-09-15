@@ -78,12 +78,13 @@ impl Parser {
         let expression = self.expression()?;
 
         let debug = self.consume(TokenType::Semicolon, "Expect ';' after value.");
-        match debug{
-            Ok(ok) =>{}
+        match debug {
+            Ok(ok) => {}
             Err(err) => {
                 println!("Expr Err conf");
-                println!("{:?}",err);}
-        } 
+                println!("{:?}", err);
+            }
+        }
         return Ok(Statement::Expression(ExpressionStatement { expression }));
     }
 
@@ -113,7 +114,7 @@ impl Parser {
             self.if_statement()
         } else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
-        } else { 
+        } else {
             println!("Expr Reached");
             self.expression_statement()
         }
@@ -125,7 +126,6 @@ impl Parser {
 
         let initalizer: Expression;
         if !self.match_token_type(vec![TokenType::Equal]) {
-            
             return Err(ParserError {
                 source: self.previous(),
                 cause: String::from("Expected '='"),
@@ -196,7 +196,10 @@ impl Parser {
                 }
 
                 _ => {
-                    return Err(ParserError { source: equals, cause: String::from("Bad Variable Expression")});
+                    return Err(ParserError {
+                        source: equals,
+                        cause: String::from("Bad Variable Expression"),
+                    });
                 }
             }
         }
@@ -377,7 +380,10 @@ impl Parser {
 
     fn error(token: Token, message: &str) -> ParserError {
         let _ = crate::error(token.line, message.to_string());
-        ParserError { source: token, cause: message.to_string() }
+        ParserError {
+            source: token,
+            cause: message.to_string(),
+        }
     }
 
     fn synchronize(&mut self) {

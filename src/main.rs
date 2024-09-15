@@ -1,4 +1,4 @@
- use std::{
+use std::{
     env, fs,
     io::{stdin, Error},
     process::exit,
@@ -9,7 +9,8 @@ mod parser;
 mod scanner;
 mod tests;
 mod types;
-//sends error report to user with specific additonal details
+
+///Sends error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Result<i32, Error> {
     eprintln!(" [Line {}]Error{}: {}", line, place, message);
     let return_err = Error::new(
@@ -19,19 +20,19 @@ fn report(line: u32, place: String, message: String) -> Result<i32, Error> {
     Result::Err(return_err)
 }
 
-//Sends an error report to user - semantic sugar
+///Sends an error report to user - semantic sugar
 fn error(line: u32, message: String) -> Result<i32, Error> {
     report(line, String::from(""), message)
 }
 
-//Runs source string provided, may be multi-line string
+///Runs source string provided, may be multi-line string
 fn run(source: String) -> Result<i32, Error> {
     let mut scanner = scanner::Scanner::new(source, None, Some(1));
 
     //Scan in & Store token string
     let mut tokens: Vec<types::token::Token> = scanner.scan_tokens();
 
-    let mut token_debug = tokens.clone();
+    //let mut token_debug = tokens.clone();
 
     //Push Final EOF token
     tokens.push(types::token::Token {
@@ -42,7 +43,6 @@ fn run(source: String) -> Result<i32, Error> {
     });
 
     let mut parser = parser::Parser::new(tokens, 0);
-    println!("Parser Green!");
     let statements = parser.parse();
 
     let mut interpreter = parser::interpreter::Interpreter::new();
@@ -53,7 +53,7 @@ fn run(source: String) -> Result<i32, Error> {
 
 use std::path::Path;
 
-//On Startup - Runs source from provided filepath
+///On Startup - Runs source from provided filepath
 pub fn run_file(filepath: String) {
     let file_path = Path::new(&filepath);
     println!("File Path: {}", filepath);
@@ -94,7 +94,7 @@ pub fn run_file(filepath: String) {
     };
 }
 
-//On startup - Enters Interactive Mode
+///On startup - Enters Interactive Mode
 pub fn run_prompt() {
     loop {
         let input: &mut String = &mut String::new();

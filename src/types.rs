@@ -1,4 +1,4 @@
-use crate::parser::expression::{Assignment, Binary, Grouping, Literal, Ternary, Unary, Variable};
+use crate::parser::expression::*;
 
 mod display_traits;
 pub(crate) mod functional_traits;
@@ -66,9 +66,9 @@ pub(crate) enum TokenType {
 }
 
 #[derive(Clone, Debug)]
-pub(crate) enum Expression {
+pub enum Expression {
     Grouping(Box<Grouping>),
-    Logical(Box<Logical>)
+    Logical(Box<Logical>),
     Unary(Box<Unary>),
     Binary(Box<Binary>),
     Ternary(Box<Ternary>),
