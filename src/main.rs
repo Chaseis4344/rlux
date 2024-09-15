@@ -48,7 +48,7 @@ fn run(source: String) -> Result<i32, Error> {
     let mut interpreter = parser::interpreter::Interpreter::new();
     interpreter.interpret(statements);
     //println!("Interpreter Green!");
-    Result::Ok(65)
+    Result::Ok(0)
 }
 
 use std::path::Path;

@@ -24,8 +24,8 @@ if (_arg> threshold)
 else  
     print "Lesser";
 
-while(adder< 10 ) 
-  adder = adder+1;
+//while(adder< 10 ) 
+ // adder = adder+1;
 
 //This should throw a Runtime error - then print NIL
 print not_found_test;
