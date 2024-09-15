@@ -7,7 +7,9 @@ var goolean45 = false;
 var vardoolean = true;
 var threshold =5;
 var adder = 1+0-5;
+var tern = true ? 5 : 10;
 
+print tern;
 print _arg;
 print cat;
 print dog;
