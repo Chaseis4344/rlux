@@ -53,6 +53,19 @@ pub struct Logical {
     fn visit_X(&mut self, Y: Box<&mut X>) -> T;
 */
 
+macro_rules! visitable_trait {
+    ($trait_type1:ty,  $enum_variant:ty, $enum_parent:ty) => {
+        impl Visitable<$trait_type1, $enum_parent> for $enum_variant {
+            paste::paste! {
+                #[doc = "Redirect Visitors to `" $enum_variant "` version."]
+                fn accept(&mut self, visitor: &mut $enum_parent) -> $trait_type1 {
+                    paste::item! {visitor.[<visit_ $enum_variant:snake:lower>](Box::new(self))}
+                }
+            }
+        }
+    };
+}
+
 pub(crate) trait ExpressionVisitor<T> {
     fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> T;
     fn visit_binary(&mut self, bin: Box<&mut Binary>) -> T;
@@ -68,41 +81,14 @@ pub(crate) trait Visitable<T, U> {
     fn accept(&mut self, visitor: &mut U) -> T;
 }
 
-impl Visitable<String, Expression> for Logical {
-    fn accept(&mut self, visitor: &mut Expression) -> String {
-        visitor.visit_logical(Box::new(self))
-    }
-}
-
-impl Visitable<String, Expression> for Ternary {
-    fn accept(&mut self, visitor: &mut Expression) -> String {
-        visitor.visit_ternary(Box::new(self))
-    }
-}
-
-impl Visitable<String, Expression> for Grouping {
-    fn accept(&mut self, visitor: &mut Expression) -> String {
-        visitor.visit_grouping(Box::new(self))
-    }
-}
-
-impl Visitable<String, Expression> for Binary {
-    fn accept(&mut self, visitor: &mut Expression) -> String {
-        visitor.visit_binary(Box::new(self))
-    }
-}
-
-impl Visitable<String, Expression> for Unary {
-    fn accept(&mut self, visitor: &mut Expression) -> String {
-        visitor.visit_unary(Box::new(self))
-    }
-}
-
-impl Visitable<String, Expression> for Literal {
-    fn accept(&mut self, visitor: &mut Expression) -> String {
-        visitor.visit_literal(Box::new(self))
-    }
-}
+visitable_trait! {String,Binary,Expression}
+visitable_trait! {String,Literal,Expression}
+visitable_trait! {String,Grouping,Expression}
+visitable_trait! {String,Unary,Expression}
+visitable_trait! {String,Ternary,Expression}
+visitable_trait! {String,Variable,Expression}
+visitable_trait! {String,Assignment,Expression}
+visitable_trait! {String,Logical,Expression}
 
 impl ExpressionVisitor<String> for Expression {
     //Visiting is really just a fancy version of self-selection with a level of indirection layered on top
@@ -139,18 +125,6 @@ impl ExpressionVisitor<String> for Expression {
     }
     fn visit_logical(&mut self, _assign: Box<&mut Logical>) -> String {
         String::from("")
-    }
-}
-
-impl Visitable<String, Expression> for Variable {
-    fn accept(&mut self, visitor: &mut Expression) -> String {
-        visitor.visit_variable(Box::new(self))
-    }
-}
-
-impl Visitable<String, Expression> for Assignment {
-    fn accept(&mut self, visitor: &mut Expression) -> String {
-        visitor.visit_assignment(Box::new(self))
     }
 }
 
