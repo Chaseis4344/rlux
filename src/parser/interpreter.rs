@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-
-use crate::enviroment::Enviroment;
-use crate::types::{Expression, LiteralType, TokenType};
-
 use super::expression::*;
 use super::Statement;
+use crate::enviroment::Enviroment;
+use crate::types::{Expression, LiteralType, TokenType};
+use std::collections::HashMap;
 
 pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
