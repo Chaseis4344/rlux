@@ -1,5 +1,4 @@
-use crate::types::LiteralType;
-use crate::types::TokenType;
+use super::{LiteralType, TokenType};
 use std::fmt::Formatter;
 
 #[derive(Clone, Debug)]

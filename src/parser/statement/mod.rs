@@ -1,4 +1,3 @@
-use super::expression::Visitable;
 use super::interpreter::Interpreter;
 use super::token::Token;
 use super::{LiteralType, ParserError, TokenType};
@@ -34,6 +33,9 @@ pub(crate) enum Statement {
 pub(crate) struct VariableStatement {
     pub(crate) name: Token,
     pub(crate) initalizer: Option<Expression>,
+}
+pub(crate) trait Visitable<T, U> {
+    fn accept(&mut self, visitor: &mut U) -> T;
 }
 
 trait StatementVisitor {
@@ -124,4 +126,3 @@ visitable_trait! {Statement, IfStatement, Interpreter}
 visitable_trait! {Statement, PrintStatement, Interpreter}
 visitable_trait! {Statement, VariableStatement, Interpreter}
 visitable_trait! {Statement, ExpressionStatement, Interpreter}
-

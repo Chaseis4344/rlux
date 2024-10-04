@@ -1,6 +1,6 @@
-use super::expression::*;
 use super::Statement;
 use crate::enviroment::Enviroment;
+use crate::types::expression::*;
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
 
@@ -18,7 +18,18 @@ macro_rules! visitable_trait {
     };
 }
 
-pub(crate) trait Visitable<T> {
+trait ExpressionVisitor<T> {
+    fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> T;
+    fn visit_binary(&mut self, bin: Box<&mut Binary>) -> T;
+    fn visit_unary(&mut self, unary: Box<&mut Unary>) -> T;
+    fn visit_literal(&mut self, lit: Box<&mut Literal>) -> T;
+    fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> T;
+    fn visit_variable(&mut self, var: Box<&mut Variable>) -> T;
+    fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> T;
+    fn visit_logical(&mut self, logical: Box<&mut Logical>) -> T;
+}
+
+trait Visitable<T> {
     fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<T>) -> T;
 }
 
@@ -62,7 +73,7 @@ impl Interpreter {
     }
 
     pub(crate) fn execute(&mut self, mut statement: Statement) {
-        use super::expression::Visitable as InterpreterVisitable;
+        use super::statement::Visitable as InterpreterVisitable;
         //Hand over between the two architectures
         statement.accept(self);
     }

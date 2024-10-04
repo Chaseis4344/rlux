@@ -1,6 +1,5 @@
-use crate::parser::expression::*;
-
 mod display_traits;
+pub(crate) mod expression;
 pub(crate) mod functional_traits;
 pub(crate) mod token;
 
@@ -67,14 +66,14 @@ pub(crate) enum TokenType {
 
 #[derive(Clone, Debug)]
 pub enum Expression {
-    Grouping(Box<Grouping>),
-    Logical(Box<Logical>),
-    Unary(Box<Unary>),
-    Binary(Box<Binary>),
-    Ternary(Box<Ternary>),
-    Literal(Box<Literal>),
-    Variable(Box<Variable>),
-    Assignment(Box<Assignment>),
+    Grouping(Box<expression::Grouping>),
+    Logical(Box<expression::Logical>),
+    Unary(Box<expression::Unary>),
+    Binary(Box<expression::Binary>),
+    Ternary(Box<expression::Ternary>),
+    Literal(Box<expression::Literal>),
+    Variable(Box<expression::Variable>),
+    Assignment(Box<expression::Assignment>),
 }
 
 pub struct ParserError {
