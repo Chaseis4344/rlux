@@ -76,15 +76,15 @@ impl Parser {
 
     fn expression_statement(&mut self) -> Result<Statement, ParserError> {
         let expression = self.expression()?;
-
-        let debug = self.consume(TokenType::Semicolon, "Expect ';' after value.");
-        match debug {
-            Ok(ok) => {}
-            Err(err) => {
-                println!("Expr Err conf");
-                println!("{:?}", err);
-            }
-        }
+        //TODO: Finish This!!!!!
+        //let debug = self.consume(TokenType::Semicolon, "Expect ';' after value.");
+        //match debug {
+        //    Ok(ok) => {}
+        //    Err(err) => {
+        //        println!("Expr Err conf");
+        //        println!("{:?}", err);
+        //    }
+        //}
         return Ok(Statement::Expression(ExpressionStatement { expression }));
     }
 
@@ -373,7 +373,7 @@ impl Parser {
         if self.check(type_) {
             Ok(self.advance())
         } else {
-            let mut token = self.peek();
+            let token = self.peek();
             Err(Self::error(token, message))
         }
     }

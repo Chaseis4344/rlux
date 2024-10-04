@@ -35,20 +35,26 @@ pub(crate) struct VariableStatement {
 }
 
 trait StatementVisitor {
-    fn visit_print(&mut self, print: Box<&mut PrintStatement>) -> Statement;
-    fn visit_expression(&mut self, expression: Box<&mut ExpressionStatement>) -> Statement;
-    fn visit_variable(&mut self, var: Box<&mut VariableStatement>) -> Statement;
-    fn visit_if(&mut self, if_statement: Box<&mut IfStatement>) -> Statement;
+    fn visit_print_statement(&mut self, print: Box<&mut PrintStatement>) -> Statement;
+    fn visit_expression_statement(
+        &mut self,
+        expression: Box<&mut ExpressionStatement>,
+    ) -> Statement;
+    fn visit_variable_statement(&mut self, var: Box<&mut VariableStatement>) -> Statement;
+    fn visit_if_statement(&mut self, if_statement: Box<&mut IfStatement>) -> Statement;
 }
 
 impl StatementVisitor for Interpreter {
-    fn visit_expression(&mut self, expression: Box<&mut ExpressionStatement>) -> Statement {
+    fn visit_expression_statement(
+        &mut self,
+        expression: Box<&mut ExpressionStatement>,
+    ) -> Statement {
         self.evaluate(&mut expression.expression);
         Statement::Print(PrintStatement {
             expression: expression.expression.clone(),
         })
     }
-    fn visit_print(&mut self, print: Box<&mut PrintStatement>) -> Statement {
+    fn visit_print_statement(&mut self, print: Box<&mut PrintStatement>) -> Statement {
         let expression = self.evaluate(&mut print.expression);
         println!("{}", expression);
         Statement::Expression(ExpressionStatement {
@@ -56,7 +62,7 @@ impl StatementVisitor for Interpreter {
         })
     }
 
-    fn visit_variable(&mut self, var: Box<&mut VariableStatement>) -> Statement {
+    fn visit_variable_statement(&mut self, var: Box<&mut VariableStatement>) -> Statement {
         let init: LiteralType;
         if var.initalizer.is_some() {
             init = self.evaluate(&mut var.initalizer.as_mut().unwrap());
@@ -72,7 +78,7 @@ impl StatementVisitor for Interpreter {
             initalizer: clone.initalizer,
         })
     }
-    fn visit_if(&mut self, if_statement: Box<&mut IfStatement>) -> Statement {
+    fn visit_if_statement(&mut self, if_statement: Box<&mut IfStatement>) -> Statement {
         if self.evaluate(&mut if_statement.condition) == LiteralType::Boolean(true) {
             self.execute(*if_statement.then_branch.clone());
         } else {
@@ -88,30 +94,6 @@ impl StatementVisitor for Interpreter {
     }
 }
 
-impl Visitable<Statement, Interpreter> for IfStatement {
-    fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
-        visitor.visit_if(Box::new(self))
-    }
-}
-
-impl Visitable<Statement, Interpreter> for PrintStatement {
-    fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
-        visitor.visit_print(Box::new(self))
-    }
-}
-
-impl Visitable<Statement, Interpreter> for ExpressionStatement {
-    fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
-        visitor.visit_expression(Box::new(self))
-    }
-}
-
-impl Visitable<Statement, Interpreter> for VariableStatement {
-    fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
-        visitor.visit_variable(Box::new(self))
-    }
-}
-
 impl Visitable<Statement, Interpreter> for Statement {
     fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
         match self {
@@ -122,3 +104,21 @@ impl Visitable<Statement, Interpreter> for Statement {
         }
     }
 }
+
+macro_rules! visitable_trait {
+    ($trait_type1:ty,  $enum_variant:ty, $enum_parent:ty) => {
+        impl Visitable<$trait_type1, $enum_parent> for $enum_variant {
+            paste::paste! {
+                #[doc = "Redirect Visitors to `" $enum_variant "`."]
+                fn accept(&mut self, visitor: &mut $enum_parent) -> $trait_type1 {
+                    paste::item! {visitor.[<visit_ $enum_variant:snake:lower>](Box::new(self))}
+                }
+            }
+        }
+    };
+}
+
+visitable_trait! {Statement, IfStatement, Interpreter}
+visitable_trait! {Statement, PrintStatement, Interpreter}
+visitable_trait! {Statement, VariableStatement, Interpreter}
+visitable_trait! {Statement, ExpressionStatement, Interpreter}

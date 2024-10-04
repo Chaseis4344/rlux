@@ -10,6 +10,16 @@ pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
 }
 
+macro_rules! visitable_trait {
+    ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
+        impl Visitable<$trait_type> for $enum_variant {
+            fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<$trait_type>) -> $trait_type {
+                paste::item! {visitor.[<visit_ $enum_variant:lower>](Box::new(self))}
+            }
+        }
+    };
+}
+
 pub(crate) trait Visitable<T> {
     fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<T>) -> T;
 }
@@ -29,53 +39,14 @@ impl Visitable<LiteralType> for Expression {
     }
 }
 
-impl Visitable<LiteralType> for Logical {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
-        visitor.visit_logical(Box::new(self))
-    }
-}
-
-impl Visitable<LiteralType> for Assignment {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
-        visitor.visit_assignment(Box::new(self))
-    }
-}
-
-impl Visitable<LiteralType> for Variable {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
-        visitor.visit_variable(Box::new(self))
-    }
-}
-
-impl Visitable<LiteralType> for Literal {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
-        visitor.visit_literal(Box::new(self))
-    }
-}
-
-impl Visitable<LiteralType> for Grouping {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
-        visitor.visit_grouping(Box::new(self))
-    }
-}
-
-impl Visitable<LiteralType> for Binary {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
-        visitor.visit_binary(Box::new(self))
-    }
-}
-
-impl Visitable<LiteralType> for Ternary {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
-        visitor.visit_ternary(Box::new(self))
-    }
-}
-
-impl Visitable<LiteralType> for Unary {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
-        visitor.visit_unary(Box::new(self))
-    }
-}
+visitable_trait! {LiteralType,Binary,Expression}
+visitable_trait! {LiteralType,Literal,Expression}
+visitable_trait! {LiteralType,Grouping,Expression}
+visitable_trait! {LiteralType,Unary,Expression}
+visitable_trait! {LiteralType,Ternary,Expression}
+visitable_trait! {LiteralType,Variable,Expression}
+visitable_trait! {LiteralType,Assignment,Expression}
+visitable_trait! {LiteralType,Logical,Expression}
 
 impl Interpreter {
     pub(crate) fn evaluate(&mut self, expr: &mut Expression) -> LiteralType {
@@ -145,7 +116,6 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         }
     }
     fn visit_unary(&mut self, unary: Box<&mut Unary>) -> LiteralType {
-        //let right =
         let right = self.evaluate(&mut unary.operand);
 
         match unary.operator.token_type {
@@ -173,10 +143,13 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> LiteralType {
         //Decompose assignment to avoid excess cloning
         let (name, value) = (assign.name.to_owned(), &mut assign.value);
+
         //Evaluate expression inside
         let value = self.evaluate(value);
+
         //Copy the value then echo out for the rest of the syntax tress
         self.enviroment.assign(name, value.clone());
+
         value
     }
 
