@@ -109,7 +109,7 @@ macro_rules! visitable_trait {
     ($trait_type1:ty,  $enum_variant:ty, $enum_parent:ty) => {
         impl Visitable<$trait_type1, $enum_parent> for $enum_variant {
             paste::paste! {
-                #[doc = "Redirect Visitors to `" $enum_variant "`."]
+                #[doc = "Redirect Visitors to `" $enum_variant "` version."]
                 fn accept(&mut self, visitor: &mut $enum_parent) -> $trait_type1 {
                     paste::item! {visitor.[<visit_ $enum_variant:snake:lower>](Box::new(self))}
                 }
@@ -122,3 +122,4 @@ visitable_trait! {Statement, IfStatement, Interpreter}
 visitable_trait! {Statement, PrintStatement, Interpreter}
 visitable_trait! {Statement, VariableStatement, Interpreter}
 visitable_trait! {Statement, ExpressionStatement, Interpreter}
+
