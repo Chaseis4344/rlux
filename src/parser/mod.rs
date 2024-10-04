@@ -122,9 +122,8 @@ impl Parser {
 
     fn variable_decalration(&mut self) -> Result<Statement, ParserError> {
         let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable")?;
-        //let name = pass_up!(name);
-
         let initalizer: Expression;
+
         if !self.match_token_type(vec![TokenType::Equal]) {
             return Err(ParserError {
                 source: self.previous(),
