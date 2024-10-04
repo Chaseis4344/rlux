@@ -11,17 +11,9 @@ impl Parser {
         return Ok(Statement::Print(PrintStatement { expression }));
     }
 
+    ///Evaluates the expression!
     fn expression_statement(&mut self) -> Result<Statement, ParserError> {
         let expression = self.expression()?;
-        //TODO: Finish This!!!!!
-        //let debug = self.consume(TokenType::Semicolon, "Expect ';' after value.");
-        //match debug {
-        //    Ok(ok) => {}
-        //    Err(err) => {
-        //        println!("Expr Err conf");
-        //        println!("{:?}", err);
-        //    }
-        //}
         return Ok(Statement::Expression(ExpressionStatement { expression }));
     }
 
@@ -52,7 +44,6 @@ impl Parser {
         } else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
         } else {
-            println!("Expr Reached");
             self.expression_statement()
         }
     }
