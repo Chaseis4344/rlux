@@ -1,8 +1,7 @@
 use crate::parser::Parser;
-use crate::types::{
-    expression::{self, *},
-    Expression, LiteralType, ParserError, TokenType,
-};
+use crate::types::{expression::*, Expression, LiteralType, ParserError, TokenType};
+
+//These macros create new types of expressions, this is so the code is understandable
 
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {
@@ -76,7 +75,7 @@ impl Parser {
 
         while self.match_token_type(vec![TokenType::Or]) {
             let operator = self.previous();
-            let right = self.and();
+            let right = self.and()?;
             expression = new_logical!(operator, expression, right);
         }
 
