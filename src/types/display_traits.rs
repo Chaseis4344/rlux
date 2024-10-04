@@ -32,7 +32,6 @@ impl DisplayTrait for types::TokenType {
             Self::LeftParen => write!(f, "Left Parentheses"),
             Self::RightParen => write!(f, "Right Parentheses"),
 
-            Self::Comma => write!(f, "Comma"),
             Self::Dot => write!(f, "Dot"),
             Self::Minus => write!(f, "Minus"),
             Self::Plus => write!(f, "Plus"),
