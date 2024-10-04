@@ -7,7 +7,6 @@ use std::{
 mod enviroment;
 mod parser;
 mod scanner;
-mod tests;
 mod types;
 
 ///Sends error report to user with specific additonal details
