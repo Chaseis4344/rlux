@@ -1,4 +1,4 @@
-use super::{statement, Statement};
+use super::Statement;
 use crate::enviroment::Enviroment;
 use crate::types::expression::*;
 use crate::types::{Expression, LiteralType, TokenType};

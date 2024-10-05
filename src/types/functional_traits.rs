@@ -4,14 +4,14 @@ macro_rules! number_op {
     ($self:expr, $rhs:expr, $op:tt) => {
         match $self {
             Self::Number(left_num) => match $rhs {
-                Self::Number(right_num) => LiteralType::Number(left_num $op right_num),
+                Self::Number(right_num) => return LiteralType::Number(left_num $op right_num),
                 _ => {
                     eprintln!(
                         "Error: Type Mismatch! \n\tReturned \"{}\" from {}!",
                         $self,
                         stringify!($op)
                     );
-                    LiteralType::Number(left_num)
+                    return LiteralType::Number(left_num);
                 },
             },
             _ => {
@@ -20,7 +20,7 @@ macro_rules! number_op {
                 $self,
                 stringify!($op)
             );
-            $self
+            return $self;
         },
         }
 
@@ -36,14 +36,6 @@ impl PartialEq for TokenType {
 
     fn ne(&self, other: &Self) -> bool {
         self.to_string() != other.to_string()
-    }
-}
-
-//Divide literals if possible
-impl std::ops::Div for LiteralType {
-    type Output = LiteralType;
-    fn div(self, rhs: Self) -> Self::Output {
-        number_op!(self,rhs,/)
     }
 }
 
@@ -92,21 +84,6 @@ impl std::ops::Add for LiteralType {
     }
 }
 
-impl std::ops::Mul for LiteralType {
-    type Output = LiteralType;
-    fn mul(self, rhs: Self) -> Self::Output {
-        //if left is number and right is number, multiply them together
-        number_op!(self,rhs,*)
-        /*match self {
-            Self::Number(left_num) => match rhs {
-                Self::Number(right_num) => LiteralType::Number(left_num * right_num),
-                _ => LiteralType::Number(left_num),
-            },
-            _ => self,
-        }*/
-    }
-}
-
 impl std::ops::Sub for LiteralType {
     type Output = LiteralType;
     fn sub(self, rhs: Self) -> Self::Output {
@@ -114,8 +91,25 @@ impl std::ops::Sub for LiteralType {
     }
 }
 
+impl std::ops::Mul for LiteralType {
+    type Output = LiteralType;
+    fn mul(self, rhs: Self) -> Self::Output {
+        //if left is number and right is number, multiply them together
+        number_op!(self,rhs,*)
+    }
+}
+
+//Divide literals if possible
+impl std::ops::Div for LiteralType {
+    type Output = LiteralType;
+    fn div(self, rhs: Self) -> Self::Output {
+        number_op!(self,rhs,/)
+    }
+}
+
 // ==, !=
 impl PartialEq for LiteralType {
+    /// For each path we extract both values and directly compare them to one another via Rust
     fn eq(&self, other: &Self) -> bool {
         //How does this all make perfect sense to me?
         //also how did I manage to exhaust all the paths by emulating C?
@@ -165,6 +159,24 @@ impl From<LiteralType> for bool {
         match value {
             LiteralType::Boolean(ret) => ret,
             _ => panic!("Coecercing Non-Bool into Bool"),
+        }
+    }
+}
+
+impl From<LiteralType> for f64 {
+    fn from(value: LiteralType) -> Self {
+        match value {
+            LiteralType::Number(number) => number,
+            _ => panic!("Coecercing Non-number into Number"),
+        }
+    }
+}
+
+impl From<LiteralType> for String {
+    fn from(value: LiteralType) -> Self {
+        match value {
+            LiteralType::String(stringy) => stringy,
+            _ => panic!("Coecercing Non-string into string"),
         }
     }
 }
@@ -220,5 +232,5 @@ impl Ord for LiteralType {
     }
 }
 
-//Strange Rust things arre Happening
+//Strange Rust things are Happening
 impl Eq for LiteralType {}

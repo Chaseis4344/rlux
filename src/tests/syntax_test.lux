@@ -19,19 +19,3 @@ print goolean45;
 print vardoolean;
 print threshold;
 print adder;
-
-
-if (_arg> threshold or _arg ==1) 
-    print "Greater"; 
-else  
-    print "Lesser";
-
-if (tern -6 > 0 and vardoolean) 
-    print "IDK";
-
-
-//while(adder< 10 ) 
- // adder = adder+1;
-
-//This should throw a Runtime error - then print NIL
-print not_found_test;

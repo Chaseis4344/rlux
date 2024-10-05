@@ -1,0 +1,23 @@
+var vardoolean = true;
+var tern = false ? 5 : 10;
+var threshold =5;
+var _arg = 4/2;
+
+if (_arg> threshold or _arg ==1) 
+    print "Greater"; 
+else  
+    print "Lesser";
+
+if (tern -6 > 0 and vardoolean)
+{
+    print "Let's Print!"; //Should Print
+} else 
+{
+    print "Not!";
+}
+    
+//while(adder< 10 ) 
+ // adder = adder+1;
+
+//This should throw a Runtime error - then print NIL
+print not_found_test;

@@ -1,7 +1,7 @@
 use super::interpreter::Interpreter;
 use super::{LiteralType, ParserError, TokenType};
 use crate::enviroment::Enviroment;
-use crate::types::statement::{self, *};
+use crate::types::statement::*;
 use crate::types::Expression;
 
 mod parser_impl;
@@ -65,7 +65,7 @@ impl StatementVisitor for Interpreter {
         let then_branch = *(unboxed.then_branch);
         let else_branch = unboxed.else_branch;
 
-        if self.evaluate(&mut condition) == LiteralType::Boolean(true) {
+        if self.evaluate(&mut condition).into() {
             self.execute(then_branch.clone());
 
             return then_branch;
@@ -85,7 +85,7 @@ impl StatementVisitor for Interpreter {
         let mut condition = unboxed.condition;
         let body = *(unboxed.body);
 
-        while self.evaluate(&mut condition) == LiteralType::Boolean(true) {
+        while self.evaluate(&mut condition).into() {
             self.execute(body.clone());
         }
 

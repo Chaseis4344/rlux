@@ -7,10 +7,11 @@ use std::{
 mod enviroment;
 mod parser;
 mod scanner;
+mod tests;
 mod types;
 
 ///Sends error report to user with specific additonal details
-fn report(line: u32, place: String, message: String) ->  Error {
+fn report(line: u32, place: String, message: String) -> Error {
     eprintln!(" [Line {}] Error{}: {}", line, place, message);
     let return_err = Error::new(
         std::io::ErrorKind::InvalidData,
@@ -20,7 +21,7 @@ fn report(line: u32, place: String, message: String) ->  Error {
 }
 
 ///Sends an error report to user - semantic sugar
-fn error(line: u32, message: String) ->  Error {
+fn error(line: u32, message: String) -> Error {
     report(line, String::from(""), message)
 }
 
@@ -55,7 +56,7 @@ use std::path::Path;
 ///On Startup - Runs source from provided filepath
 pub fn run_file(filepath: String) {
     let file_path = Path::new(&filepath);
-    println!("File Path: {}", filepath);
+    //println!("File Path: {}", filepath);
     if !file_path.exists() {
         println!("Please provide a valid file.");
         return;
@@ -76,19 +77,19 @@ pub fn run_file(filepath: String) {
     if source.is_err() {
         let error = source.unwrap_err();
         eprintln!("File Error: {}", error);
-        exit(65);
+        exit(1);
     }
 
     let valid_source = source.unwrap();
 
     //Run the code
     match run(valid_source) {
-        Ok(number) => {
-            exit(number);
+        Ok(_) => {
+            exit(0);
         }
         Err(err) => {
             eprintln!("{}", err);
-            exit(65);
+            exit(1);
         }
     };
 }
