@@ -12,7 +12,7 @@ pub(crate) enum LiteralType {
     Nil, //This will be wrapped in an option,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Copy)]
 pub(crate) enum TokenType {
     //Single Character Tokens
     LeftParen,
@@ -76,15 +76,19 @@ pub enum Expression {
     Assignment(Box<expression::Assignment>),
 }
 
+#[derive(Clone)]
+
 pub struct ParserError {
     pub(crate) source: token::Token,
     pub(crate) cause: String,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub(crate) struct RuntimeError {
     pub(crate) source: token::Token,
 }
+
+#[derive(Clone, Debug)]
 
 pub(crate) enum LuxErrors {
     ParserError(ParserError),

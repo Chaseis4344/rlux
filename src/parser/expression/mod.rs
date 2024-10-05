@@ -114,32 +114,29 @@ impl Parser {
     }
 
     fn assignment(&mut self) -> Result<Expression, ParserError> {
-        let expression = self.equality();
+        let expression = self.equality()?;
 
         if self.match_token_type(vec![TokenType::Equal]) {
             let equals = self.previous();
-            let value = self.assignment()?;
+            let value: Expression = self.assignment()?;
             //let value = pass_up!(value);
 
-            match value.clone() {
+            match expression.clone() {
                 Expression::Variable(var) => {
+                    let _ = self.consume(TokenType::Semicolon, "Expected ';' after assignement");
                     let name = var.name;
-                    return Ok(Expression::Assignment(Box::new(Assignment {
-                        name: name,
-                        value: value,
-                    })));
+                    return Ok(Expression::Assignment(Box::new(Assignment { name, value })));
                 }
-
                 _ => {
                     return Err(ParserError {
                         source: equals,
-                        cause: String::from("Bad Variable Expression"),
+                        cause: String::from("Invalid Assignment Target"),
                     });
                 }
             }
         }
 
-        expression
+        Ok(expression)
     }
 
     fn equality(&mut self) -> Result<Expression, ParserError> {
@@ -204,7 +201,7 @@ impl Parser {
 
         match self.primary() {
             Ok(expression) => Ok(expression),
-            Err(_) => Err(Self::error(self.peek(), "Eval error:")),
+            Err(err) => Err(Self::error(self.peek(), &format!("Eval error: {}", err))),
         }
     }
 
@@ -238,9 +235,9 @@ impl Parser {
 
             return Ok(new_grouping!(expression));
         } else if self.match_token_type(vec![TokenType::Identifier]) {
-            return Ok(new_grouping!(Expression::Variable(Box::new(Variable {
-                name: self.previous()
-            }))));
+            return Ok(Expression::Variable(Box::new(Variable {
+                name: self.previous(),
+            })));
         } else {
             return Err(ParserError {
                 source: self.peek(),

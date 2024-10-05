@@ -2,6 +2,10 @@ var vardoolean = true;
 var tern = false ? 5 : 10;
 var threshold =5;
 var _arg = 4/2;
+var adder = 5;
+
+adder = 1;
+
 
 if (_arg> threshold or _arg ==1) 
     print "Greater"; 
@@ -16,8 +20,12 @@ if (tern -6 > 0 and vardoolean)
     print "Not!";
 }
     
-//while(adder< 10 ) 
- // adder = adder+1;
+while(adder < 10 )
+{
+   adder = 1+ adder;
+   print "Increment " + adder;
+}
+
 
 //This should throw a Runtime error - then print NIL
 print not_found_test;

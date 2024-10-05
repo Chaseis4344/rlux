@@ -10,6 +10,8 @@ mod scanner;
 mod tests;
 mod types;
 
+#[allow(unused)]
+
 ///Sends error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Error {
     eprintln!(" [Line {}] Error{}: {}", line, place, message);

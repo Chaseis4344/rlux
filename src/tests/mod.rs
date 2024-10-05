@@ -54,6 +54,6 @@ fn scope_test() {
 }
 
 #[test]
-fn syntax_test() {
-    run_file_test(String::from("./src/tests/syntax_test.lux"));
+fn math_test() {
+    run_file_test(String::from("./src/tests/math_test.lux"));
 }

@@ -1,5 +1,5 @@
 use super::*;
-use crate::parser::Parser;
+use crate::{parser::Parser, types::statement};
 
 impl Parser {
     /*Statement Grammar is Here Down */
@@ -41,6 +41,7 @@ impl Parser {
         Ok(Statement::While(WhileStatement { condition, body }))
     }
 
+    // This desugars into a while loop with statements outside it
     fn for_statement(&mut self) -> Result<Statement, ParserError> {
         let _ = self.consume(TokenType::LeftParen, "Expect '(' after for.");
 
@@ -52,24 +53,62 @@ impl Parser {
         } else {
             initializer = Some(self.expression_statement()?);
         }
+        let _ = self.consume(TokenType::Semicolon, "Expect ';' after declaration part.");
 
         let mut condition: Option<Expression> = None;
         if !self.check(TokenType::Semicolon) {
             condition = Some(self.expression()?);
         }
-        let _ = self.consume(TokenType::Semicolon, "Expect ';' after declaration part.");
+
+        let _ = self.consume(TokenType::Semicolon, "Expect ';' after increment part.");
 
         let mut increment: Option<Expression> = None;
         if !self.check(TokenType::Semicolon) {
             increment = Some(self.expression()?);
         }
-        let _ = self.consume(TokenType::Semicolon, "Expect ';' after declaration part.");
 
         let _ = self.consume(TokenType::RightParen, "Expect ')' after condition block.");
 
-        let body = self.statement();
+        let mut body = self.statement()?;
 
-        todo!("Implement Blocks now blockhead")
+        if increment.is_some() {
+            let statements: Vec<Statement> = vec![
+                body,
+                Statement::Expression(ExpressionStatement {
+                    expression: increment.unwrap(),
+                }),
+            ];
+
+            body = Statement::Block(BlockStatement { statements });
+        }
+
+        if condition.is_none() {
+            condition = Some(Expression::Literal(Box::new(
+                crate::types::expression::Literal {
+                    value: LiteralType::Boolean(true),
+                },
+            )))
+        }
+
+        if condition.is_some() {
+            body = Statement::While(WhileStatement {
+                condition: condition.unwrap(),
+                body: Box::new(body),
+            });
+        } else {
+            crate::error(
+                0,
+                String::from("Interpreter Parse Error: Bad For Loop Condition Handle"),
+            );
+        }
+
+        if initializer.is_some() {
+            body = Statement::Block(BlockStatement {
+                statements: vec![initializer.unwrap(), body],
+            });
+        }
+
+        Ok(body)
     }
 
     ///Evaluates the expression!
