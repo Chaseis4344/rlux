@@ -7,7 +7,7 @@ var goolean45 = false;
 var vardoolean = true;
 var threshold =5;
 var adder = 1+0-5;
-var tern = true ? 5 : 10;
+var tern = false ? 5 : 10;
 
 print tern;
 print _arg;
@@ -21,10 +21,14 @@ print threshold;
 print adder;
 
 
-if (_arg> threshold) 
+if (_arg> threshold or _arg ==1) 
     print "Greater"; 
 else  
     print "Lesser";
+
+if (tern -6 > 0 and vardoolean) 
+    print "IDK";
+
 
 //while(adder< 10 ) 
  // adder = adder+1;
