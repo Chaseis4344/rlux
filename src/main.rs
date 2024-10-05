@@ -32,8 +32,6 @@ fn run(source: String) -> Result<i32, Error> {
     //Scan in & Store token string
     let mut tokens: Vec<types::token::Token> = scanner.scan_tokens();
 
-    //let mut token_debug = tokens.clone();
-
     //Push Final EOF token
     tokens.push(types::token::Token {
         token_type: types::TokenType::Eof,
@@ -47,7 +45,7 @@ fn run(source: String) -> Result<i32, Error> {
 
     let mut interpreter = parser::interpreter::Interpreter::new();
     interpreter.interpret(statements);
-    //println!("Interpreter Green!");
+
     Result::Ok(0)
 }
 

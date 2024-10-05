@@ -1,8 +1,8 @@
 mod display_traits;
 pub(crate) mod expression;
 pub(crate) mod functional_traits;
-pub(crate) mod token;
 pub(crate) mod statement;
+pub(crate) mod token;
 
 #[derive(Clone, Debug)]
 pub(crate) enum LiteralType {

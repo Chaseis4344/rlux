@@ -90,8 +90,6 @@ impl Parser {
         Ok(Statement::Block(BlockStatement { statements }))
     }
 
-    
-
     fn statement(&mut self) -> Result<Statement, ParserError> {
         if self.match_token_type(vec![TokenType::If]) {
             self.if_statement()

@@ -1,22 +1,7 @@
 use crate::run;
 use std::{fs, path::Path, process::exit};
 
-#[cfg(test)]
-#[test]
-fn control_test() {
-    run_file_test(String::from("./src/tests/control_test.lux"));
-}
-
-#[test]
-fn scope_test() {
-    run_file_test(String::from("./src/tests/scope_test.lux"));
-}
-
-#[test]
-fn syntax_test() {
-    run_file_test(String::from("./src/tests/syntax_test.lux"));
-}
-
+#[allow(dead_code)]
 fn run_file_test(filepath: String) {
     let file_path = Path::new(&filepath);
     //println!("File Path: {}", filepath);
@@ -55,4 +40,20 @@ fn run_file_test(filepath: String) {
             exit(1);
         }
     };
+}
+
+#[cfg(test)]
+#[test]
+fn control_test() {
+    run_file_test(String::from("./src/tests/control_test.lux"));
+}
+
+#[test]
+fn scope_test() {
+    run_file_test(String::from("./src/tests/scope_test.lux"));
+}
+
+#[test]
+fn syntax_test() {
+    run_file_test(String::from("./src/tests/syntax_test.lux"));
 }
