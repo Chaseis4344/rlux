@@ -41,6 +41,37 @@ impl Parser {
         Ok(Statement::While(WhileStatement { condition, body }))
     }
 
+    fn for_statement(&mut self) -> Result<Statement, ParserError> {
+        let _ = self.consume(TokenType::LeftParen, "Expect '(' after for.");
+
+        let mut initializer: Option<Statement>;
+        if self.match_token_type(vec![TokenType::Semicolon]) {
+            initializer = None;
+        } else if self.match_token_type(vec![TokenType::Var]) {
+            initializer = Some(self.variable_decalration()?);
+        } else {
+            initializer = Some(self.expression_statement()?);
+        }
+
+        let mut condition: Option<Expression> = None;
+        if !self.check(TokenType::Semicolon) {
+            condition = Some(self.expression()?);
+        }
+        let _ = self.consume(TokenType::Semicolon, "Expect ';' after declaration part.");
+
+        let mut increment: Option<Expression> = None;
+        if !self.check(TokenType::Semicolon) {
+            increment = Some(self.expression()?);
+        }
+        let _ = self.consume(TokenType::Semicolon, "Expect ';' after declaration part.");
+
+        let _ = self.consume(TokenType::RightParen, "Expect ')' after condition block.");
+
+        let body = self.statement();
+
+        todo!("Implement Blocks now blockhead")
+    }
+
     ///Evaluates the expression!
     fn expression_statement(&mut self) -> Result<Statement, ParserError> {
         let expression = self.expression()?;
@@ -54,6 +85,8 @@ impl Parser {
             self.print_statement()
         } else if self.match_token_type(vec![TokenType::While]) {
             self.while_statement()
+        } else if self.match_token_type(vec![TokenType::For]) {
+            self.for_statement()
         } else {
             self.expression_statement()
         }
