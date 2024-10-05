@@ -1,39 +1,10 @@
 use super::interpreter::Interpreter;
-use super::token::Token;
 use super::{LiteralType, ParserError, TokenType};
+use crate::types::statement::*;
 use crate::types::Expression;
 
 mod parser_impl;
 
-#[derive(Clone, Debug)]
-pub(crate) struct PrintStatement {
-    pub(crate) expression: Expression,
-}
-
-#[derive(Clone, Debug)]
-pub(crate) struct ExpressionStatement {
-    pub(crate) expression: Expression,
-}
-
-#[derive(Clone, Debug)]
-pub(crate) struct IfStatement {
-    pub(crate) condition: Expression,
-    pub(crate) then_branch: Box<Statement>,
-    pub(crate) else_branch: Box<Option<Statement>>,
-}
-
-#[derive(Clone, Debug)]
-pub(crate) enum Statement {
-    Print(PrintStatement),
-    Expression(ExpressionStatement),
-    Variable(VariableStatement),
-    If(IfStatement),
-}
-#[derive(Clone, Debug)]
-pub(crate) struct VariableStatement {
-    pub(crate) name: Token,
-    pub(crate) initalizer: Option<Expression>,
-}
 pub(crate) trait Visitable<T, U> {
     fn accept(&mut self, visitor: &mut U) -> T;
 }
@@ -46,6 +17,7 @@ trait StatementVisitor {
     ) -> Statement;
     fn visit_variable_statement(&mut self, var: Box<&mut VariableStatement>) -> Statement;
     fn visit_if_statement(&mut self, if_statement: Box<&mut IfStatement>) -> Statement;
+    fn visit_while_statement(&mut self, while_statement: Box<&mut WhileStatement>) -> Statement;
 }
 
 impl StatementVisitor for Interpreter {
@@ -60,6 +32,7 @@ impl StatementVisitor for Interpreter {
     }
     fn visit_print_statement(&mut self, print: Box<&mut PrintStatement>) -> Statement {
         let expression = self.evaluate(&mut print.expression);
+
         println!("{}", expression);
         Statement::Expression(ExpressionStatement {
             expression: print.expression.clone(),
@@ -68,6 +41,7 @@ impl StatementVisitor for Interpreter {
 
     fn visit_variable_statement(&mut self, var: Box<&mut VariableStatement>) -> Statement {
         let init: LiteralType;
+
         if var.initalizer.is_some() {
             init = self.evaluate(&mut var.initalizer.as_mut().unwrap());
         } else {
@@ -83,18 +57,37 @@ impl StatementVisitor for Interpreter {
         })
     }
     fn visit_if_statement(&mut self, if_statement: Box<&mut IfStatement>) -> Statement {
-        if self.evaluate(&mut if_statement.condition) == LiteralType::Boolean(true) {
-            self.execute(*if_statement.then_branch.clone());
-        } else {
-            match (*(if_statement.else_branch)).clone() {
-                Some(statement) => {
-                    self.execute(statement);
-                    return (*(if_statement.else_branch)).to_owned().unwrap();
-                }
-                None => {}
-            }
+        let unboxed = if_statement.to_owned();
+        let return_thing = unboxed.clone();
+        let mut condition = unboxed.condition;
+        let then_branch = *(unboxed.then_branch);
+        let else_branch = unboxed.else_branch;
+
+        if self.evaluate(&mut condition) == LiteralType::Boolean(true) {
+            self.execute(then_branch.clone());
+
+            return then_branch;
+        } else if else_branch.is_some() {
+            let else_branch = else_branch.unwrap();
+            self.execute(else_branch.clone());
+
+            return else_branch;
         }
-        *if_statement.then_branch.to_owned()
+
+        Statement::If(return_thing)
+    }
+
+    fn visit_while_statement(&mut self, while_statement: Box<&mut WhileStatement>) -> Statement {
+        let unboxed = while_statement.to_owned();
+        let return_thing = unboxed.clone();
+        let mut condition = unboxed.condition;
+        let body = *(unboxed.body);
+
+        while self.evaluate(&mut condition) == LiteralType::Boolean(true) {
+            self.execute(body.clone());
+        }
+
+        Statement::While(return_thing)
     }
 }
 
@@ -105,6 +98,7 @@ impl Visitable<Statement, Interpreter> for Statement {
             Statement::Expression(statement) => statement.accept(visitor),
             Statement::Variable(statement) => statement.accept(visitor),
             Statement::If(statement) => statement.accept(visitor),
+            Statement::While(statement) => statement.accept(visitor),
         }
     }
 }
@@ -126,3 +120,4 @@ visitable_trait! {Statement, IfStatement, Interpreter}
 visitable_trait! {Statement, PrintStatement, Interpreter}
 visitable_trait! {Statement, VariableStatement, Interpreter}
 visitable_trait! {Statement, ExpressionStatement, Interpreter}
+visitable_trait! {Statement, WhileStatement, Interpreter}

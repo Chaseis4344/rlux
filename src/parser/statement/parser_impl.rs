@@ -3,20 +3,6 @@ use crate::parser::Parser;
 
 impl Parser {
     /*Statement Grammar is Here Down */
-    fn print_statement(&mut self) -> Result<Statement, ParserError> {
-        let expression = self.expression()?;
-        //let expression = pass_up!(value);
-        let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
-
-        return Ok(Statement::Print(PrintStatement { expression }));
-    }
-
-    ///Evaluates the expression!
-    fn expression_statement(&mut self) -> Result<Statement, ParserError> {
-        let expression = self.expression()?;
-        return Ok(Statement::Expression(ExpressionStatement { expression }));
-    }
-
     fn if_statement(&mut self) -> Result<Statement, ParserError> {
         let _ = self.consume(TokenType::LeftParen, "Expected \"(\" after if statement");
         let condition = self.expression()?;
@@ -38,11 +24,36 @@ impl Parser {
         }))
     }
 
+    fn print_statement(&mut self) -> Result<Statement, ParserError> {
+        let expression = self.expression()?;
+        //let expression = pass_up!(value);
+        let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
+
+        return Ok(Statement::Print(PrintStatement { expression }));
+    }
+
+    fn while_statement(&mut self) -> Result<Statement, ParserError> {
+        let _ = self.consume(TokenType::LeftParen, "Expect '(' after while.");
+        let condition = self.expression()?;
+        let _ = self.consume(TokenType::RightParen, "Expect ')' after while condition.");
+        let body = Box::new(self.statement()?);
+
+        Ok(Statement::While(WhileStatement { condition, body }))
+    }
+
+    ///Evaluates the expression!
+    fn expression_statement(&mut self) -> Result<Statement, ParserError> {
+        let expression = self.expression()?;
+        return Ok(Statement::Expression(ExpressionStatement { expression }));
+    }
+
     fn statement(&mut self) -> Result<Statement, ParserError> {
         if self.match_token_type(vec![TokenType::If]) {
             self.if_statement()
         } else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
+        } else if self.match_token_type(vec![TokenType::While]) {
+            self.while_statement()
         } else {
             self.expression_statement()
         }

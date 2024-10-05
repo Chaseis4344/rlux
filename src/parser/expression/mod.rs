@@ -144,7 +144,6 @@ impl Parser {
 
     fn equality(&mut self) -> Result<Expression, ParserError> {
         let mut expression = self.comparison()?;
-        //let mut expression = pass_up!(expression);
 
         while self.match_token_type(vec![TokenType::BangEqual, TokenType::EqualEqual]) {
             let operator = self.previous();
@@ -171,6 +170,7 @@ impl Parser {
 
         Ok(expression)
     }
+
     fn term(&mut self) -> Result<Expression, ParserError> {
         let mut expression = self.factor()?;
 

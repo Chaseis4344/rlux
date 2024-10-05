@@ -1,7 +1,7 @@
 //use crate::token::Token;
+use crate::types::statement::Statement;
 use crate::types::token::Token;
 use crate::types::*;
-use statement::Statement;
 
 pub(crate) mod expression;
 pub(crate) mod interpreter;
