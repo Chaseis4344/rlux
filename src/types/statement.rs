@@ -30,10 +30,16 @@ pub(crate) struct WhileStatement {
 }
 
 #[derive(Clone, Debug)]
+pub(crate) struct BlockStatement {
+    pub(crate) statements: Vec<Statement>,
+}
+
+#[derive(Clone, Debug)]
 pub(crate) enum Statement {
     Print(PrintStatement),
     Expression(ExpressionStatement),
     Variable(VariableStatement),
     While(WhileStatement),
     If(IfStatement),
+    Block(BlockStatement),
 }

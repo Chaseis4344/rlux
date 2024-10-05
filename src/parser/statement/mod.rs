@@ -1,6 +1,7 @@
 use super::interpreter::Interpreter;
 use super::{LiteralType, ParserError, TokenType};
-use crate::types::statement::*;
+use crate::enviroment::Enviroment;
+use crate::types::statement::{self, *};
 use crate::types::Expression;
 
 mod parser_impl;
@@ -18,6 +19,7 @@ trait StatementVisitor {
     fn visit_variable_statement(&mut self, var: Box<&mut VariableStatement>) -> Statement;
     fn visit_if_statement(&mut self, if_statement: Box<&mut IfStatement>) -> Statement;
     fn visit_while_statement(&mut self, while_statement: Box<&mut WhileStatement>) -> Statement;
+    fn visit_block_statement(&mut self, block_statement: Box<&mut BlockStatement>) -> Statement;
 }
 
 impl StatementVisitor for Interpreter {
@@ -89,6 +91,17 @@ impl StatementVisitor for Interpreter {
 
         Statement::While(return_thing)
     }
+
+    fn visit_block_statement(&mut self, block_statement: Box<&mut BlockStatement>) -> Statement {
+        self.execute_block(
+            block_statement.statements.to_owned(),
+            Enviroment {
+                enclosing: Box::new(Some((*self.enviroment).clone())),
+                variable_map: self.enviroment.variable_map.clone(),
+            },
+        );
+        Statement::Block(block_statement.to_owned())
+    }
 }
 
 impl Visitable<Statement, Interpreter> for Statement {
@@ -99,6 +112,7 @@ impl Visitable<Statement, Interpreter> for Statement {
             Statement::Variable(statement) => statement.accept(visitor),
             Statement::If(statement) => statement.accept(visitor),
             Statement::While(statement) => statement.accept(visitor),
+            Statement::Block(statement) => statement.accept(visitor),
         }
     }
 }
@@ -121,3 +135,4 @@ visitable_trait! {Statement, PrintStatement, Interpreter}
 visitable_trait! {Statement, VariableStatement, Interpreter}
 visitable_trait! {Statement, ExpressionStatement, Interpreter}
 visitable_trait! {Statement, WhileStatement, Interpreter}
+visitable_trait! {Statement, BlockStatement, Interpreter}

@@ -44,7 +44,7 @@ impl Parser {
     fn for_statement(&mut self) -> Result<Statement, ParserError> {
         let _ = self.consume(TokenType::LeftParen, "Expect '(' after for.");
 
-        let mut initializer: Option<Statement>;
+        let initializer: Option<Statement>;
         if self.match_token_type(vec![TokenType::Semicolon]) {
             initializer = None;
         } else if self.match_token_type(vec![TokenType::Var]) {
@@ -78,6 +78,20 @@ impl Parser {
         return Ok(Statement::Expression(ExpressionStatement { expression }));
     }
 
+    fn block_statement(&mut self) -> Result<Statement, ParserError> {
+        let mut statements: Vec<Statement> = vec![];
+
+        while !(self.check(TokenType::RightBrace) || self.is_at_end()) {
+            statements.push(self.declaration()?);
+        }
+
+        let _ = self.consume(TokenType::RightBrace, "Expect '}' to match '{'.");
+
+        Ok(Statement::Block(BlockStatement { statements }))
+    }
+
+    
+
     fn statement(&mut self) -> Result<Statement, ParserError> {
         if self.match_token_type(vec![TokenType::If]) {
             self.if_statement()
@@ -87,6 +101,8 @@ impl Parser {
             self.while_statement()
         } else if self.match_token_type(vec![TokenType::For]) {
             self.for_statement()
+        } else if self.match_token_type(vec![TokenType::LeftBrace]) {
+            self.block_statement()
         } else {
             self.expression_statement()
         }

@@ -1,8 +1,9 @@
-use super::Statement;
+use super::{statement, Statement};
 use crate::enviroment::Enviroment;
 use crate::types::expression::*;
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
+use std::mem;
 
 pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
@@ -63,7 +64,10 @@ impl Interpreter {
     }
     pub(crate) fn new() -> Interpreter {
         let map = HashMap::new();
-        let enviroment = Box::new(Enviroment { variable_map: map });
+        let enviroment = Box::new(Enviroment {
+            enclosing: Box::new(None),
+            variable_map: map,
+        });
         Interpreter { enviroment }
     }
     pub(crate) fn interpret(&mut self, statements: Vec<Statement>) {
@@ -76,6 +80,18 @@ impl Interpreter {
         use super::statement::Visitable as InterpreterVisitable;
         //Hand over between the two architectures
         statement.accept(self);
+    }
+
+    pub(crate) fn execute_block(&mut self, statements: Vec<Statement>, enviroment: Enviroment) {
+        let mut previous = enviroment;
+
+        mem::swap(&mut previous, &mut self.enviroment);
+
+        for statement in statements {
+            self.execute(statement);
+        }
+
+        mem::swap(&mut previous, &mut self.enviroment);
     }
 }
 
