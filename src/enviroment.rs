@@ -20,7 +20,7 @@ impl Enviroment {
                 return Ok(lit.to_owned());
             }
             None => {
-                let _ = crate::error(name.line, "Error Undefined Variable".to_string());
+                let _ = crate::error(name.line, "Undefined Variable".to_string());
                 return Err(VarError::NotPresent);
             }
         }

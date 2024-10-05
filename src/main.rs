@@ -10,17 +10,17 @@ mod scanner;
 mod types;
 
 ///Sends error report to user with specific additonal details
-fn report(line: u32, place: String, message: String) -> Result<i32, Error> {
-    eprintln!(" [Line {}]Error{}: {}", line, place, message);
+fn report(line: u32, place: String, message: String) ->  Error {
+    eprintln!(" [Line {}] Error{}: {}", line, place, message);
     let return_err = Error::new(
         std::io::ErrorKind::InvalidData,
         format!(" [Line {}]Error{}: {}", line, place, message),
     );
-    Result::Err(return_err)
+    return_err
 }
 
 ///Sends an error report to user - semantic sugar
-fn error(line: u32, message: String) -> Result<i32, Error> {
+fn error(line: u32, message: String) ->  Error {
     report(line, String::from(""), message)
 }
 
