@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use super::interpreter::Interpreter;
 use super::{LiteralType, ParserError, TokenType};
-use crate::enviroment::Enviroment;
+use crate::enviroment::{self, Enviroment};
 use crate::types::statement::*;
 use crate::types::Expression;
 
@@ -93,13 +95,8 @@ impl StatementVisitor for Interpreter {
     }
 
     fn visit_block_statement(&mut self, block_statement: Box<&mut BlockStatement>) -> Statement {
-        self.execute_block(
-            block_statement.statements.to_owned(),
-            Enviroment {
-                enclosing: Box::new(Some((*self.enviroment).clone())),
-                variable_map: self.enviroment.variable_map.clone(),
-            },
-        );
+        self.execute_block(block_statement.statements.to_owned());
+
         Statement::Block(block_statement.to_owned())
     }
 }

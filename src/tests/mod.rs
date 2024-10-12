@@ -24,8 +24,7 @@ fn run_file_test(filepath: String) {
     //Check source for OS Errors
     if source.is_err() {
         let error = source.unwrap_err();
-        eprintln!("File Error: {}", error);
-        exit(1);
+        panic!("File Error: {}", error);
     }
 
     let valid_source = source.unwrap();
@@ -36,8 +35,7 @@ fn run_file_test(filepath: String) {
             //exit(0);
         }
         Err(err) => {
-            eprintln!("{}", err);
-            exit(1);
+            panic!("{}", err);
         }
     };
 }

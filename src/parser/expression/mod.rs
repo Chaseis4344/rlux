@@ -120,10 +120,10 @@ impl Parser {
             let equals = self.previous();
             let value: Expression = self.assignment()?;
             //let value = pass_up!(value);
+            let _ = self.consume(TokenType::Semicolon, "Expected ';' after assignement");
 
             match expression.clone() {
                 Expression::Variable(var) => {
-                    let _ = self.consume(TokenType::Semicolon, "Expected ';' after assignement");
                     let name = var.name;
                     return Ok(Expression::Assignment(Box::new(Assignment { name, value })));
                 }

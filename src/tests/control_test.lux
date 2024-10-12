@@ -23,9 +23,11 @@ if (tern -6 > 0 and vardoolean)
 while(adder < 10 )
 {
    adder = 1+ adder;
-   print "Increment " + adder;
+   var cde = "cde";
 }
 
 
+
 //This should throw a Runtime error - then print NIL
+print cde;
 print not_found_test;

@@ -5,10 +5,6 @@ use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
 use std::mem;
 
-pub(crate) struct Interpreter {
-    pub(crate) enviroment: Box<Enviroment>,
-}
-
 macro_rules! visitable_trait {
     ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
         impl Visitable<$trait_type> for $enum_variant {
@@ -58,6 +54,10 @@ visitable_trait! {LiteralType,Variable,Expression}
 visitable_trait! {LiteralType,Assignment,Expression}
 visitable_trait! {LiteralType,Logical,Expression}
 
+pub(crate) struct Interpreter {
+    pub(crate) enviroment: Box<Enviroment>,
+}
+
 impl Interpreter {
     pub(crate) fn evaluate(&mut self, expr: &mut Expression) -> LiteralType {
         expr.accept(self)
@@ -65,7 +65,7 @@ impl Interpreter {
     pub(crate) fn new() -> Interpreter {
         let map = HashMap::new();
         let enviroment = Box::new(Enviroment {
-            enclosing: Box::new(None),
+            enclosing: None,
             variable_map: map,
         });
         Interpreter { enviroment }
@@ -82,16 +82,20 @@ impl Interpreter {
         statement.accept(self);
     }
 
-    pub(crate) fn execute_block(&mut self, statements: Vec<Statement>, enviroment: Enviroment) {
-        let mut previous = enviroment;
+    pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) {
+        //Wrap
+        self.enviroment = Box::new(Enviroment {
+            enclosing: Some(self.enviroment.clone()),
+            variable_map: HashMap::new(),
+        });
 
-        mem::swap(&mut previous, &mut self.enviroment);
-
+        //Execute
         for statement in statements {
             self.execute(statement);
         }
 
-        mem::swap(&mut previous, &mut self.enviroment);
+        //Unwrap
+        self.enviroment = self.enviroment.enclosing.to_owned().unwrap();
     }
 }
 
