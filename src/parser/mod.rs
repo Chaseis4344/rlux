@@ -1,62 +1,11 @@
 //use crate::token::Token;
-use crate::types::statement::Statement;
+use crate::types::statement::*;
 use crate::types::token::Token;
-use crate::types::token::Token;
-use crate::types::Expression;
 use crate::types::*;
-use crate::types::*;
-use expression::Variable;
-use statement::{ExpressionStatement, PrintStatement, Statement, VariableStatement};
 
 pub(crate) mod expression;
 pub(crate) mod interpreter;
 pub(crate) mod statement;
-
-macro_rules! new_ternary {
-    ($eval:expr, $lhs:expr,  $rhs:expr) => {
-        Expression::Ternary(Box::new(expression::Ternary {
-            evaluator: $eval,
-            left: $lhs,
-            right: $rhs,
-        }))
-    };
-}
-
-macro_rules! new_assignment {
-    ($name:expr, $value:expr) => {
-        Expression::Assignment(Box::new(expression::Assignment {
-            name: $name,
-            value: $value,
-        }))
-    };
-}
-
-macro_rules! new_expression {
-    ($left:expr, $operator:expr,$right:expr) => {
-        Expression::Binary(Box::new(expression::Binary {
-            operator: $operator,
-            left: $left,
-            right: $right,
-        }))
-    };
-    ($operator:expr, $operand:expr) => {
-        Expression::Unary(Box::new(expression::Unary {
-            operator: $operator,
-            operand: $operand,
-        }))
-    };
-    ($expression:expr) => {
-        Expression::Grouping(Box::new(expression::Grouping {
-            expression: $expression,
-        }))
-    };
-}
-
-macro_rules! new_literal {
-    ($value:expr) => {
-        Expression::Literal(Box::new(expression::Literal { value: $value }))
-    };
-}
 
 pub struct Parser {
     tokens: Vec<Token>,
@@ -110,7 +59,7 @@ impl Parser {
         if self.check(type_) {
             Ok(self.advance())
         } else {
-            let mut token = self.peek();
+            let token = self.peek();
             Err(Self::error(token, message))
         }
     }
