@@ -1,9 +1,9 @@
 //use crate::token::Token;
 use crate::types::statement::Statement;
 use crate::types::token::Token;
-use crate::types::*;
 use crate::types::token::Token;
 use crate::types::Expression;
+use crate::types::*;
 use crate::types::*;
 use expression::Variable;
 use statement::{ExpressionStatement, PrintStatement, Statement, VariableStatement};
@@ -67,13 +67,6 @@ impl Parser {
     pub fn new(tokens: Vec<Token>, current: i32) -> Parser {
         Parser { tokens, current }
     }
-
-
-
-
-
-
-
 
     fn match_token_type(&mut self, types: Vec<TokenType>) -> bool {
         for token_type in types {
