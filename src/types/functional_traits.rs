@@ -1,5 +1,6 @@
 use crate::types::{LiteralType, TokenType};
 
+///Defines an operation to be performed with 2 numbers, the operand is passed into $op
 macro_rules! number_op {
     ($self:expr, $rhs:expr, $op:tt) => {
         match $self {
@@ -28,18 +29,18 @@ macro_rules! number_op {
 }
 
 impl PartialEq for TokenType {
-    /*String comparison is costly and slow, but,
-    we only end up doing it in areas on the dev side, so the cost is acceptable*/
+    ///Uses String Comparison to compare two Tokens
     fn eq(&self, rhs: &Self) -> bool {
         self.to_string() == rhs.to_string()
     }
 
+    ///Uses self.eq to test equality
     fn ne(&self, other: &Self) -> bool {
-        self.to_string() != other.to_string()
+        !self.eq(other)
     }
 }
 
-//Add Literals Together if possible
+///Add Literals Together if possible, concatonate if string
 impl std::ops::Add for LiteralType {
     type Output = LiteralType;
     fn add(self, rhs: Self) -> Self::Output {
@@ -84,6 +85,7 @@ impl std::ops::Add for LiteralType {
     }
 }
 
+///Subtract two literals, if possible
 impl std::ops::Sub for LiteralType {
     type Output = LiteralType;
     fn sub(self, rhs: Self) -> Self::Output {
@@ -91,6 +93,7 @@ impl std::ops::Sub for LiteralType {
     }
 }
 
+///Multiplies two literal nums together
 impl std::ops::Mul for LiteralType {
     type Output = LiteralType;
     fn mul(self, rhs: Self) -> Self::Output {
@@ -99,7 +102,8 @@ impl std::ops::Mul for LiteralType {
     }
 }
 
-//Divide literals if possible
+
+///Divide literals if possible
 impl std::ops::Div for LiteralType {
     type Output = LiteralType;
     fn div(self, rhs: Self) -> Self::Output {
@@ -107,7 +111,7 @@ impl std::ops::Div for LiteralType {
     }
 }
 
-// ==, !=
+/// ==, !=
 impl PartialEq for LiteralType {
     /// For each path we extract both values and directly compare them to one another via Rust
     fn eq(&self, other: &Self) -> bool {
@@ -118,7 +122,7 @@ impl PartialEq for LiteralType {
                 Self::Boolean(right_boolean) => *left_boolean == *right_boolean,
                 _ => {
                     /*Type Mismatch*/
-                    eprintln!("Error: Type Mismatch! \n\tReturned false from a boolean while trying to check equality!");
+                    println!("Error: Type Mismatch! \n\tReturned false from a boolean while trying to check equality!");
                     false
                 }
             },
@@ -126,7 +130,7 @@ impl PartialEq for LiteralType {
                 Self::Number(right_num) => *left_num == *right_num,
                 _ => {
                     /*Type Mismatch*/
-                    eprintln!("Error: Type Mismatch! \n\tReturned false from a Number while trying to check equality!");
+                    println!("Error: Type Mismatch! \n\tReturned false from a Number while trying to check equality!");
                     false
                 }
             },
@@ -154,6 +158,7 @@ impl PartialEq for LiteralType {
     }
 }
 
+///Type Casting from Literal to Rust boolean
 impl From<LiteralType> for bool {
     fn from(value: LiteralType) -> Self {
         match value {
@@ -162,7 +167,7 @@ impl From<LiteralType> for bool {
         }
     }
 }
-
+///Type casting from literal to Rust float
 impl From<LiteralType> for f64 {
     fn from(value: LiteralType) -> Self {
         match value {
@@ -172,6 +177,7 @@ impl From<LiteralType> for f64 {
     }
 }
 
+///Type casting from Literal to Rust String 
 impl From<LiteralType> for String {
     fn from(value: LiteralType) -> Self {
         match value {
@@ -181,6 +187,7 @@ impl From<LiteralType> for String {
     }
 }
 
+///Defines helper macro for any boolean operation (Requiring 2 inputs and an operator)
 macro_rules! boolean_op {
     ($self:ident, $other:ident, $op:tt) => {
         match $self {
@@ -199,7 +206,7 @@ macro_rules! boolean_op {
     };
 }
 
-//>=, >, <=, <
+///>=, >, <=, <
 impl PartialOrd for LiteralType {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
@@ -219,6 +226,7 @@ impl PartialOrd for LiteralType {
     }
 }
 
+///Implements ordering for numeric rlux types
 impl Ord for LiteralType {
     fn cmp(&self, other: &LiteralType) -> std::cmp::Ordering {
         //Ripped Striaght from rust's own source
@@ -232,5 +240,5 @@ impl Ord for LiteralType {
     }
 }
 
-//Strange Rust things are Happening
+///Strange Rust things are Happening
 impl Eq for LiteralType {}

@@ -2,17 +2,20 @@ use crate::types::{token::Token, LiteralType};
 use std::{collections::HashMap, env::VarError, mem};
 
 #[derive(Clone, Debug)]
+///Enclosing Enviroment for Rlux runtime
 pub struct Enviroment {
     pub(crate) enclosing: Option<Box<Enviroment>>,
     pub(crate) variable_map: HashMap<String, LiteralType>,
 }
 
 impl Enviroment {
+    ///Defines a new variable and maps the value to the Literal Provided
     pub(crate) fn define(&mut self, name: Token, value: LiteralType) {
         let map = &mut self.variable_map;
         map.insert(name.lexeme, value);
     }
 
+    ///Gets a defined variable, throws a runtime error if non is found
     pub(crate) fn get(self, name: Token) -> Result<LiteralType, VarError> {
         let result = self.variable_map.get(&name.lexeme);
 
@@ -30,20 +33,8 @@ impl Enviroment {
         }
     }
 
-    fn swap_define(&mut self, name: Token, value: LiteralType) {
-        let mut temp = Enviroment {
-            enclosing: None,
-            variable_map: HashMap::new(),
-        };
 
-        mem::swap(&mut temp, self);
-
-        let map = &mut self.variable_map;
-        map.insert(name.lexeme, value);
-
-        mem::swap(&mut temp, self);
-    }
-
+    /// Assigns value to variable, may be used to redfine existing varibles
     pub(crate) fn assign(&mut self, name: Token, value: LiteralType) {
         if self.variable_map.contains_key(&name.lexeme) {
             self.variable_map.insert(name.lexeme, value);
