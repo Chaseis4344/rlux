@@ -147,27 +147,15 @@ impl Parser {
 
     fn variable_decalration(&mut self) -> Result<Statement, ParserError> {
         let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable")?;
-        let initalizer: Expression;
+        let mut initalizer: Option<Expression> = None;
 
-        if !self.match_token_type(vec![TokenType::Equal]) {
-            return Err(ParserError {
-                source: self.previous(),
-                cause: String::from("Expected '='"),
-            });
+        if self.match_token_type(vec![TokenType::Equal]) {
+            initalizer = Some(self.expression()?)
         }
 
-        let result = self.expression();
-        if result.is_err() {
-            return Err(result.unwrap_err());
-        }
-
-        initalizer = result.unwrap();
         let _ = self.consume(TokenType::Semicolon, "Expexted \";\" following statement");
 
-        let statement = VariableStatement {
-            name,
-            initalizer: Some(initalizer),
-        };
+        let statement = VariableStatement { name, initalizer };
 
         Ok(Statement::Variable(statement))
     }
