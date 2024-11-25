@@ -26,8 +26,7 @@ while(adder < 10 )
    var cde = "cde";
 }
 
-
-
 //This should throw a Runtime error - then print NIL
+print "The Below should error";
 print cde;
 print not_found_test;

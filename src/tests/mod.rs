@@ -1,9 +1,14 @@
+#[cfg(test)]
 use crate::run;
 use std::{fs, path::Path, process::exit};
 
+const PREFIX: &'static str = "./src/tests/";
+
 #[allow(dead_code)]
-fn run_file_test(filepath: String) {
-    let file_path = Path::new(&filepath);
+fn run_file_test(filepath: &str) {
+    let files = &(format!("{PREFIX}{filepath}"));
+
+    let file_path = Path::new(files);
     //println!("File Path: {}", filepath);
     if !file_path.exists() {
         println!("Please provide a valid file.");
@@ -40,18 +45,23 @@ fn run_file_test(filepath: String) {
     };
 }
 
-#[cfg(test)]
 #[test]
 fn control_test() {
-    run_file_test(String::from("./src/tests/control_test.lux"));
+    run_file_test("control_test.lux");
 }
 
 #[test]
 fn scope_test() {
-    run_file_test(String::from("./src/tests/scope_test.lux"));
+    run_file_test("scope_test.lux");
 }
 
 #[test]
 fn math_test() {
-    run_file_test(String::from("./src/tests/math_test.lux"));
+    run_file_test("math_test.lux");
+}
+
+#[test]
+
+fn for_loop_test() {
+    run_file_test("for_loop_test.lux")
 }
