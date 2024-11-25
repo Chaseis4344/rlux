@@ -119,7 +119,7 @@ impl Parser {
         if self.match_token_type(vec![TokenType::Equal]) {
             let equals = self.previous();
             let value: Expression = self.assignment()?;
-            //let value = pass_up!(value);
+
             let _ = self.consume(TokenType::Semicolon, "Expected ';' after assignement");
 
             match expression.clone() {
