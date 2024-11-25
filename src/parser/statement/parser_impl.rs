@@ -53,7 +53,6 @@ impl Parser {
         } else {
             initializer = Some(self.expression_statement()?);
         }
-        let _ = self.consume(TokenType::Semicolon, "Expect ';' after declaration part.");
 
         let mut condition: Option<Expression> = None;
         if !self.check(TokenType::Semicolon) {
