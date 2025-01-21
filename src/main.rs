@@ -7,6 +7,7 @@ use std::{
 mod enviroment;
 mod parser;
 mod scanner;
+#[cfg(test)]
 mod tests;
 mod types;
 
