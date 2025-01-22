@@ -62,7 +62,7 @@ impl Parser {
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after increment part.");
 
         let mut increment: Option<Expression> = None;
-        if !self.check(TokenType::Semicolon) {
+        if !self.check(TokenType::RightParen) {
             increment = Some(self.expression()?);
         }
 

@@ -24,6 +24,7 @@ while(adder < 10 )
 {
    adder = 1+ adder;
    var cde = "cde";
+   print adder;
 }
 
 //This should throw a Runtime error - then print NIL
