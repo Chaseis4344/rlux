@@ -40,6 +40,8 @@ impl DisplayTrait for types::TokenType {
             Self::Star => write!(f, "Star"),
             Self::Question => write!(f, "Question"),
             Self::Colon => write!(f, "Colon"),
+            Self::Comma => write!(f, "Comma"),
+
             Self::Bang => write!(f, "Bang"),
             Self::BangEqual => write!(f, "Bang Equal"),
             Self::Equal => write!(f, "Equal"),
@@ -131,6 +133,7 @@ impl DisplayTrait for crate::types::Expression {
             //TODO: IMPLEMENT BELOW
             Self::Assignment(_) => todo!(),
             Self::Logical(_) => todo!(),
+            Self::Call(_) => todo!(),
         }
     }
 }

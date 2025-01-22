@@ -48,3 +48,10 @@ pub struct Logical {
     pub(crate) right: Expression,
     pub(crate) operator: Token,
 }
+
+#[derive(Clone, Debug)]
+pub struct Call {
+    pub(crate) callee: Expression,
+    pub(crate) paren : Token,
+    pub(crate) arguments: Vec<Expression>,
+}

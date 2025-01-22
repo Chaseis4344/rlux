@@ -27,6 +27,7 @@ pub(crate) enum TokenType {
     Star,
     Question,
     Colon,
+    Comma,
 
     //One Or Two Character Tokens
     Bang,
@@ -74,6 +75,7 @@ pub enum Expression {
     Literal(Box<expression::Literal>),
     Variable(Box<expression::Variable>),
     Assignment(Box<expression::Assignment>),
+    Call(Box<expression::Call>),
 }
 
 #[derive(Clone)]

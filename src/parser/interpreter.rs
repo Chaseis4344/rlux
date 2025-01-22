@@ -24,6 +24,7 @@ trait ExpressionVisitor<T> {
     fn visit_variable(&mut self, var: Box<&mut Variable>) -> T;
     fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> T;
     fn visit_logical(&mut self, logical: Box<&mut Logical>) -> T;
+    fn visit_call(&mut self, call: Box<&mut Call>) -> T;
 }
 
 trait Visitable<T> {
@@ -41,6 +42,7 @@ impl Visitable<LiteralType> for Expression {
             Expression::Variable(var) => var.accept(visitor),
             Expression::Assignment(assign) => assign.accept(visitor),
             Expression::Logical(logic) => logic.accept(visitor),
+            Expression::Call(call) => call.accept(visitor),
         }
     }
 }
@@ -53,6 +55,7 @@ visitable_trait! {LiteralType,Ternary,Expression}
 visitable_trait! {LiteralType,Variable,Expression}
 visitable_trait! {LiteralType,Assignment,Expression}
 visitable_trait! {LiteralType,Logical,Expression}
+visitable_trait! {LiteralType,Call,Expression}
 
 pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
@@ -200,5 +203,13 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
 
         //traverse it otherwise
         self.evaluate(&mut logical.right)
+    }
+    fn visit_call(&mut self, call: Box<&mut Call>) -> LiteralType {
+       let callee = self.evaluate(&mut call.callee);
+
+       let mut arguments = vec![];
+       for arg in call.arguments {
+            arguments.push(arg);
+       }
     }
 }

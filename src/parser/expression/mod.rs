@@ -1,5 +1,5 @@
 use crate::parser::Parser;
-use crate::types::{expression::*, Expression, LiteralType, ParserError, TokenType};
+use crate::types::{expression::*, Expression, LiteralType, ParserError, TokenType, token::Token};
 
 //These macros create new types of expressions, this is so the code is understandable
 
@@ -11,6 +11,17 @@ macro_rules! new_ternary {
             right: $rhs,
         }))
     };
+}
+
+macro_rules! new_call {
+    ($callee:expr, $paren:expr, $arguments: expr) => (
+
+        Expression::Call(Box::new(Call {
+            callee: $callee,
+            paren: $paren,
+            arguments: $arguments,
+        }))
+    )
 }
 
 macro_rules! new_logical {
@@ -193,16 +204,54 @@ impl Parser {
     }
 
     fn unary(&mut self) -> Result<Expression, ParserError> {
+        let mut expression = self.call()?;
+        
         if self.match_token_type(vec![TokenType::Bang, TokenType::Minus]) {
+
             let operator = self.previous();
             let right = self.unary()?;
             return Ok(new_unary!(operator, right));
         }
+        
+        Ok(expression)
+    }
 
-        match self.primary() {
+    fn finish_call(&mut self, callee: Expression) -> Result<Expression, ParserError> {
+        let mut arguments: Vec<Expression> = vec![];
+        if !self.check(TokenType::RightParen) {
+            //Secretly a do while
+            while {
+                //Body
+                arguments.push(self.expression()?);
+                
+                //Then Eval Condition
+                self.match_token_type(vec![TokenType::Comma])
+            }{};
+        }
+
+        let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
+    
+        return Ok(new_call!(callee, paren, arguments)) ;  
+
+    }
+
+    fn call(&mut self) -> Result<Expression, ParserError> {
+        let mut expression = self.primary();
+
+       let ret_value = match self.primary() {
             Ok(expression) => Ok(expression),
             Err(err) => Err(Self::error(self.peek(), &format!("Eval error: {}", err))),
+        };
+
+        loop {
+            if self.match_token_type(vec![TokenType::LeftParen]) {
+                expression = self.finish_call(expression.expect("Expression Expected, ParserError Found"));
+            } else {
+                break;
+            }
         }
+
+        return ret_value;
     }
 
     fn primary(&mut self) -> Result<Expression, ParserError> {
