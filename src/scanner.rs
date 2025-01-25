@@ -196,7 +196,7 @@ impl Scanner {
 
         return new_literal!(
             TokenType::String,
-            result.clone(),
+            result.to_owned(),
             LiteralType::String(result),
             self.line
         );
@@ -289,7 +289,7 @@ impl Scanner {
 
         return new_literal!(
             TokenType::Number,
-            result_string.clone(),
+            result_string.to_owned(),
             LiteralType::Number(result_string.parse::<f64>().unwrap()),
             self.line
         );

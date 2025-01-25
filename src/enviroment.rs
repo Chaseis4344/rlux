@@ -1,5 +1,5 @@
 use crate::types::{token::Token, LiteralType};
-use std::{collections::HashMap, env::VarError, mem};
+use std::{collections::HashMap, env::VarError};
 
 #[derive(Clone, Debug)]
 ///Enclosing Enviroment for Rlux runtime
@@ -32,7 +32,6 @@ impl Enviroment {
             }
         }
     }
-
 
     /// Assigns value to variable, may be used to redfine existing varibles
     pub(crate) fn assign(&mut self, name: Token, value: LiteralType) {

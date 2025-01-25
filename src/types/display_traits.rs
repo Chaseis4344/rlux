@@ -13,7 +13,7 @@ impl DisplayTrait for types::LiteralType {
             Self::Boolean(val) => write!(f, "{}", val),
             Self::String(string) => write!(f, "{}", string),
             Self::Nil => write!(f, "NIL"),
-            Self::Callable(call) => write!(f, "{}", call)
+            Self::Callable(call) => write!(f, "{}", call),
         }
     }
 }
@@ -140,7 +140,6 @@ impl DisplayTrait for crate::types::Expression {
 }
 
 impl std::fmt::Display for types::expression::Callable {
-
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }

@@ -26,32 +26,32 @@ pub struct Binary {
     pub(crate) right: Expression,
 }
 
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Grouping {
     pub(crate) expression: Expression,
 }
 
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Variable {
     pub(crate) name: Token,
 }
 
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Assignment {
     pub(crate) name: Token,
     pub(crate) value: Expression,
 }
 
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Logical {
     pub(crate) left: Expression,
     pub(crate) right: Expression,
     pub(crate) operator: Token,
 }
 
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Callable {
     pub(crate) callee: Expression,
-    pub(crate) paren : Box<Token>,
+    pub(crate) paren: Box<Token>,
     pub(crate) arguments: Vec<Expression>,
 }

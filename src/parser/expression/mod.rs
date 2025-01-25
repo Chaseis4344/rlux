@@ -1,5 +1,5 @@
 use crate::parser::Parser;
-use crate::types::{expression::*, Expression, LiteralType, ParserError, TokenType, token::Token};
+use crate::types::{expression::*, token::Token, Expression, LiteralType, ParserError, TokenType};
 
 //These macros create new types of expressions, this is so the code is understandable
 
@@ -14,14 +14,13 @@ macro_rules! new_ternary {
 }
 
 macro_rules! new_call {
-    ($callee:expr, $paren:expr, $arguments: expr) => (
-
+    ($callee:expr, $paren:expr, $arguments: expr) => {
         Expression::Callable(Box::new(Callable {
             callee: $callee,
             paren: Box::new($paren),
             arguments: $arguments,
         }))
-    )
+    };
 }
 
 macro_rules! new_logical {
@@ -204,26 +203,24 @@ impl Parser {
     }
 
     fn unary(&mut self) -> Result<Expression, ParserError> {
-        let mut expression = self.call()?;
-        
-        if self.match_token_type(vec![TokenType::Bang, TokenType::Minus]) {
+        let expression = self.call()?;
 
+        if self.match_token_type(vec![TokenType::Bang, TokenType::Minus]) {
             let operator = self.previous();
             let right = self.unary()?;
             return Ok(new_unary!(operator, right));
         }
-        
+
         Ok(expression)
     }
-
 
     fn call(&mut self) -> Result<Expression, ParserError> {
         let mut expression = self.primary();
 
-
         loop {
             if self.match_token_type(vec![TokenType::LeftParen]) {
-                expression = self.finish_call(expression.expect("Expression Expected, ParserError Found"));
+                expression =
+                    self.finish_call(expression.expect("Expression Expected, ParserError Found"));
             } else {
                 break;
             }
@@ -231,27 +228,24 @@ impl Parser {
 
         return expression;
     }
-    
-    fn finish_call(&mut self, callee: Expression) -> Result<Expression, ParserError> {
 
+    fn finish_call(&mut self, callee: Expression) -> Result<Expression, ParserError> {
         let mut arguments: Vec<Expression> = vec![];
         if !self.check(TokenType::RightParen) {
             //Secretly a do while
             while {
                 //Body
                 arguments.push(self.expression()?);
-                
+
                 //Then Eval Condition
                 self.match_token_type(vec![TokenType::Comma])
-            }{};
+            } {}
         }
 
         let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
-    
-        return Ok(new_call!(callee, paren, arguments)) ;  
 
+        return Ok(new_call!(callee, paren, arguments));
     }
-
 
     fn primary(&mut self) -> Result<Expression, ParserError> {
         if self.match_token_type(vec![
@@ -274,10 +268,12 @@ impl Parser {
                     new_literal!(LiteralType::Boolean(boolean))
                 }
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
-                LiteralType::Callable(call) => return Err(ParserError {
-                    source: *call.paren,
-                    cause: String::from("Cannot Evaluate a function from primary!")
-                }),
+                LiteralType::Callable(call) => {
+                    return Err(ParserError {
+                        source: *call.paren,
+                        cause: String::from("Cannot Evaluate a function from primary!"),
+                    })
+                }
             };
 
             return Ok(return_val);

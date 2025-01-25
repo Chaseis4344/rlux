@@ -1,6 +1,10 @@
 var a = 1;
 {
+
   var a = a + 2;
-  print a;
+  print "Expected: 3";
+  print "Actual: "+a;
+  print"";
 }
-print a;
+print "Expected: 1";
+print "Actual: "+a;

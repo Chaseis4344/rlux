@@ -21,3 +21,9 @@ This project is by no means professional. I will not and do not work on it for a
 ## Contact
 
 You can reach me at [mctownsend2002@gmail.com](mailto:mctownsend2002@gmail.com).
+
+## Last Test Results
+My custom testing suite can be found in ./src/tests/ and is run with cargo t, use --show-output to see Runtime errors in the code from *.lux files
+```
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+```

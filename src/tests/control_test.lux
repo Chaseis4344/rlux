@@ -23,11 +23,11 @@ if (tern -6 > 0 and vardoolean)
 while(adder < 10 )
 {
    adder = 1+ adder;
-   var cde = "cde";
+   var while_loop_scope_test = "while_loop_scope_test failed";
    print adder;
 }
 
 //This should throw a Runtime error - then print NIL
 print "The Below should error";
-print cde;
+print while_loop_scope_test;
 print not_found_test;

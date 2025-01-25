@@ -1,8 +1,5 @@
-use std::collections::HashMap;
-
 use super::interpreter::Interpreter;
 use super::{LiteralType, ParserError, TokenType};
-use crate::enviroment::{self, Enviroment};
 use crate::types::statement::*;
 use crate::types::Expression;
 

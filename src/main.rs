@@ -13,7 +13,7 @@ mod types;
 
 #[allow(unused)]
 
-///Sends error report to user with specific additonal details
+///Sends runtime error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Error {
     eprintln!(" [Line {}] Error{}: {}", line, place, message);
     let return_err = Error::new(
@@ -131,7 +131,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     match args.len() {
-        2 => run_file(args[1].clone()),
+        2 => run_file(args[1].to_owned()),
         1 => run_prompt(),
         _ => {
             println!("Usage: rlux [script]");
