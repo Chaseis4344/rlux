@@ -16,9 +16,9 @@ macro_rules! new_ternary {
 macro_rules! new_call {
     ($callee:expr, $paren:expr, $arguments: expr) => (
 
-        Expression::Call(Box::new(Call {
+        Expression::Callable(Box::new(Callable {
             callee: $callee,
-            paren: $paren,
+            paren: Box::new($paren),
             arguments: $arguments,
         }))
     )
@@ -216,7 +216,24 @@ impl Parser {
         Ok(expression)
     }
 
+
+    fn call(&mut self) -> Result<Expression, ParserError> {
+        let mut expression = self.primary();
+
+
+        loop {
+            if self.match_token_type(vec![TokenType::LeftParen]) {
+                expression = self.finish_call(expression.expect("Expression Expected, ParserError Found"));
+            } else {
+                break;
+            }
+        }
+
+        return expression;
+    }
+    
     fn finish_call(&mut self, callee: Expression) -> Result<Expression, ParserError> {
+
         let mut arguments: Vec<Expression> = vec![];
         if !self.check(TokenType::RightParen) {
             //Secretly a do while
@@ -235,24 +252,6 @@ impl Parser {
 
     }
 
-    fn call(&mut self) -> Result<Expression, ParserError> {
-        let mut expression = self.primary();
-
-       let ret_value = match self.primary() {
-            Ok(expression) => Ok(expression),
-            Err(err) => Err(Self::error(self.peek(), &format!("Eval error: {}", err))),
-        };
-
-        loop {
-            if self.match_token_type(vec![TokenType::LeftParen]) {
-                expression = self.finish_call(expression.expect("Expression Expected, ParserError Found"));
-            } else {
-                break;
-            }
-        }
-
-        return ret_value;
-    }
 
     fn primary(&mut self) -> Result<Expression, ParserError> {
         if self.match_token_type(vec![
@@ -275,6 +274,10 @@ impl Parser {
                     new_literal!(LiteralType::Boolean(boolean))
                 }
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
+                LiteralType::Callable(call) => return Err(ParserError {
+                    source: *call.paren,
+                    cause: String::from("Cannot Evaluate a function from primary!")
+                }),
             };
 
             return Ok(return_val);

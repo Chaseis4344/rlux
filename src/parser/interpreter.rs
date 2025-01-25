@@ -1,7 +1,8 @@
 use super::Statement;
 use crate::enviroment::Enviroment;
 use crate::types::expression::*;
-use crate::types::{Expression, LiteralType, TokenType};
+use crate::types::{Expression, LiteralType, TokenType, functional_traits::*};
+use crate::types::functional_traits::CallableTrait;
 use std::collections::HashMap;
 use std::mem;
 
@@ -24,7 +25,7 @@ trait ExpressionVisitor<T> {
     fn visit_variable(&mut self, var: Box<&mut Variable>) -> T;
     fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> T;
     fn visit_logical(&mut self, logical: Box<&mut Logical>) -> T;
-    fn visit_call(&mut self, call: Box<&mut Call>) -> T;
+    fn visit_callable(&mut self, call: Box<&mut Callable>) -> T;
 }
 
 trait Visitable<T> {
@@ -42,7 +43,7 @@ impl Visitable<LiteralType> for Expression {
             Expression::Variable(var) => var.accept(visitor),
             Expression::Assignment(assign) => assign.accept(visitor),
             Expression::Logical(logic) => logic.accept(visitor),
-            Expression::Call(call) => call.accept(visitor),
+            Expression::Callable(call) => call.accept(visitor),
         }
     }
 }
@@ -55,11 +56,13 @@ visitable_trait! {LiteralType,Ternary,Expression}
 visitable_trait! {LiteralType,Variable,Expression}
 visitable_trait! {LiteralType,Assignment,Expression}
 visitable_trait! {LiteralType,Logical,Expression}
-visitable_trait! {LiteralType,Call,Expression}
+visitable_trait! {LiteralType,Callable,Expression}
 
 pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
 }
+
+// fun -> LiteralType | fun
 
 impl Interpreter {
     pub(crate) fn evaluate(&mut self, expr: &mut Expression) -> LiteralType {
@@ -204,12 +207,24 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         //traverse it otherwise
         self.evaluate(&mut logical.right)
     }
-    fn visit_call(&mut self, call: Box<&mut Call>) -> LiteralType {
-       let callee = self.evaluate(&mut call.callee);
+    fn visit_callable(&mut self, call: Box<&mut Callable>) -> LiteralType {
+        let (mut paren,mut callee,mut arguments) = (call.paren.clone(), call.callee.clone(), call.arguments.clone());
+       let mut callee: LiteralType = self.evaluate(&mut callee);
 
-       let mut arguments = vec![];
-       for arg in call.arguments {
-            arguments.push(arg);
+
+       let mut ret_arguments: Vec<Expression> = vec![];
+       for arg in arguments {
+            ret_arguments.push(arg);
        }
+
+       let function: crate::types::expression::Callable;
+       match callee {
+           LiteralType::Callable(ref func) =>{
+                function = func.clone();
+           },
+           _ => {crate::error(call.paren.line, String::from("Cannot call a non-callable function"));},
+       }
+        let mut call_result = callee.call(self,ret_arguments); 
+       return self.evaluate(&mut call_result);
     }
 }

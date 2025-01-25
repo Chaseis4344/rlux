@@ -9,6 +9,7 @@ pub(crate) enum LiteralType {
     Number(f64),
     Boolean(bool),
     String(String),
+    Callable(expression::Callable),
     Nil, //This will be wrapped in an option,
 }
 
@@ -65,7 +66,7 @@ pub(crate) enum TokenType {
     Eof,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Expression {
     Grouping(Box<expression::Grouping>),
     Logical(Box<expression::Logical>),
@@ -75,7 +76,7 @@ pub enum Expression {
     Literal(Box<expression::Literal>),
     Variable(Box<expression::Variable>),
     Assignment(Box<expression::Assignment>),
-    Call(Box<expression::Call>),
+    Callable(Box<expression::Callable>),
 }
 
 #[derive(Clone)]

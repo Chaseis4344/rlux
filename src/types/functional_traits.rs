@@ -1,5 +1,5 @@
-use crate::types::{LiteralType, TokenType};
-
+use crate::types::{LiteralType, TokenType, Expression};
+use crate::parser::interpreter::Interpreter;
 ///Defines an operation to be performed with 2 numbers, the operand is passed into $op
 macro_rules! number_op {
     ($self:expr, $rhs:expr, $op:tt) => {
@@ -27,6 +27,17 @@ macro_rules! number_op {
 
     };
 }
+
+pub(crate) trait CallableTrait {
+    fn call(&mut self, interpreter:&mut Interpreter, arguments: Vec<Expression>) -> Expression;
+}
+
+impl crate::types::functional_traits::CallableTrait for LiteralType {
+    fn call(&mut self, interpreter:&mut Interpreter, arguments: Vec<Expression>) -> Expression {
+        todo!()
+    }
+}
+
 
 impl PartialEq for TokenType {
     ///Uses String Comparison to compare two Tokens
@@ -68,6 +79,8 @@ impl std::ops::Add for LiteralType {
                 Self::Boolean(boolean) => LiteralType::String(left_string + &boolean.to_string()),
                 Self::Number(num) => LiteralType::String(left_string + &num.to_string()),
                 Self::Nil => LiteralType::String(left_string + &Self::Nil.to_string()),
+                Self::Callable(right_string) => {eprintln!("Error: Type Mismatch! \n\tCannot add {} function to {}!", right_string.to_string(), left_string);
+                        LiteralType::String(String::from("Function"))},
             },
 
             /*
@@ -150,6 +163,21 @@ impl PartialEq for LiteralType {
                 Self::Nil => true,
                 _ => false,
             }, //  _ => false, //Error left not number or boolean
+            Self::Callable(left_func) => match other {
+                Self::Callable(right_func) => {
+                    if left_func.to_string() == right_func.to_string()
+                    {
+                        true
+                    } else 
+                    {
+                        false
+                    }
+                },
+                _ => {
+                    println!("Error: Type Mismatch! \n\t Cannot Compare a function to a non-function"); 
+                    false
+                }
+            }
         }
     }
 
