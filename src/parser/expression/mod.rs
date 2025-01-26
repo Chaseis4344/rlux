@@ -268,9 +268,9 @@ impl Parser {
                     new_literal!(LiteralType::Boolean(boolean))
                 }
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
-                LiteralType::Callable(call) => {
+                LiteralType::Callable{data,methods} => {
                     return Err(ParserError {
-                        source: *call.paren,
+                        source: *data.paren,
                         cause: String::from("Cannot Evaluate a function from primary!"),
                     })
                 }

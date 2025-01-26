@@ -219,8 +219,8 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
 
         let function: crate::types::expression::Callable;
         match callee {
-            LiteralType::Callable(ref func) => {
-                function = func.clone();
+            LiteralType::Callable{data: ref call_data, methods: call_methods} => {
+                function = call_data.clone();
             }
             _ => {
                 crate::error(

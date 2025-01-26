@@ -41,15 +41,14 @@ impl StatementVisitor for Interpreter {
     }
 
     fn visit_variable_statement(&mut self, var: Box<&mut VariableStatement>) -> Statement {
-        let init: LiteralType;
-
+        let init: LiteralType =
         if var.initalizer.is_some() {
-            init = self.evaluate(&mut var.initalizer.as_mut().unwrap());
+            self.evaluate(&mut var.initalizer.as_mut().unwrap())
         } else {
-            init = LiteralType::Nil;
-        }
+            LiteralType::Nil
+        };
 
-        self.enviroment.define(var.name.clone(), init);
+        self.enviroment.define(var.name.clone(), init.to_owned());
 
         let clone = var.clone();
         Statement::Variable(VariableStatement {
