@@ -1,9 +1,9 @@
 use super::Statement;
 use crate::enviroment::Enviroment;
 use crate::types::expression::*;
-use crate::types::functional_traits::CallableTrait;
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
+use crate::types::functional_traits::Callable as CallableTrait;
 
 macro_rules! visitable_trait {
     ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
@@ -214,22 +214,32 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         //Taking Ownership here isn't a bad thing because we are decomposing to produce an output,
         //plus the original data is still stored in a file
         let deref = call.to_owned();
-        let (paren, mut callee, arguments) = (deref.paren, deref.callee, deref.arguments);
+        let (paren, mut callee, mut arguments) = (deref.paren, deref.callee, deref.arguments);
         let mut callee: LiteralType = self.evaluate(&mut callee);
 
-        let function: crate::types::expression::Callable;
+        let mut eval_args = vec![];
+        for mut argument in &mut arguments {
+            eval_args.push(self.evaluate(&mut argument));
+        }
+
+        let mut function: Option<crate::types::expression::Callable>;
         match callee {
             LiteralType::Callable(ref func) => {
-                function = func.clone();
+                function = Some(func.clone());
             }
             _ => {
                 crate::error(
                     paren.line,
                     String::from("Cannot call a non-callable function"),
                 );
+                function = None;
             }
         }
-        let mut call_result = callee.call(self, arguments);
-        return self.evaluate(&mut call_result);
+        if function.is_some(){
+            let mut call_result = function.expect("Expected a function").call(self, arguments);
+            return self.evaluate(&mut call_result);
+        } else {
+            return LiteralType::Nil;
+        }
     }
 }

@@ -28,11 +28,11 @@ macro_rules! number_op {
     };
 }
 
-pub(crate) trait CallableTrait {
+pub(crate) trait Callable {
     fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Expression;
 }
 
-impl crate::types::functional_traits::CallableTrait for LiteralType {
+impl crate::types::functional_traits::Callable for super::expression::Callable {
     fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Expression {
         todo!()
     }
