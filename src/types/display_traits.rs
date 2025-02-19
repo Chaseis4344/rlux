@@ -13,7 +13,7 @@ impl DisplayTrait for types::LiteralType {
             Self::Boolean(val) => write!(f, "{}", val),
             Self::String(string) => write!(f, "{}", string),
             Self::Nil => write!(f, "NIL"),
-            Self::Callable(function) => write!(f, "{}", function),
+            Self::Callable(function) => write!(f, "{:?}", function),
         }
     }
 }
@@ -75,6 +75,12 @@ impl DisplayTrait for types::TokenType {
             Self::Eof => write!(f, "Eof"),
         }
     }
+}
+
+impl DisplayTrait for crate::types::expression::Callable {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f,"Callable at {} ", self.paren.line)
+        }
 }
 
 impl Error for types::ParserError {

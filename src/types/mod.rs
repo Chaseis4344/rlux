@@ -9,7 +9,7 @@ pub(crate) enum LiteralType {
     Number(f64),
     Boolean(bool),
     String(String),
-    Callable(&mut expression::Callable),
+    Callable(expression::Callable),
     Nil, //This will be wrapped in an option,
 }
 
