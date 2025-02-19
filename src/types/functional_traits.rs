@@ -28,12 +28,12 @@ macro_rules! number_op {
     };
 }
 
-pub(crate) trait CallableTrait: std::fmt::Debug {
-    fn arity(&mut self) -> u64;
+
+pub(crate) trait Callable {
     fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Expression;
 }
 
-impl crate::types::functional_traits::CallableTrait for LiteralType<'_> {
+impl crate::types::functional_traits::Callable for super::expression::Callable {
     fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Expression {
        match self {
            LiteralType::Callable{data,methods} =>{todo!()},
