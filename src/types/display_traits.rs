@@ -6,14 +6,14 @@ use super::RuntimeError;
 
 //Token Display implementation moved to token.rs because of private field implementation
 
-impl DisplayTrait for types::LiteralType<'_> {
+impl DisplayTrait for types::LiteralType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Number(num) => write!(f, "{}", num),
             Self::Boolean(val) => write!(f, "{}", val),
             Self::String(string) => write!(f, "{}", string),
             Self::Nil => write!(f, "NIL"),
-            Self::Callable{data,methods} => write!(f, "{}", data),
+            Self::Callable(function) => write!(f, "{}", function),
         }
     }
 }
@@ -139,8 +139,3 @@ impl DisplayTrait for crate::types::Expression {
     }
 }
 
-impl std::fmt::Display for types::expression::Callable {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
-    }
-}

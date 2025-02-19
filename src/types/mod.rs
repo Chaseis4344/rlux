@@ -5,11 +5,11 @@ pub(crate) mod statement;
 pub(crate) mod token;
 
 #[derive(Clone, Debug)]
-pub(crate) enum LiteralType<'func> {
+pub(crate) enum LiteralType {
     Number(f64),
     Boolean(bool),
     String(String),
-    Callable{data: expression::Callable, methods: &'func dyn functional_traits::CallableTrait},
+    Callable(&mut expression::Callable),
     Nil, //This will be wrapped in an option,
 }
 
