@@ -1,5 +1,5 @@
 var vardoolean = true;
-var tern = false ? 5 : 10;
+var tern =  10;
 var threshold =5;
 var _arg = 4/2;
 var adder = 5;
@@ -12,7 +12,9 @@ if (_arg> threshold or _arg ==1)
 else  
     print "Lesser";
 
-if (tern -6 > 0 and vardoolean)
+print (tern -6)> 0;
+
+if (tern - 6 > 0 and vardoolean)
 {
     print "Let's Print!"; //Should Print
 } else 

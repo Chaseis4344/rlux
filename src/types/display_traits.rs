@@ -82,11 +82,6 @@ impl DisplayTrait for types::TokenType {
     }
 }
 
-impl DisplayTrait for crate::types::expression::Callable {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f,"Callable at {} ", self.paren.line)
-        }
-}
 
 impl Error for types::ParserError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {

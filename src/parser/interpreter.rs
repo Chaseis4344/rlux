@@ -4,6 +4,7 @@ use crate::types::expression::*;
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
 use crate::types::functional_traits::Callable as CallableTrait;
+use crate::types::expression::Callable as Callable;
 
 macro_rules! visitable_trait {
     ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
@@ -222,7 +223,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             eval_args.push(self.evaluate(&mut argument));
         }
 
-        let mut function: Option<crate::types::expression::Callable>;
+        let mut function: Option<Callable>;
         match callee {
             LiteralType::Callable(ref func) => {
                 function = Some(func.clone());
@@ -236,7 +237,14 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             }
         }
         if function.is_some(){
-            let mut call_result = function.expect("Expected a function").call(self, arguments);
+            let mut function: Callable = function.expect("Was checked before unwrapping, should be something");
+            let arity: u64 = function.arity();
+            let got_len: u64 = eval_args.len() as u64;
+            if  arity != got_len {
+                crate::error(paren.line, format!("Expected: {} Got: {}", arity,got_len));
+            }
+
+            let mut call_result = function.call(self, arguments);
             return self.evaluate(&mut call_result);
         } else {
             return LiteralType::Nil;

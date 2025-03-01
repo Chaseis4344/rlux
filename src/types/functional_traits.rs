@@ -31,7 +31,6 @@ macro_rules! number_op {
 
 pub(crate) trait Callable {
     fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Expression;
-
     fn arity(&mut self) -> u64;
 }
 

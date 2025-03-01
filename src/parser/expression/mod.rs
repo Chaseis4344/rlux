@@ -203,15 +203,15 @@ impl Parser {
     }
 
     fn unary(&mut self) -> Result<Expression, ParserError> {
-        let expression = self.call()?;
-
         if self.match_token_type(vec![TokenType::Bang, TokenType::Minus]) {
             let operator = self.previous();
             let right = self.unary()?;
-            return Ok(new_unary!(operator, right));
+            let expression =(new_unary!(operator, right));
+            println!("{}",expression.clone());
+            return Ok(expression);
         }
 
-        Ok(expression)
+        Ok(self.call()?)
     }
 
     fn call(&mut self) -> Result<Expression, ParserError> {
