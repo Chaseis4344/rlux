@@ -1,6 +1,7 @@
 mod display_traits;
 pub(crate) mod expression;
-pub(crate) mod functional_traits;
+pub(crate) mod lux_functions;
+pub(crate) mod math_traits;
 pub(crate) mod statement;
 pub(crate) mod token;
 

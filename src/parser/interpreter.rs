@@ -3,7 +3,7 @@ use crate::enviroment::Enviroment;
 use crate::types::expression::*;
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
-use crate::types::functional_traits::Callable as CallableTrait;
+use crate::types::lux_functions::Callable as CallableTrait;
 use crate::types::expression::Callable as Callable;
 
 macro_rules! visitable_trait {
@@ -60,6 +60,7 @@ visitable_trait! {LiteralType,Callable,Expression}
 
 pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
+    pub(crate) globals: Enviroment,
 }
 
 // fun -> LiteralType | fun
@@ -70,11 +71,12 @@ impl Interpreter {
     }
     pub(crate) fn new() -> Interpreter {
         let map = HashMap::new();
-        let enviroment = Box::new(Enviroment {
+        let globals = Enviroment {
             enclosing: None,
             variable_map: map,
-        });
-        Interpreter { enviroment }
+        };
+        let enviroment = Box::new(globals.clone());
+        Interpreter { enviroment, globals }
     }
     pub(crate) fn interpret(&mut self, statements: Vec<Statement>) {
         for statement in statements {

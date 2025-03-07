@@ -20,12 +20,11 @@ print "true = "+vardoolean;
 print "5 = "+threshold;
 print "1+0-5 = "+adder;
 
-print "Comparison Test:";
-print 1>0;
-print 1<0;
-print 1>=0;
+print "tern + 5 >=10: ";
 print tern + 5 >= 10;
+print "tern: "
 print tern;
+print "tern-=5 then tern-1:";
 tern = tern -5;
 print tern-1;
 print (tern-1) >0;
