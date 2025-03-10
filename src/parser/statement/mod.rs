@@ -10,28 +10,28 @@ pub(crate) trait Visitable<T, U> {
 }
 
 trait StatementVisitor {
-    fn visit_print_statement(&mut self, print: Box<&mut PrintStatement>) -> Statement;
+    fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement;
     fn visit_expression_statement(
         &mut self,
-        expression: Box<&mut ExpressionStatement>,
+        expression: &mut ExpressionStatement,
     ) -> Statement;
-    fn visit_variable_statement(&mut self, var: Box<&mut VariableStatement>) -> Statement;
-    fn visit_if_statement(&mut self, if_statement: Box<&mut IfStatement>) -> Statement;
-    fn visit_while_statement(&mut self, while_statement: Box<&mut WhileStatement>) -> Statement;
-    fn visit_block_statement(&mut self, block_statement: Box<&mut BlockStatement>) -> Statement;
+    fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement;
+    fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement;
+    fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement;
+    fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement;
 }
 
 impl StatementVisitor for Interpreter {
     fn visit_expression_statement(
         &mut self,
-        expression: Box<&mut ExpressionStatement>,
+        expression: &mut ExpressionStatement,
     ) -> Statement {
         self.evaluate(&mut expression.expression);
         Statement::Print(PrintStatement {
             expression: expression.expression.clone(),
         })
     }
-    fn visit_print_statement(&mut self, print: Box<&mut PrintStatement>) -> Statement {
+    fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement {
         let expression = self.evaluate(&mut print.expression);
 
         println!("{}", expression);
@@ -40,7 +40,7 @@ impl StatementVisitor for Interpreter {
         })
     }
 
-    fn visit_variable_statement(&mut self, var: Box<&mut VariableStatement>) -> Statement {
+    fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement {
         let init: LiteralType =
         if var.initalizer.is_some() {
             self.evaluate(&mut var.initalizer.as_mut().unwrap())
@@ -56,7 +56,7 @@ impl StatementVisitor for Interpreter {
             initalizer: clone.initalizer,
         })
     }
-    fn visit_if_statement(&mut self, if_statement: Box<&mut IfStatement>) -> Statement {
+    fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement {
         let unboxed = if_statement.to_owned();
         let return_thing = unboxed.clone();
         let mut condition = unboxed.condition;
@@ -77,7 +77,7 @@ impl StatementVisitor for Interpreter {
         Statement::If(return_thing)
     }
 
-    fn visit_while_statement(&mut self, while_statement: Box<&mut WhileStatement>) -> Statement {
+    fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement {
         let unboxed = while_statement.to_owned();
         let return_thing = unboxed.clone();
         let mut condition = unboxed.condition;
@@ -90,7 +90,7 @@ impl StatementVisitor for Interpreter {
         Statement::While(return_thing)
     }
 
-    fn visit_block_statement(&mut self, block_statement: Box<&mut BlockStatement>) -> Statement {
+    fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement {
         self.execute_block(block_statement.statements.to_owned());
 
         Statement::Block(block_statement.to_owned())
@@ -116,7 +116,7 @@ macro_rules! visitable_trait {
             paste::paste! {
                 #[doc = "Redirect Visitors to `" $enum_variant "` version."]
                 fn accept(&mut self, visitor: &mut $enum_parent) -> $trait_type1 {
-                    paste::item! {visitor.[<visit_ $enum_variant:snake:lower>](Box::new(self))}
+                    paste::item! {visitor.[<visit_ $enum_variant:snake:lower>](self)}
                 }
             }
         }
