@@ -31,6 +31,7 @@ macro_rules! new_literal {
     };
 }
 
+#[allow(clippy::manual_range_contains)]
 impl Scanner {
     pub fn new(source: String, current: Option<u32>, line: Option<u32>) -> Scanner {
         init_value!(current, 0);
@@ -319,17 +320,15 @@ impl Scanner {
         while !self.is_at_end() {
             //let current_char: char = self.source.as_bytes()[i] as char;
             //let next_char: char = self.source.as_bytes()[i + 1] as char;
-            match self.scan_token() {
-                Some(current_token) => {
+            if let Some(current_token) = self.scan_token() {
                     tokens.push(current_token);
-                }
-                None => {}
             };
         }
-        return tokens;
+        tokens
     }
 }
 
+#[allow(clippy::manual_range_contains)]
 pub(crate) fn is_ascii_num(ch: char) -> bool {
     ch >= '0' && ch <= '9'
 }

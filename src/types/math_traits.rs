@@ -34,10 +34,6 @@ impl PartialEq for TokenType {
         self.to_string() == rhs.to_string()
     }
 
-    ///Uses self.eq to test equality
-    fn ne(&self, other: &Self) -> bool {
-        !self.eq(other)
-    }
 }
 
 ///Add Literals Together if possible, concatonate if string
@@ -118,7 +114,7 @@ impl std::ops::Div for LiteralType {
     }
 }
 
-/// ==, !=
+/// ==, != is derived
 impl PartialEq for LiteralType {
     /// For each path we extract both values and directly compare them to one another via Rust
     fn eq(&self, other: &Self) -> bool {
@@ -153,15 +149,9 @@ impl PartialEq for LiteralType {
                 }
             }
             //If both are Nil, true else false
-            Self::Nil => match other {
-                Self::Nil => true,
-                _ => false,
-            },   _ => false, //Error left not number or boolean
+            Self::Nil => matches!(other,Self::Nil),
+            Self::Callable(_) => todo!(),
         }
-    }
-
-    fn ne(&self, other: &Self) -> bool {
-        !(self == other)
     }
 }
 

@@ -10,22 +10,22 @@ macro_rules! visitable_trait {
     ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
         impl Visitable<$trait_type> for $enum_variant {
             fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<$trait_type>) -> $trait_type {
-                paste::item! {visitor.[<visit_ $enum_variant:lower>](Box::new(self))}
+                paste::item! {visitor.[<visit_ $enum_variant:lower>](self)}
             }
         }
     };
 }
 
 trait ExpressionVisitor<T> {
-    fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> T;
-    fn visit_binary(&mut self, bin: Box<&mut Binary>) -> T;
-    fn visit_unary(&mut self, unary: Box<&mut Unary>) -> T;
-    fn visit_literal(&mut self, lit: Box<&mut Literal>) -> T;
-    fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> T;
-    fn visit_variable(&mut self, var: Box<&mut Variable>) -> T;
-    fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> T;
-    fn visit_logical(&mut self, logical: Box<&mut Logical>) -> T;
-    fn visit_callable(&mut self, call: Box<&mut Callable>) -> T;
+    fn visit_grouping(&mut self, group: &mut Grouping) -> T;
+    fn visit_binary(&mut self, bin: &mut Binary) -> T;
+    fn visit_unary(&mut self, unary: &mut Unary) -> T;
+    fn visit_literal(&mut self, lit: &mut Literal) -> T;
+    fn visit_ternary(&mut self, tern: &mut Ternary) -> T;
+    fn visit_variable(&mut self, var: &mut Variable) -> T;
+    fn visit_assignment(&mut self, assign: &mut Assignment) -> T;
+    fn visit_logical(&mut self, logical: &mut Logical) -> T;
+    fn visit_callable(&mut self, call: &mut Callable) -> T;
 }
 
 trait Visitable<T> {
@@ -109,7 +109,7 @@ impl Interpreter {
 
 ///Logic for how the Interpreter acts with each Data Type
 impl ExpressionVisitor<LiteralType> for Interpreter {
-    fn visit_binary(&mut self, bin: Box<&mut Binary>) -> LiteralType {
+    fn visit_binary(&mut self, bin: &mut Binary) -> LiteralType {
         let left = self.evaluate(&mut bin.left);
         let right = self.evaluate(&mut bin.right);
         let operator = &bin.operator;
@@ -130,13 +130,13 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             _ => left,
         }
     }
-    fn visit_grouping(&mut self, group: Box<&mut Grouping>) -> LiteralType {
+    fn visit_grouping(&mut self, group: &mut Grouping) -> LiteralType {
         self.evaluate(&mut group.expression)
     }
-    fn visit_literal(&mut self, lit: Box<&mut Literal>) -> LiteralType {
+    fn visit_literal(&mut self, lit: &mut Literal) -> LiteralType {
         lit.value.to_owned()
     }
-    fn visit_ternary(&mut self, tern: Box<&mut Ternary>) -> LiteralType {
+    fn visit_ternary(&mut self, tern: &mut Ternary) -> LiteralType {
         let evaluator = self.evaluate(&mut tern.evaluator);
         let mut left = &mut tern.left;
         let mut right = &mut tern.right;
@@ -144,15 +144,15 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         match evaluator {
             LiteralType::Boolean(truthy) => {
                 if truthy {
-                    self.evaluate(&mut left)
+                    self.evaluate(left)
                 } else {
-                    self.evaluate(&mut right)
+                    self.evaluate(right)
                 }
             }
             _ => evaluator,
         }
     }
-    fn visit_unary(&mut self, unary: Box<&mut Unary>) -> LiteralType {
+    fn visit_unary(&mut self, unary: &mut Unary) -> LiteralType {
         let right = self.evaluate(&mut unary.operand);
 
         match unary.operator.token_type {
@@ -168,16 +168,16 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         }
     }
 
-    fn visit_variable(&mut self, var: Box<&mut Variable>) -> LiteralType {
+    fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
         let result = self.enviroment.to_owned().get(var.to_owned().name);
-        if result.is_ok() {
-            return result.unwrap();
+        if let Ok(item) = result {
+            return item;
         } else {
             return LiteralType::Nil;
         }
     }
 
-    fn visit_assignment(&mut self, assign: Box<&mut Assignment>) -> LiteralType {
+    fn visit_assignment(&mut self, assign: &mut Assignment) -> LiteralType {
         //Decompose assignment to avoid excess cloning
         let (name, value) = (assign.name.to_owned(), &mut assign.value);
 
@@ -190,7 +190,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         value
     }
 
-    fn visit_logical(&mut self, logical: Box<&mut Logical>) -> LiteralType {
+    fn visit_logical(&mut self, logical: &mut Logical) -> LiteralType {
         let left: LiteralType = self.evaluate(&mut logical.left);
 
         let left_bool = match left {
@@ -213,7 +213,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         //traverse it otherwise
         self.evaluate(&mut logical.right)
     }
-    fn visit_callable(&mut self, call: Box<&mut Callable>) -> LiteralType {
+    fn visit_callable(&mut self, call: &mut Callable) -> LiteralType {
         //Taking Ownership here isn't a bad thing because we are decomposing to produce an output,
         //plus the original data is still stored in a file
         let deref = call.to_owned();
@@ -225,19 +225,18 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             eval_args.push(self.evaluate(&mut argument));
         }
 
-        let function: Option<Callable>;
-        match callee {
+        let function: Option<Callable> = match callee {
             LiteralType::Callable(ref func) => {
-                function = Some(func.clone());
+                Some(func.clone())
             }
             _ => {
                 crate::error(
                     error_line.clone(),
                     String::from("Cannot call a non-callable function"),
                 );
-                function = None;
+                None
             }
-        }
+        };
     
         if function.is_some(){
             let mut function = function.expect("Expected a function");

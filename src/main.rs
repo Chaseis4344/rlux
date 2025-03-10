@@ -12,15 +12,14 @@ mod tests;
 mod types;
 
 #[allow(unused)]
-
 ///Sends runtime error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Error {
     eprintln!(" [Line {}] Error{}: {}", line, place, message);
-    let return_err = Error::new(
+    
+    Error::new(
         std::io::ErrorKind::InvalidData,
         format!(" [Line {}]Error{}: {}", line, place, message),
-    );
-    return_err
+    )
 }
 
 ///Sends an error report to user - semantic sugar
