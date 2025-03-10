@@ -1,6 +1,6 @@
 #[cfg(test)]
 use crate::run;
-use std::{fs, path::Path, process::exit};
+use std::{fs, path::Path};
 
 const PREFIX: &'static str = "./src/tests/";
 

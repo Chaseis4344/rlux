@@ -1,5 +1,4 @@
-use crate::parser::interpreter::Interpreter;
-use crate::types::{Expression, LiteralType, TokenType};
+use crate::types::{LiteralType, TokenType};
 ///Defines an operation to be performed with 2 numbers, the operand is passed into $op
 macro_rules! number_op {
     ($self:expr, $rhs:expr, $op:tt) => {

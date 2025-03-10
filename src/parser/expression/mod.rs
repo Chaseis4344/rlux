@@ -206,7 +206,7 @@ impl Parser {
         if self.match_token_type(vec![TokenType::Bang, TokenType::Minus]) {
             let operator = self.previous();
             let right = self.unary()?;
-            let expression =(new_unary!(operator, right));
+            let expression =new_unary!(operator, right);
             println!("{}",expression.clone());
             return Ok(expression);
         }

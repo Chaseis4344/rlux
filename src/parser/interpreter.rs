@@ -218,14 +218,14 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         //plus the original data is still stored in a file
         let deref = call.to_owned();
         let (paren, mut callee, mut arguments) = (deref.paren, deref.callee, deref.arguments);
-        let mut callee: LiteralType = self.evaluate(&mut callee);
+        let callee: LiteralType = self.evaluate(&mut callee);
         let error_line = paren.line;
         let mut eval_args = vec![];
         for mut argument in &mut arguments {
             eval_args.push(self.evaluate(&mut argument));
         }
 
-        let mut function: Option<Callable>;
+        let function: Option<Callable>;
         match callee {
             LiteralType::Callable(ref func) => {
                 function = Some(func.clone());
