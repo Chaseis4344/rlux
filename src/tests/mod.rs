@@ -32,7 +32,7 @@ fn run_file_test(filepath: &str) {
         panic!("File Error: {}", error);
     }
 
-    let valid_source = source.unwrap();
+    let valid_source = source.expect("Expected Valid Source");
 
     //Run the code
     match run(valid_source) {
@@ -61,7 +61,11 @@ fn math_test() {
 }
 
 #[test]
-
 fn for_loop_test() {
     run_file_test("for_loop_test.lux")
+}
+
+#[test]
+fn comparison_test() {
+    run_file_test("comparison_test.lux")
 }
