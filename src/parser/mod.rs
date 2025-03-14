@@ -25,7 +25,7 @@ impl Parser {
             }
         }
 
-        return false;
+        false
     }
 
     fn check(&self, token_type: TokenType) -> bool {

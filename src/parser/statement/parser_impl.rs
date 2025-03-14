@@ -29,7 +29,7 @@ impl Parser {
         //let expression = pass_up!(value);
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
 
-        return Ok(Statement::Print(PrintStatement { expression }));
+        Ok(Statement::Print(PrintStatement { expression }))
     }
 
     fn while_statement(&mut self) -> Result<Statement, ParserError> {
@@ -113,7 +113,7 @@ impl Parser {
     ///Evaluates the expression!
     fn expression_statement(&mut self) -> Result<Statement, ParserError> {
         let expression = self.expression()?;
-        return Ok(Statement::Expression(ExpressionStatement { expression }));
+        Ok(Statement::Expression(ExpressionStatement { expression }))
     }
 
     fn block_statement(&mut self) -> Result<Statement, ParserError> {
@@ -170,7 +170,7 @@ impl Parser {
                 return Err(err);
             }
 
-            return result;
+            result
         } else {
             let result = self.statement();
 
@@ -181,7 +181,7 @@ impl Parser {
                 return Err(err);
             }
 
-            return result;
+            result
         }
     }
 }

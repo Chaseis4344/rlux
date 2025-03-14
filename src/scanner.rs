@@ -37,17 +37,17 @@ impl Scanner {
         init_value!(current, 0);
         init_value!(line, 1);
 
-        return Scanner {
+        Scanner {
             source,
             current,
             line,
-        };
+        }
     }
 
     //Advance the cursor then return resulting token
     fn scan_token(&mut self) -> Option<Token> {
         //Basically a shitty hashmap, but too much time invested to change
-        return match self.advance() {
+        match self.advance() {
             ' ' | '\t' | '\r' => {
                 /* White Space goes here*/
                 None
@@ -60,10 +60,10 @@ impl Scanner {
                 if self.peek() == '*' {
                     self.multi_line_comment();
                     //Return no token
-                    return None;
+                    None
                 } else if self.peek() == '/' {
                     self.single_line_comment();
-                    return None;
+                    None
                 } else {
                     //Literal Slash
                     new_character!(TokenType::Slash, "/", self.line)
@@ -83,34 +83,38 @@ impl Scanner {
             ',' => new_character!(TokenType::Comma, ",", self.line),
             '!' => {
                 if self.peek() == '=' {
+                    //Discard and return combo character
                     let _ = self.advance();
-                    return new_character!(TokenType::BangEqual, "!=", self.line);
+                    new_character!(TokenType::BangEqual, "!=", self.line)
                 } else {
-                    return new_character!(TokenType::Bang, "!", self.line);
+                    new_character!(TokenType::Bang, "!", self.line)
                 }
             }
             '=' => {
                 if self.peek() == '=' {
+                    //Discard and return combo character
                     let _ = self.advance();
-                    return new_character!(TokenType::EqualEqual, "==", self.line);
+                    new_character!(TokenType::EqualEqual, "==", self.line)
                 } else {
-                    return new_character!(TokenType::Equal, "=", self.line);
+                    new_character!(TokenType::Equal, "=", self.line)
                 }
             }
             '<' => {
                 if self.peek() == '=' {
+                    //Discard and return combo character
                     let _ = self.advance();
-                    return new_character!(TokenType::LessEqual, "<=", self.line);
+                    new_character!(TokenType::LessEqual, "<=", self.line)
                 } else {
-                    return new_character!(TokenType::Less, "<", self.line);
+                    new_character!(TokenType::Less, "<", self.line)
                 }
             }
             '>' => {
                 if self.peek() == '=' {
+                    //Discard and return combo character
                     let _ = self.advance();
-                    return new_character!(TokenType::GreaterEqual, ">=", self.line);
+                    new_character!(TokenType::GreaterEqual, ">=", self.line)
                 } else {
-                    return new_character!(TokenType::Greater, ">", self.line);
+                    new_character!(TokenType::Greater, ">", self.line)
                 }
             }
 
@@ -123,7 +127,7 @@ impl Scanner {
                 let _ = crate::error(self.line, format!("Unexpected Token: '{}'", chara));
                 None
             }
-        };
+        }
     }
 
     fn multi_line_comment(&mut self) {
@@ -195,12 +199,12 @@ impl Scanner {
             result.push(current_char);
         }
 
-        return new_literal!(
+        new_literal!(
             TokenType::String,
             result.to_owned(),
             LiteralType::String(result),
             self.line
-        );
+        )
     }
 
     fn is_ascii_ident(ch: char) -> bool {
@@ -288,12 +292,12 @@ impl Scanner {
             self.current -= 1;
         }
 
-        return new_literal!(
+        new_literal!(
             TokenType::Number,
             result_string.to_owned(),
             LiteralType::Number(result_string.parse::<f64>().unwrap()),
             self.line
-        );
+        )
     }
 
     fn is_at_end(&self) -> bool {

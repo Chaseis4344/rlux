@@ -171,9 +171,9 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
         let result = self.enviroment.to_owned().get(var.to_owned().name);
         if let Ok(item) = result {
-            return item;
+            item
         } else {
-            return LiteralType::Nil;
+            LiteralType::Nil
         }
     }
 
@@ -222,7 +222,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         let error_line = paren.line;
         let mut eval_args = vec![];
         for mut argument in &mut arguments {
-            eval_args.push(self.evaluate(&mut argument));
+            eval_args.push(self.evaluate(argument));
         }
 
         let function: Option<Callable> = match callee {
@@ -231,7 +231,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             }
             _ => {
                 crate::error(
-                    error_line.clone(),
+                    error_line,
                     String::from("Cannot call a non-callable function"),
                 );
                 None
@@ -241,12 +241,12 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         if function.is_some(){
             let mut function = function.expect("Expected a function");
             if function.arity() != eval_args.len().try_into().expect("Expected a length in u64 range"){
-                _ = crate::error(error_line,String::from(format!("Expected {} but got {}",function.arity(), eval_args.len())));
+                _ = crate::error(error_line,format!("Expected {} but got {}",function.arity(), eval_args.len()));
             }
             let mut result = function.call(self, arguments);
-            return self.evaluate(&mut result);
+            self.evaluate(&mut result)
         } else {
-            return LiteralType::Nil;
+            LiteralType::Nil
         }
     }
 }

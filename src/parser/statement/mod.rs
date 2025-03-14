@@ -43,7 +43,7 @@ impl StatementVisitor for Interpreter {
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement {
         let init: LiteralType =
         if var.initalizer.is_some() {
-            self.evaluate(&mut var.initalizer.as_mut().unwrap())
+            self.evaluate(var.initalizer.as_mut().unwrap())
         } else {
             LiteralType::Nil
         };

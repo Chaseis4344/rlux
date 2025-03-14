@@ -21,22 +21,22 @@ impl Enviroment {
 
         match result {
             Some(lit) => {
-                return Ok(lit.to_owned());
+                Ok(lit.to_owned())
             }
             None => {
                 if self.enclosing.is_some() {
                     return self.enclosing.unwrap().get(name);
                 }
                 let _ = crate::error(name.line, "Undefined Variable".to_string());
-                return Err(VarError::NotPresent);
+                Err(VarError::NotPresent)
             }
         }
     }
 
     /// Assigns value to variable, may be used to redfine existing varibles
     pub(crate) fn assign(&mut self, name: Token, value: LiteralType) {
-        if self.variable_map.contains_key(&name.lexeme) {
-            self.variable_map.insert(name.lexeme, value);
+        if let std::collections::hash_map::Entry::Occupied(mut entry) = self.variable_map.entry(name.lexeme.clone()) {
+            entry.insert(value);
         } else if self.enclosing.is_some() {
             self.enclosing.as_mut().unwrap().assign(name, value);
         } else {

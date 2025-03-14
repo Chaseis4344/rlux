@@ -67,7 +67,7 @@ impl std::ops::Add for LiteralType {
                 Self::Callable(function) => {
                     eprintln!(
                         "Error: Type Mismatch! \n\tCannot add {} function to {}!",
-                        function.to_string(),
+                        function,
                         left_string
                     );
                     LiteralType::String(String::from("Function"))
@@ -225,6 +225,7 @@ impl PartialOrd for LiteralType{
 
 ///Implements ordering for numeric rlux types
 impl Ord for LiteralType{
+    #[allow(clippy::comparison_chain)]
     fn cmp(&self, other: &LiteralType) -> std::cmp::Ordering {
         //Ripped Striaght from rust's own source
         if *self < *other {

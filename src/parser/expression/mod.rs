@@ -211,7 +211,7 @@ impl Parser {
             return Ok(expression);
         }
 
-        Ok(self.call()?)
+       self.call()
     }
 
     fn call(&mut self) -> Result<Expression, ParserError> {
@@ -226,7 +226,7 @@ impl Parser {
             }
         }
 
-        return expression;
+        expression
     }
 
     fn finish_call(&mut self, callee: Expression) -> Result<Expression, ParserError> {
@@ -244,7 +244,7 @@ impl Parser {
 
         let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
 
-        return Ok(new_call!(callee, paren, arguments));
+        Ok(new_call!(callee, paren, arguments))
     }
 
     fn primary(&mut self) -> Result<Expression, ParserError> {
@@ -276,7 +276,7 @@ impl Parser {
                 }
             };
 
-            return Ok(return_val);
+            Ok(return_val)
         } else if self.match_token_type(vec![TokenType::LeftParen]) {
             let expression = self.expression()?;
             let _ = self.consume(TokenType::RightParen, "Expect \')\' after expression.");
