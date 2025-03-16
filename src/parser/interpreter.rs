@@ -75,6 +75,8 @@ impl Interpreter {
             enclosing: None,
             variable_map: map,
         };
+        let clock = Callable 
+
         let enviroment = Box::new(globals.clone());
         Interpreter { enviroment, globals }
     }
