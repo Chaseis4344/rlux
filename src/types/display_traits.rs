@@ -7,11 +7,17 @@ use super::RuntimeError;
 //Token Display implementation moved to token.rs because of private field implementation
 
 impl DisplayTrait for super::expression::Callable {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(),std::fmt::Error> {
-        write!(f, "Callale: (callee: {}, paren: {}, arguments: {})", self.callee, self.paren, self.arguments.len())
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(
+            f,
+            "Callable: (callee: {}, paren: {}, arguments: {})",
+            self.callee,
+            self.paren,
+            self.arguments.len()
+        )
     }
-} 
-impl DisplayTrait for types::LiteralType { 
+}
+impl DisplayTrait for types::LiteralType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Number(num) => write!(f, "{}", num),
@@ -82,7 +88,6 @@ impl DisplayTrait for types::TokenType {
     }
 }
 
-
 impl Error for types::ParserError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         None
@@ -144,4 +149,3 @@ impl DisplayTrait for crate::types::Expression {
         }
     }
 }
-

@@ -206,12 +206,12 @@ impl Parser {
         if self.match_token_type(vec![TokenType::Bang, TokenType::Minus]) {
             let operator = self.previous();
             let right = self.unary()?;
-            let expression =new_unary!(operator, right);
-            println!("{}",expression.clone());
+            let expression = new_unary!(operator, right);
+            println!("{}", expression.clone());
             return Ok(expression);
         }
 
-       self.call()
+        self.call()
     }
 
     fn call(&mut self) -> Result<Expression, ParserError> {

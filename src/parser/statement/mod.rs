@@ -11,10 +11,7 @@ pub(crate) trait Visitable<T, U> {
 
 trait StatementVisitor {
     fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement;
-    fn visit_expression_statement(
-        &mut self,
-        expression: &mut ExpressionStatement,
-    ) -> Statement;
+    fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement;
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement;
     fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement;
     fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement;
@@ -22,10 +19,7 @@ trait StatementVisitor {
 }
 
 impl StatementVisitor for Interpreter {
-    fn visit_expression_statement(
-        &mut self,
-        expression: &mut ExpressionStatement,
-    ) -> Statement {
+    fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement {
         self.evaluate(&mut expression.expression);
         Statement::Print(PrintStatement {
             expression: expression.expression.clone(),
@@ -41,8 +35,7 @@ impl StatementVisitor for Interpreter {
     }
 
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement {
-        let init: LiteralType =
-        if var.initalizer.is_some() {
+        let init: LiteralType = if var.initalizer.is_some() {
             self.evaluate(var.initalizer.as_mut().unwrap())
         } else {
             LiteralType::Nil

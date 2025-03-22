@@ -325,7 +325,7 @@ impl Scanner {
             //let current_char: char = self.source.as_bytes()[i] as char;
             //let next_char: char = self.source.as_bytes()[i + 1] as char;
             if let Some(current_token) = self.scan_token() {
-                    tokens.push(current_token);
+                tokens.push(current_token);
             };
         }
         tokens

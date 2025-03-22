@@ -27,13 +27,11 @@ macro_rules! number_op {
     };
 }
 
-
 impl PartialEq for TokenType {
     ///Uses String Comparison to compare two Tokens
     fn eq(&self, rhs: &Self) -> bool {
         self.to_string() == rhs.to_string()
     }
-
 }
 
 ///Add Literals Together if possible, concatonate if string
@@ -67,8 +65,7 @@ impl std::ops::Add for LiteralType {
                 Self::Callable(function) => {
                     eprintln!(
                         "Error: Type Mismatch! \n\tCannot add {} function to {}!",
-                        function,
-                        left_string
+                        function, left_string
                     );
                     LiteralType::String(String::from("Function"))
                 }
@@ -149,7 +146,7 @@ impl PartialEq for LiteralType {
                 }
             }
             //If both are Nil, true else false
-            Self::Nil => matches!(other,Self::Nil),
+            Self::Nil => matches!(other, Self::Nil),
             Self::Callable(_) => todo!(),
         }
     }
@@ -204,7 +201,7 @@ macro_rules! boolean_op {
 }
 
 ///>=, >, <=, <
-impl PartialOrd for LiteralType{
+impl PartialOrd for LiteralType {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
@@ -224,7 +221,7 @@ impl PartialOrd for LiteralType{
 }
 
 ///Implements ordering for numeric rlux types
-impl Ord for LiteralType{
+impl Ord for LiteralType {
     #[allow(clippy::comparison_chain)]
     fn cmp(&self, other: &LiteralType) -> std::cmp::Ordering {
         //Ripped Striaght from rust's own source
@@ -239,4 +236,4 @@ impl Ord for LiteralType{
 }
 
 ///Strange Rust things are Happening
-impl Eq for LiteralType{}
+impl Eq for LiteralType {}

@@ -10,6 +10,12 @@ pub(crate) struct ExpressionStatement {
     pub(crate) expression: Expression,
 }
 
+pub(crate) struct FunctionStatement {
+    pub(crate) name: Token,
+    pub(crate) body: Vec<Statement>,
+    pub(crate) parameters: Vec<Token>,
+}
+
 #[derive(Clone, Debug)]
 pub(crate) struct IfStatement {
     pub(crate) condition: Expression,

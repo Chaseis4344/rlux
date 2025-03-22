@@ -1,10 +1,12 @@
 use super::Statement;
 use crate::enviroment::Enviroment;
+use crate::types::expression::Callable;
 use crate::types::expression::*;
+use crate::types::lux_functions::{
+    clock::Clock, Callable as CallableTrait, Functions::Clock as OuterClock,
+};
 use crate::types::{Expression, LiteralType, TokenType};
-use std::collections::HashMap; 
-use crate::types::lux_functions::{Callable as CallableTrait, Clock, Functions::Clock as OuterClock};
-use crate::types::expression::Callable as Callable;
+use std::collections::HashMap;
 
 macro_rules! visitable_trait {
     ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
@@ -75,10 +77,13 @@ impl Interpreter {
             enclosing: None,
             variable_map: map,
         };
-        let clock = OuterClock(Clock{}); 
+        let clock = OuterClock(Clock {});
 
         let enviroment = Box::new(globals.clone());
-        Interpreter { enviroment, globals }
+        Interpreter {
+            enviroment,
+            globals,
+        }
     }
     pub(crate) fn interpret(&mut self, statements: Vec<Statement>) {
         for statement in statements {
@@ -228,9 +233,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         }
 
         let function: Option<Callable> = match callee {
-            LiteralType::Callable(ref func) => {
-                Some(func.clone())
-            }
+            LiteralType::Callable(ref func) => Some(func.clone()),
             _ => {
                 crate::error(
                     error_line,
@@ -239,12 +242,20 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
                 None
             }
         };
-    
-        if function.is_some(){
+
+        if function.is_some() {
             let mut function = function.expect("Expected a function");
             let arity = function.clone().arity();
-            if arity != eval_args.len().try_into().expect("Expected a length in u64 range"){
-                _ = crate::error(error_line,format!("Expected {} but got {}",arity, eval_args.len()));
+            if arity
+                != eval_args
+                    .len()
+                    .try_into()
+                    .expect("Expected a length in u64 range")
+            {
+                _ = crate::error(
+                    error_line,
+                    format!("Expected {} but got {}", arity, eval_args.len()),
+                );
             }
             let mut result = function.call(self, arguments);
             self.evaluate(&mut result)

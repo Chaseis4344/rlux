@@ -15,7 +15,7 @@ mod types;
 ///Sends runtime error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Error {
     eprintln!(" [Line {}] Error{}: {}", line, place, message);
-    
+
     Error::new(
         std::io::ErrorKind::InvalidData,
         format!(" [Line {}]Error{}: {}", line, place, message),

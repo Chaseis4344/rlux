@@ -20,9 +20,7 @@ impl Enviroment {
         let result = self.variable_map.get(&name.lexeme);
 
         match result {
-            Some(lit) => {
-                Ok(lit.to_owned())
-            }
+            Some(lit) => Ok(lit.to_owned()),
             None => {
                 if self.enclosing.is_some() {
                     return self.enclosing.unwrap().get(name);
@@ -35,7 +33,9 @@ impl Enviroment {
 
     /// Assigns value to variable, may be used to redfine existing varibles
     pub(crate) fn assign(&mut self, name: Token, value: LiteralType) {
-        if let std::collections::hash_map::Entry::Occupied(mut entry) = self.variable_map.entry(name.lexeme.clone()) {
+        if let std::collections::hash_map::Entry::Occupied(mut entry) =
+            self.variable_map.entry(name.lexeme.clone())
+        {
             entry.insert(value);
         } else if self.enclosing.is_some() {
             self.enclosing.as_mut().unwrap().assign(name, value);
