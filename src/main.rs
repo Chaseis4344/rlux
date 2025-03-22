@@ -14,11 +14,11 @@ mod types;
 #[allow(unused)]
 ///Sends runtime error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Error {
-    eprintln!(" [Line {}] Error{}: {}", line, place, message);
+    eprintln!(" [Line {line}]Error{place}: {message}");
 
     Error::new(
         std::io::ErrorKind::InvalidData,
-        format!(" [Line {}]Error{}: {}", line, place, message),
+        format!(" [Line {line}]Error{place}: {message}"),
     )
 }
 
@@ -76,7 +76,7 @@ pub fn run_file(filepath: String) {
     //Check source for OS Errors
     if source.is_err() {
         let error = source.unwrap_err();
-        eprintln!("File Error: {}", error);
+        println!("File Error: {error}");
         exit(1);
     }
 
@@ -88,7 +88,7 @@ pub fn run_file(filepath: String) {
             exit(0);
         }
         Err(err) => {
-            eprintln!("{}", err);
+            println!("{err}");
             exit(1);
         }
     };
@@ -103,17 +103,17 @@ pub fn run_prompt() {
         //Bad Path 1
         if matcher.is_err() {
             let err = matcher.unwrap_err();
-            eprintln!("{}", err);
+            println!("{err}");
             exit(65);
         }
 
         //Core function of REPL
-        let result = run(input.to_string());
+        let result = run((*input).to_string());
 
         // Bad Path 2
         if result.is_err() {
             let err = result.unwrap_err();
-            eprintln!("{}", err);
+            println!("{err}");
             exit(65);
         }
 
