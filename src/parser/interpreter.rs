@@ -2,8 +2,8 @@ use super::Statement;
 use crate::enviroment::Enviroment;
 use crate::types::expression::*;
 use crate::types::{Expression, LiteralType, TokenType};
-use std::collections::HashMap;
-use crate::types::lux_functions::Callable as CallableTrait;
+use std::collections::HashMap; 
+use crate::types::lux_functions::{Callable as CallableTrait, Clock, Functions::Clock as OuterClock};
 use crate::types::expression::Callable as Callable;
 
 macro_rules! visitable_trait {
@@ -75,7 +75,7 @@ impl Interpreter {
             enclosing: None,
             variable_map: map,
         };
-        let clock = Callable 
+        let clock = OuterClock(Clock{}); 
 
         let enviroment = Box::new(globals.clone());
         Interpreter { enviroment, globals }
@@ -242,8 +242,9 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     
         if function.is_some(){
             let mut function = function.expect("Expected a function");
-            if function.arity() != eval_args.len().try_into().expect("Expected a length in u64 range"){
-                _ = crate::error(error_line,format!("Expected {} but got {}",function.arity(), eval_args.len()));
+            let arity = function.clone().arity();
+            if arity != eval_args.len().try_into().expect("Expected a length in u64 range"){
+                _ = crate::error(error_line,format!("Expected {} but got {}",arity, eval_args.len()));
             }
             let mut result = function.call(self, arguments);
             self.evaluate(&mut result)
