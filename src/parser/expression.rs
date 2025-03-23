@@ -15,7 +15,7 @@ macro_rules! new_ternary {
 
 macro_rules! new_call {
     ($callee:expr, $paren:expr, $arguments: expr) => {
-        Expression::Callable(Box::new(Callable {
+        Expression::Call(Box::new(Call {
             callee: $callee,
             paren: Box::new($paren),
             arguments: $arguments,
@@ -103,6 +103,7 @@ impl Parser {
 
         Ok(expression)
     }
+ Expr expr = primary();
 
     fn ternary(&mut self) -> Result<Expression, ParserError> {
         let mut ternary = self.assignment()?;

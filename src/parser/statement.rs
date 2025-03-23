@@ -41,7 +41,7 @@ impl StatementVisitor for Interpreter {
             LiteralType::Nil
         };
 
-        self.enviroment.define(var.name.clone(), init.to_owned());
+        self.enviroment.define(var.name.lexeme.clone(), init.to_owned());
 
         let clone = var.clone();
         Statement::Variable(VariableStatement {

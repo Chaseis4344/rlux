@@ -10,7 +10,7 @@ pub(crate) enum LiteralType {
     Number(f64),
     Boolean(bool),
     String(String),
-    Callable(expression::Callable),
+    Callable(lux_functions::Functions),
     Nil, //This will be wrapped in an option,
 }
 
@@ -77,7 +77,7 @@ pub enum Expression {
     Literal(Box<expression::Literal>),
     Variable(Box<expression::Variable>),
     Assignment(Box<expression::Assignment>),
-    Callable(Box<expression::Callable>),
+    Call(Box<expression::Call>),
 }
 
 #[derive(Clone)]

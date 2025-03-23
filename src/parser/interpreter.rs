@@ -27,7 +27,7 @@ trait ExpressionVisitor<T> {
     fn visit_variable(&mut self, var: &mut Variable) -> T;
     fn visit_assignment(&mut self, assign: &mut Assignment) -> T;
     fn visit_logical(&mut self, logical: &mut Logical) -> T;
-    fn visit_callable(&mut self, call: &mut Callable) -> T;
+    fn visit_call(&mut self, call: &mut Call) -> T;
 }
 
 trait Visitable<T> {
@@ -45,7 +45,7 @@ impl Visitable<LiteralType> for Expression {
             Expression::Variable(var) => var.accept(visitor),
             Expression::Assignment(assign) => assign.accept(visitor),
             Expression::Logical(logic) => logic.accept(visitor),
-            Expression::Callable(call) => call.accept(visitor),
+            Expression::Call(call) => call.accept(visitor),
         }
     }
 }
@@ -58,7 +58,7 @@ visitable_trait! {LiteralType,Ternary,Expression}
 visitable_trait! {LiteralType,Variable,Expression}
 visitable_trait! {LiteralType,Assignment,Expression}
 visitable_trait! {LiteralType,Logical,Expression}
-visitable_trait! {LiteralType,Callable,Expression}
+visitable_trait! {LiteralType,Call,Expression}
 
 pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
@@ -73,12 +73,13 @@ impl Interpreter {
     }
     pub(crate) fn new() -> Interpreter {
         let map = HashMap::new();
-        let globals = Enviroment {
+        let mut globals = Enviroment {
             enclosing: None,
             variable_map: map,
         };
         let clock = OuterClock(Clock {});
 
+        globals.define(String::from("clock"),LiteralType::Callable(clock));
         let enviroment = Box::new(globals.clone());
         Interpreter {
             enviroment,
@@ -176,7 +177,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     }
 
     fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
-        let result = self.enviroment.to_owned().get(var.to_owned().name);
+        let result = self.enviroment.to_owned().get(var.to_owned().name.lexeme);
         if let Ok(item) = result {
             item
         } else {
@@ -192,7 +193,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         let value = self.evaluate(value);
 
         //Copy the value then echo out for the rest of the syntax tress
-        self.enviroment.assign(name, value.clone());
+        self.enviroment.assign(name.lexeme, value.clone());
 
         value
     }
@@ -220,7 +221,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         //traverse it otherwise
         self.evaluate(&mut logical.right)
     }
-    fn visit_callable(&mut self, call: &mut Callable) -> LiteralType {
+    fn visit_call(&mut self, call: &mut Callable) -> LiteralType {
         //Taking Ownership here isn't a bad thing because we are decomposing to produce an output,
         //plus the original data is still stored in a file
         let deref = call.to_owned();
@@ -232,7 +233,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             eval_args.push(self.evaluate(argument));
         }
 
-        let function: Option<Callable> = match callee {
+        let function: Option< dyn CallableTrait> = match callee {
             LiteralType::Callable(ref func) => Some(func.clone()),
             _ => {
                 crate::error(

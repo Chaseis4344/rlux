@@ -64,7 +64,7 @@ impl std::ops::Add for LiteralType {
                 Self::Nil => LiteralType::String(left_string + &Self::Nil.to_string()),
                 Self::Callable(function) => {
                     eprintln!(
-                        "Error: Type Mismatch! \n\tCannot add {} function to {}!",
+                        "Error: Type Mismatch! \n\tCannot add {:?} function to {}!",
                         function, left_string
                     );
                     LiteralType::String(String::from("Function"))

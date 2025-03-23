@@ -6,11 +6,11 @@ use super::RuntimeError;
 
 //Token Display implementation moved to token.rs because of private field implementation
 
-impl DisplayTrait for super::expression::Callable {
+impl DisplayTrait for super::expression::Call {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         write!(
             f,
-            "Callable: (callee: {}, paren: {}, arguments: {})",
+            "Call: (callee: {}, paren: {}, arguments: {})",
             self.callee,
             self.paren,
             self.arguments.len()
@@ -145,7 +145,7 @@ impl DisplayTrait for crate::types::Expression {
             //TODO: IMPLEMENT BELOW
             Self::Assignment(_) => todo!(),
             Self::Logical(_) => todo!(),
-            Self::Callable(_) => todo!(),
+            Self::Call(_) => todo!(),
         }
     }
 }
