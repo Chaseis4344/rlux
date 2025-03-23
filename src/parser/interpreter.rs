@@ -3,7 +3,7 @@ use crate::enviroment::Enviroment;
 use crate::types::expression::Call;
 use crate::types::expression::*;
 use crate::types::lux_functions::{
-    clock::Clock, Callable as CallableTrait, Functions::Clock as OuterClock,
+    clock::Clock, Callable as CallableTrait, Functions::Clock as OuterClock, Functions,
 };
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
@@ -233,19 +233,17 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             eval_args.push(self.evaluate(argument));
         }
 
-        let function: Option< &mut dyn CallableTrait> = match callee {
-            LiteralType::Callable(ref func) => todo!(),
-            _ => {
-                crate::error(
-                    error_line,
-                    String::from("Cannot call a non-callable function"),
-                );
-                None
-            }
+        let function: Option<Box<dyn CallableTrait>> = match callee {
+            LiteralType::Callable(function) => match function {
+                Functions::Print(function) => Some(Box::new(function)),
+                Functions::Clock(function) => Some(Box::new(function)),
+                Functions::User(user_defined_function) => {todo!()},
+            },
+            _ => None,
         };
 
         if function.is_some() {
-            let mut function = function.expect("Expected a function");
+            let mut function  = function.expect("Expected a function");
             let arity:u64 = function.arity();
             if arity
                 != eval_args
