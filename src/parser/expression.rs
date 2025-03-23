@@ -17,7 +17,7 @@ macro_rules! new_call {
     ($callee:expr, $paren:expr, $arguments: expr) => {
         Expression::Call(Box::new(Call {
             callee: $callee,
-            paren: Box::new($paren),
+            paren: $paren,
             arguments: $arguments,
         }))
     };
@@ -103,7 +103,6 @@ impl Parser {
 
         Ok(expression)
     }
- Expr expr = primary();
 
     fn ternary(&mut self) -> Result<Expression, ParserError> {
         let mut ternary = self.assignment()?;
@@ -271,7 +270,7 @@ impl Parser {
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
                 LiteralType::Callable(function) => {
                     return Err(ParserError {
-                        source: *function.paren,
+                        source: self.previous(),
                         cause: String::from("Cannot Evaluate a function from primary!"),
                     })
                 }

@@ -1,6 +1,6 @@
 use super::Statement;
 use crate::enviroment::Enviroment;
-use crate::types::expression::Callable;
+use crate::types::expression::Call;
 use crate::types::expression::*;
 use crate::types::lux_functions::{
     clock::Clock, Callable as CallableTrait, Functions::Clock as OuterClock,
@@ -221,7 +221,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         //traverse it otherwise
         self.evaluate(&mut logical.right)
     }
-    fn visit_call(&mut self, call: &mut Callable) -> LiteralType {
+    fn visit_call(&mut self, call: &mut Call) -> LiteralType {
         //Taking Ownership here isn't a bad thing because we are decomposing to produce an output,
         //plus the original data is still stored in a file
         let deref = call.to_owned();
@@ -233,8 +233,8 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             eval_args.push(self.evaluate(argument));
         }
 
-        let function: Option< dyn CallableTrait> = match callee {
-            LiteralType::Callable(ref func) => Some(func.clone()),
+        let function: Option< &mut dyn CallableTrait> = match callee {
+            LiteralType::Callable(ref func) => todo!(),
             _ => {
                 crate::error(
                     error_line,
@@ -246,7 +246,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
 
         if function.is_some() {
             let mut function = function.expect("Expected a function");
-            let arity = function.clone().arity();
+            let arity:u64 = function.arity();
             if arity
                 != eval_args
                     .len()

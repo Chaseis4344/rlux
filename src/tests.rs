@@ -29,7 +29,7 @@ fn run_file_test(filepath: &str) {
     //Check source for OS Errors
     if source.is_err() {
         let error = source.unwrap_err();
-        panic!("File Error: {}", error);
+        panic!("File Error: {error}");
     }
 
     let valid_source = source.expect("Expected Valid Source");
@@ -40,7 +40,7 @@ fn run_file_test(filepath: &str) {
             //exit(0);
         }
         Err(err) => {
-            panic!("{}", err);
+            panic!("{err}");
         }
     };
 }

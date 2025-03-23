@@ -6,7 +6,7 @@ pub(crate) mod user;
 
 pub(crate) trait Callable {
     fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Expression;
-    fn arity(self) -> u64;
+    fn arity(&self) -> u64;
 }
 
 
@@ -14,5 +14,5 @@ pub(crate) trait Callable {
 pub(crate) enum Functions {
     Clock(clock::Clock),
     Print(print::Print),
-    User(user::User),
+    User(user::UserFunction),
 }

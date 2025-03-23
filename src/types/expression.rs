@@ -52,6 +52,6 @@ pub struct Logical {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Call {
     pub(crate) callee: Expression,
-    pub(crate) paren: &Token,
+    pub(crate) paren: Token,
     pub(crate) arguments: Vec<Expression>,
 }

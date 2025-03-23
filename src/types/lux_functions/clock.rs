@@ -19,7 +19,7 @@ impl Callable for Clock {
             ),
         }))
     }
-    fn arity(self) -> u64 {
+    fn arity(&self) -> u64 {
         0
     }
 }
