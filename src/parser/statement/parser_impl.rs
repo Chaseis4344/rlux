@@ -1,5 +1,6 @@
 use super::*;
 use crate::parser::Parser;
+use crate::types::token::Token;
 
 impl Parser {
     /*Statement Grammar is Here Down */
@@ -159,8 +160,32 @@ impl Parser {
         Ok(Statement::Variable(statement))
     }
 
+    fn function_declaration(&mut self, kind: String) -> Result<Statement, ParserError> {
+        let mut name = self.consume(TokenType::Identifier, &format!("Expect {kind} name"))?;
+        let mut parameters: Vec<Token> = vec![];
+
+        let _ = self.consume(TokenType::LeftParen,&format!("Expect ( after {kind}"));
+        if !self.match_token_type(vec![TokenType::RightParen]) {
+            while self.match_token_type(vec![TokenType::Comma]) {
+                if parameters.len() + 1 > u64::MAX.try_into().unwrap() {
+                    Parser::error(self.peek(), &format!("Cannot have more than {} parameters in a function",u64::MAX));
+                    return Err(ParserError {source: self.peek(),cause: format!("Cannot have more than {} parameters in a function",u64::MAX)});
+                }
+                parameters.push(self.consume(TokenType::Identifier, "Expected Parameter name")?);
+            }
+            let _ = self.consume(TokenType::RightParen, "Expected ) after parameters")?;
+    
+        }
+        let body = self.block_statement()?;
+        let mut body:Vec<Statement> =  match body {Statement::Block(block) => block.statements, _ => {vec![]},};
+        Ok(Statement::Function(FunctionStatement{name, body, parameters}))
+    }
+
     pub(crate) fn declaration(&mut self) -> Result<Statement, ParserError> {
-        if self.match_token_type(vec![TokenType::Var]) {
+        if self.match_token_type(vec![TokenType::Fun]){
+            self.function_declaration(String::from("function"))
+        }
+        else if self.match_token_type(vec![TokenType::Var]) {
             let result = self.variable_decalration();
 
             if result.is_err() {

@@ -3,7 +3,7 @@ use crate::enviroment::Enviroment;
 use crate::types::expression::Call;
 use crate::types::expression::*;
 use crate::types::lux_functions::{
-    clock::Clock, Callable as CallableTrait, Functions::Clock as OuterClock, Functions,
+    clock::Clock, Callable as CallableTrait, Functions, Functions::Clock as OuterClock,
 };
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
@@ -79,7 +79,7 @@ impl Interpreter {
         };
         let clock = OuterClock(Clock {});
 
-        globals.define(String::from("clock"),LiteralType::Callable(clock));
+        globals.define(String::from("clock"), LiteralType::Callable(clock));
         let enviroment = Box::new(globals.clone());
         Interpreter {
             enviroment,
@@ -237,14 +237,16 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             LiteralType::Callable(function) => match function {
                 Functions::Print(function) => Some(Box::new(function)),
                 Functions::Clock(function) => Some(Box::new(function)),
-                Functions::User(user_defined_function) => {todo!()},
+                Functions::User(user_defined_function) => {
+                    todo!()
+                }
             },
             _ => None,
         };
 
         if function.is_some() {
-            let mut function  = function.expect("Expected a function");
-            let arity:u64 = function.arity();
+            let mut function = function.expect("Expected a function");
+            let arity: u64 = function.arity();
             if arity
                 != eval_args
                     .len()

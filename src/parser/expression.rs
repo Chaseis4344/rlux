@@ -1,4 +1,5 @@
 use crate::parser::Parser;
+use crate::types::statement::Statement;
 use crate::types::{expression::*, token::Token, Expression, LiteralType, ParserError, TokenType};
 
 //These macros create new types of expressions, this is so the code is understandable

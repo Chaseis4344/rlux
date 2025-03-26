@@ -9,7 +9,6 @@ pub(crate) trait Callable {
     fn arity(&self) -> u64;
 }
 
-
 #[derive(Clone, Debug)]
 pub(crate) enum Functions {
     Clock(clock::Clock),

@@ -1,5 +1,6 @@
 use super::token::Token;
 use super::*;
+use crate::types::statement::Statement;
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Ternary {
@@ -54,4 +55,11 @@ pub struct Call {
     pub(crate) callee: Expression,
     pub(crate) paren: Token,
     pub(crate) arguments: Vec<Expression>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Function {
+    name: Token,
+    parameters: Vec<Token>,
+    body: Vec<Statement>,
 }

@@ -16,6 +16,8 @@ trait StatementVisitor {
     fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement;
     fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement;
     fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement;
+    fn visit_function_statement(&mut self, function_statement: &mut FunctionStatement)
+        -> Statement;
 }
 
 impl StatementVisitor for Interpreter {
@@ -41,7 +43,8 @@ impl StatementVisitor for Interpreter {
             LiteralType::Nil
         };
 
-        self.enviroment.define(var.name.lexeme.clone(), init.to_owned());
+        self.enviroment
+            .define(var.name.lexeme.clone(), init.to_owned());
 
         let clone = var.clone();
         Statement::Variable(VariableStatement {
@@ -88,6 +91,13 @@ impl StatementVisitor for Interpreter {
 
         Statement::Block(block_statement.to_owned())
     }
+
+    fn visit_function_statement(
+        &mut self,
+        function_statement: &mut FunctionStatement,
+    ) -> Statement {
+        todo!()
+    }
 }
 
 impl Visitable<Statement, Interpreter> for Statement {
@@ -99,6 +109,7 @@ impl Visitable<Statement, Interpreter> for Statement {
             Statement::If(statement) => statement.accept(visitor),
             Statement::While(statement) => statement.accept(visitor),
             Statement::Block(statement) => statement.accept(visitor),
+            Statement::Function(statement) => statement.accept(visitor),
         }
     }
 }
@@ -122,3 +133,4 @@ visitable_trait! {Statement, VariableStatement, Interpreter}
 visitable_trait! {Statement, ExpressionStatement, Interpreter}
 visitable_trait! {Statement, WhileStatement, Interpreter}
 visitable_trait! {Statement, BlockStatement, Interpreter}
+visitable_trait! {Statement, FunctionStatement, Interpreter}
