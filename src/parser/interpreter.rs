@@ -259,7 +259,11 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
                 );
             }
             let mut result = function.call(self, arguments);
-            self.evaluate(&mut result)
+            if result.is_some() {
+                self.evaluate(&mut result)
+            } else {
+                LiteralType::Nil
+            }
         } else {
             LiteralType::Nil
         }

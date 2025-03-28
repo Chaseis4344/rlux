@@ -8,12 +8,10 @@ use crate::types::LiteralType;
 pub(crate) struct Print {}
 
 impl Callable for Print {
-    fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Expression {
+    fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Option<Expression> {
         let printable: String = arguments[0].to_string();
         println!("{printable}");
-        Literal(Box::new(crate::types::expression::Literal {
-            value: LiteralType::Nil,
-        }))
+        None
     }
     fn arity(&self) -> u64 {
         1

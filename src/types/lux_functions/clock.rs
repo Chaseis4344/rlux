@@ -9,15 +9,15 @@ use std::time::SystemTime;
 pub(crate) struct Clock {}
 
 impl Callable for Clock {
-    fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Expression {
-        Literal(Box::new(LiteralStruct {
+    fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Option<Expression> {
+        Some(Literal(Box::new(LiteralStruct {
             value: LiteralType::Number(
                 SystemTime::now()
                     .duration_since(SystemTime::UNIX_EPOCH)
                     .expect("Died getting Unix Time")
                     .as_secs() as f64,
             ),
-        }))
+        })))
     }
     fn arity(&self) -> u64 {
         0
