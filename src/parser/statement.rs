@@ -96,7 +96,9 @@ impl StatementVisitor for Interpreter {
         &mut self,
         function_statement: &mut FunctionStatement,
     ) -> Statement {
-        todo!()
+        use crate::types::lux_functions::user::UserFunction;
+         use crate::types::lux_functions::Functions;
+        Statement::Function(Functions::User(UserFunction{declaration: Box::new(function_statement.clone())}))
     }
 }
 

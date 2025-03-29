@@ -6,7 +6,7 @@ use crate::types::token::Token;
 use crate::types::Expression;
 use std::{collections::HashMap, env::VarError};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) struct UserFunction {
     declaration: Box<FunctionStatement>,
 }
@@ -18,19 +18,18 @@ impl Callable for UserFunction {
         mut arguments: Vec<Expression>,
     ) -> Option<Expression> {
         let mut function_enviroment: Enviroment = Enviroment {
-            enclosing: None,
+            enclosing: Some(Box::new(interpreter.globals.clone())),
             variable_map: HashMap::new(),
         };
-        let mut decl = &self.declaration;
-
-        for i in 0..decl.parameters.len() {
+        let (mut params,body) = (self.declaration.parameters.clone() ,self.declaration.body.clone());
+        for i in 0..params.len() {
             function_enviroment.define(
-                decl.parameters[i].lexeme.clone(),
+                params[i].lexeme.clone(),
                 interpreter.evaluate(&mut arguments[i]),
             );
         }
 
-        interpreter.execute_block(decl.body, function_enviroment);
+        interpreter.execute_block_in_env(body, function_enviroment);
         None
     }
 

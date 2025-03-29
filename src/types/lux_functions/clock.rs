@@ -5,7 +5,7 @@ use crate::types::Expression::Literal;
 use crate::types::LiteralType;
 use std::time::SystemTime;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug,PartialEq)]
 pub(crate) struct Clock {}
 
 impl Callable for Clock {

@@ -98,6 +98,15 @@ impl Interpreter {
         statement.accept(self);
     }
 
+    pub(crate) fn execute_block_in_env(&mut self, statements: Vec<Statement>, enviroment: Enviroment) {
+        let old_env = self.enviroment.to_owned();
+        self.enviroment = Box::new(enviroment);
+        for statement in statements {
+                self.execute(statement);
+        }
+        self.enviroment= old_env;
+
+    }
     pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) {
         //Wrap
         self.enviroment = Box::new(Enviroment {
@@ -260,7 +269,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             }
             let mut result = function.call(self, arguments);
             if result.is_some() {
-                self.evaluate(&mut result)
+                self.evaluate(&mut result.unwrap())
             } else {
                 LiteralType::Nil
             }

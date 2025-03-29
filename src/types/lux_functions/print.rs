@@ -4,7 +4,7 @@ use crate::types::Expression;
 use crate::types::Expression::Literal;
 use crate::types::LiteralType;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Print {}
 
 impl Callable for Print {

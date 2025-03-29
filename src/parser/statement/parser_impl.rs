@@ -166,7 +166,7 @@ impl Parser {
 
         let _ = self.consume(TokenType::LeftParen, &format!("Expect ( after {kind}"));
         if !self.match_token_type(vec![TokenType::RightParen]) {
-            while self.match_token_type(vec![TokenType::Comma]) {
+            while {
                 if parameters.len() + 1 > u64::MAX.try_into().unwrap() {
                     Parser::error(
                         self.peek(),
@@ -184,8 +184,10 @@ impl Parser {
                     });
                 }
                 parameters.push(self.consume(TokenType::Identifier, "Expected Parameter name")?);
-            }
+                self.match_token_type(vec![TokenType::Comma]) 
+            } {}
             let _ = self.consume(TokenType::RightParen, "Expected ) after parameters")?;
+
         }
         let body = self.block_statement()?;
         let mut body: Vec<Statement> = match body {
