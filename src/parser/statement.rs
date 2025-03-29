@@ -97,8 +97,12 @@ impl StatementVisitor for Interpreter {
         function_statement: &mut FunctionStatement,
     ) -> Statement {
         use crate::types::lux_functions::user::UserFunction;
-         use crate::types::lux_functions::Functions;
-        Statement::Function(Functions::User(UserFunction{declaration: Box::new(function_statement.clone())}))
+        use crate::types::lux_functions::Functions;
+
+        let function = Functions::User(UserFunction{declaration: Box::new(function_statement.clone())}); 
+        self.enviroment.define(function_statement.name.lexeme.clone(), LiteralType::Callable(function));
+        
+        Statement::Function(function_statement.to_owned())
     }
 }
 

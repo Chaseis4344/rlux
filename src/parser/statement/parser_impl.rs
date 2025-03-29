@@ -186,7 +186,7 @@ impl Parser {
                 parameters.push(self.consume(TokenType::Identifier, "Expected Parameter name")?);
                 self.match_token_type(vec![TokenType::Comma]) 
             } {}
-            let _ = self.consume(TokenType::RightParen, "Expected ) after parameters")?;
+            let _ = self.consume(TokenType::RightParen, &format!("Expected ) after parameters for {kind}"))?;
 
         }
         let body = self.block_statement()?;

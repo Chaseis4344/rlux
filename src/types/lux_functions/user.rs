@@ -8,7 +8,7 @@ use std::{collections::HashMap, env::VarError};
 
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct UserFunction {
-    declaration: Box<FunctionStatement>,
+    pub(crate) declaration: Box<FunctionStatement>,
 }
 
 impl Callable for UserFunction {

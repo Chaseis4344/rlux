@@ -1,5 +1,4 @@
 use super::{token::Token, Expression};
-use crate::types::lux_functions::Functions;
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct PrintStatement {
@@ -50,5 +49,5 @@ pub(crate) enum Statement {
     While(WhileStatement),
     If(IfStatement),
     Block(BlockStatement),
-    Function(Functions),
+    Function(FunctionStatement),
 }
