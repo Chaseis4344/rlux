@@ -30,7 +30,7 @@ impl StatementVisitor for Interpreter {
     fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement {
         let expression = self.evaluate(&mut print.expression);
 
-        //println!("{}", expression);
+        println!("{}", expression);
         Statement::Expression(ExpressionStatement {
             expression: print.expression.clone(),
         })

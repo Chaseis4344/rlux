@@ -119,10 +119,6 @@ impl Parser {
 
     fn block_statement(&mut self) -> Result<Statement, ParserError> {
         let mut statements: Vec<Statement> = vec![];
-        
-
-        let _ = self.consume(TokenType::LeftBrace, "Very Bad no good, this is supposed to have a check but it doesn't contact Chaseis4344 if you see this");
-
         while !(self.check(TokenType::RightBrace) || self.is_at_end()) {
             statements.push(self.declaration()?);
         }
@@ -194,6 +190,7 @@ impl Parser {
 
 
         }
+        let _ = self.consume(TokenType::LeftBrace, "Expected \'{\' after function statement"); 
         let body = self.block_statement()?;
         let mut body: Vec<Statement> = match body {
             Statement::Block(block) => block.statements,
