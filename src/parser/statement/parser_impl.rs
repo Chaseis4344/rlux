@@ -119,12 +119,14 @@ impl Parser {
 
     fn block_statement(&mut self) -> Result<Statement, ParserError> {
         let mut statements: Vec<Statement> = vec![];
+        
+
+        let _ = self.consume(TokenType::LeftBrace, "Very Bad no good, this is supposed to have a check but it doesn't contact Chaseis4344 if you see this");
 
         while !(self.check(TokenType::RightBrace) || self.is_at_end()) {
             statements.push(self.declaration()?);
         }
 
-        println!("{}", self.peek());
 
         let _ = self.consume(TokenType::RightBrace, "Expect '}' to match '{'.");
 
@@ -190,11 +192,13 @@ impl Parser {
             } {}
             let _ = self.consume(TokenType::RightParen, &format!("Expected ) after parameters for {kind}"))?;
 
+
         }
         let body = self.block_statement()?;
         let mut body: Vec<Statement> = match body {
             Statement::Block(block) => block.statements,
             _ => {
+                println!("Bad Path! Block is nothing! ");
                 vec![]
             }
         };
