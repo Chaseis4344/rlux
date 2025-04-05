@@ -16,31 +16,33 @@ impl Enviroment {
     }
 
     ///Gets a defined variable, throws a runtime error if non is found
-    pub(crate) fn get(self, name: String) -> Result<LiteralType, VarError> {
+    pub(crate) fn get(self, name: String, line: u32) -> Result<LiteralType, VarError> {
         let result = self.variable_map.get(&name);
 
         match result {
             Some(lit) => Ok(lit.to_owned()),
             None => {
                 if self.enclosing.is_some() {
-                    return self.enclosing.unwrap().get(name);
+                    return self.enclosing.unwrap().get(name,line);
                 }
-                let _ = crate::error(0, "Undefined Variable".to_string());
-                Err(VarError::NotPresent)
+                else {
+                    let _ = crate::error(line, "Undefined Variable".to_string());
+                    Err(VarError::NotPresent)
+                }
             }
         }
     }
 
     /// Assigns value to variable, may be used to redfine existing varibles
-    pub(crate) fn assign(&mut self, name: String, value: LiteralType) {
+    pub(crate) fn assign(&mut self, name: String, value: LiteralType, line: u32) {
         if let std::collections::hash_map::Entry::Occupied(mut entry) =
             self.variable_map.entry(name.clone())
         {
             entry.insert(value);
         } else if self.enclosing.is_some() {
-            self.enclosing.as_mut().unwrap().assign(name, value);
+            self.enclosing.as_mut().unwrap().assign(name, value, line);
         } else {
-            let _ = crate::error(0, format!("Undefined Variable {}.", name));
+            let _ = crate::error(line, format!("Undefined Variable {}.", name));
         }
     }
 }

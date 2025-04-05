@@ -2,6 +2,7 @@ use crate::types;
 use std::error::Error;
 use std::fmt::Display as DisplayTrait;
 
+use crate::types::lux_functions::user::UserFunction;
 use super::RuntimeError;
 
 //Token Display implementation moved to token.rs because of private field implementation
@@ -24,7 +25,19 @@ impl DisplayTrait for types::LiteralType {
             Self::Boolean(val) => write!(f, "{}", val),
             Self::String(string) => write!(f, "{}", string),
             Self::Nil => write!(f, "NIL"),
-            Self::Callable(function) => write!(f, "{:?}", function),
+            Self::Callable(function) => write!(f, "{}", function),
+        }
+    }
+}
+
+impl DisplayTrait for types::lux_functions::Functions{
+
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        
+        match self {
+            Self::User(u) => write!(f,"<fn {}>", u),
+            Self::Clock(u) => write!(f,"<fn Clock>"),
+            Self::Print(u) =>  write!(f,"<fn Print>"),
         }
     }
 }
@@ -33,6 +46,12 @@ impl DisplayTrait for RuntimeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Error on: {}", self.source)
     }
+}
+impl DisplayTrait for UserFunction {
+
+   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> { 
+        write!(f, "{}", self.declaration.name.lexeme )
+   } 
 }
 
 impl DisplayTrait for types::TokenType {

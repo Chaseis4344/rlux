@@ -124,6 +124,8 @@ impl Parser {
             statements.push(self.declaration()?);
         }
 
+        println!("{}", self.peek());
+
         let _ = self.consume(TokenType::RightBrace, "Expect '}' to match '{'.");
 
         Ok(Statement::Block(BlockStatement { statements }))

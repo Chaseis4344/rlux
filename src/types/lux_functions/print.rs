@@ -9,6 +9,7 @@ pub(crate) struct Print {}
 
 impl Callable for Print {
     fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Option<Expression> {
+        //We are garunteeing that only 1 argument will ever be passed
         let printable: String = arguments[0].to_string();
         println!("{printable}");
         None

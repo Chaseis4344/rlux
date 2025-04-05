@@ -1,7 +1,19 @@
 
 fun count(n) {
-  if (n > 1) count(n - 1)
-    print(n);
-}
 
-count(3)
+      print(n);
+  if (n > 1){ 
+      count2(n - 1)
+    }
+}}
+
+fun count2(z) {
+
+   print(z);
+  if(z>1) {
+    count(z-2)
+  }
+}}
+
+count2(22)
+print(count);

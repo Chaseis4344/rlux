@@ -186,7 +186,8 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     }
 
     fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
-        let result = self.enviroment.to_owned().get(var.to_owned().name.lexeme);
+        let var = var.to_owned();
+        let result = self.enviroment.to_owned().get(var.name.lexeme, var.name.line );
         if let Ok(item) = result {
             item
         } else {
@@ -202,7 +203,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         let value = self.evaluate(value);
 
         //Copy the value then echo out for the rest of the syntax tress
-        self.enviroment.assign(name.lexeme, value.clone());
+        self.enviroment.assign(name.lexeme, value.clone(), name.line);
 
         value
     }
@@ -246,9 +247,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
             LiteralType::Callable(function) => match function {
                 Functions::Print(function) => Some(Box::new(function)),
                 Functions::Clock(function) => Some(Box::new(function)),
-                Functions::User(user_defined_function) => {
-                    todo!()
-                }
+                Functions::User(function) => Some(Box::new(function)),
             },
             _ => None,
         };
