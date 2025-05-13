@@ -220,7 +220,6 @@ impl Parser {
 
         loop {
             if self.match_token_type(vec![TokenType::LeftParen]) {
-                println!("Function Recognized!");
                 expression =
                     self.finish_call(expression.expect("Expression Expected, ParserError Found"));
             } else {

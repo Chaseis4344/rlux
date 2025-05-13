@@ -10,7 +10,7 @@ adder = 1;
 if (_arg> threshold or _arg ==1) 
     print ("Greater"); 
 else  
-    print ("Lesser"));
+    print ("Lesser");
 
 print ((tern -6)> 0);
 

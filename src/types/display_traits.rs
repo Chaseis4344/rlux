@@ -129,20 +129,18 @@ impl std::fmt::Debug for types::ParserError {
 }
 
 impl DisplayTrait for crate::types::Expression {
+    
+    ///TODO: Make this evaluate the expressions before displaying the result
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match (*self).clone() {
             Self::Grouping(group) => {
-                write!(f, "(group {})", group.expression)
+                write!(f, "{}", group.expression)
             }
             Self::Binary(bin) => {
-                write!(
-                    f,
-                    "(binary: l: {} op: ({}) r:{}) ",
-                    bin.left, bin.operator, bin.right
-                )
+               todo!() 
             }
             Self::Literal(lit) => {
-                write!(f, "(literal: {})", lit.value)
+                write!(f, "{}", lit.value)
             }
             Self::Unary(unary) => {
                 write!(
