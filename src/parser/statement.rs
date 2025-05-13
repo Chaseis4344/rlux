@@ -10,7 +10,7 @@ pub(crate) trait Visitable<T, U> {
 }
 
 trait StatementVisitor {
-    fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement;
+    //fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement;
     fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement;
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement;
     fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement;
@@ -23,18 +23,21 @@ trait StatementVisitor {
 impl StatementVisitor for Interpreter {
     fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement {
         self.evaluate(&mut expression.expression);
-        Statement::Print(PrintStatement {
+       /* Statement::Print(PrintStatement {
+            expression: expression.expression.clone(),
+        })*/
+        Statement::Expression(ExpressionStatement {
             expression: expression.expression.clone(),
         })
     }
-    fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement {
+    /*fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement {
         let expression = self.evaluate(&mut print.expression);
 
         println!("{}", expression);
         Statement::Expression(ExpressionStatement {
             expression: print.expression.clone(),
         })
-    }
+    }*/
 
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement {
         let init: LiteralType = if var.initalizer.is_some() {
@@ -109,7 +112,7 @@ impl StatementVisitor for Interpreter {
 impl Visitable<Statement, Interpreter> for Statement {
     fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
         match self {
-            Statement::Print(statement) => statement.accept(visitor),
+            // Statement::Print(statement) => statement.accept(visitor),
             Statement::Expression(statement) => statement.accept(visitor),
             Statement::Variable(statement) => statement.accept(visitor),
             Statement::If(statement) => statement.accept(visitor),
@@ -134,7 +137,7 @@ macro_rules! visitable_trait {
 }
 
 visitable_trait! {Statement, IfStatement, Interpreter}
-visitable_trait! {Statement, PrintStatement, Interpreter}
+// visitable_trait! {Statement, PrintStatement, Interpreter}
 visitable_trait! {Statement, VariableStatement, Interpreter}
 visitable_trait! {Statement, ExpressionStatement, Interpreter}
 visitable_trait! {Statement, WhileStatement, Interpreter}

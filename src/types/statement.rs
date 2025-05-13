@@ -1,10 +1,10 @@
 use super::{token::Token, Expression};
-
+/*
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct PrintStatement {
     pub(crate) expression: Expression,
 }
-
+*/
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct ExpressionStatement {
     pub(crate) expression: Expression,
@@ -43,7 +43,7 @@ pub(crate) struct BlockStatement {
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum Statement {
-    Print(PrintStatement),
+    // Print(PrintStatement),
     Expression(ExpressionStatement),
     Variable(VariableStatement),
     While(WhileStatement),

@@ -220,6 +220,7 @@ impl Parser {
 
         loop {
             if self.match_token_type(vec![TokenType::LeftParen]) {
+                println!("Function Recognized!");
                 expression =
                     self.finish_call(expression.expect("Expression Expected, ParserError Found"));
             } else {
@@ -244,7 +245,8 @@ impl Parser {
         }
 
         let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
-
+        //TODO: Relocate this somewhere that makes more smeantic sense
+        let _ = self.consume(TokenType::Semicolon, "Expect Semicolona after print statement");
         Ok(new_call!(callee, paren, arguments))
     }
 

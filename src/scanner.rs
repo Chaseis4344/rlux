@@ -235,7 +235,7 @@ impl Scanner {
             "for" => new_character!(TokenType::For, word_built.as_str(), self.line),
             "if" => new_character!(TokenType::If, word_built.as_str(), self.line),
             "or" => new_character!(TokenType::Or, word_built.as_str(), self.line),
-            "print" => new_character!(TokenType::Print, word_built.as_str(), self.line),
+            // "print" => new_character!(TokenType::Print, word_built.as_str(), self.line),
             "return" => new_character!(TokenType::Return, word_built.as_str(), self.line),
             "super" => new_character!(TokenType::Super, word_built.as_str(), self.line),
             "this" => new_character!(TokenType::This, word_built.as_str(), self.line),

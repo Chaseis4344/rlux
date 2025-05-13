@@ -2,9 +2,9 @@ var a = 1;
 {
 
   var a = a + 2;
-  print "Expected: 3";
-  print "Actual: "+a;
-  print"";
+  print("Expected: 3");
+  print("Actual: "+a);
+  print("");
 }
-print "Expected: 1";
-print "Actual: "+a;
+print("Expected: 1");
+print("Actual: "+a);

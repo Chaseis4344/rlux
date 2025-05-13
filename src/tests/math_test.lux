@@ -9,16 +9,16 @@ var threshold =5;
 var adder = 1+0-5;
 var tern = false ? 5 : 10;
 
-print "false ? 5 : 10 = "+ tern;
-print "4/2 = "+_arg;
-print "0 = "+cat;
-print "12*4 = " +dog;
-print "(13/2) = "+turt;
-print "\"strung\" = "+tester;
-print "false = "+goolean45;
-print "true = "+vardoolean;
-print "5 = "+threshold;
-print "1+0-5 = "+adder;
+print("false ? 5 : 10 = "+ tern);
+print("4/2 = "+_arg);
+print("0 = "+cat);
+print("12*4 = " +dog);
+print("(13/2) = "+turt);
+print("\"strung\" = "+tester);
+print("false = "+goolean45);
+print("true = "+vardoolean);
+print("5 = "+threshold);
+print("1+0-5 = "+adder);
 
 print("tern + 5 >=10: ");
 print(tern + 5 >= 10);

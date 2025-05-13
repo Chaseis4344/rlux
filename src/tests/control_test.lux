@@ -8,28 +8,28 @@ adder = 1;
 
 
 if (_arg> threshold or _arg ==1) 
-    print "Greater"; 
+    print ("Greater"); 
 else  
-    print "Lesser";
+    print ("Lesser"));
 
-print (tern -6)> 0;
+print ((tern -6)> 0);
 
 if (tern - 6 > 0 and vardoolean)
 {
-    print "Let's Print!"; //Should Print
+    print("Let's Print!"); //Should Print
 } else 
 {
-    print "Not!";
+    print("Not!");
 }
     
 while(adder < 10 )
 {
    adder = 1+ adder;
    var while_loop_scope_test = "while_loop_scope_test failed";
-   print adder;
+   print(adder);
 }
 
 //This should throw a Runtime error - then print NIL
-print "The Below should error";
-print while_loop_scope_test;
-print not_found_test;
+print ("The Below should error");
+print (while_loop_scope_test);
+print (not_found_test);

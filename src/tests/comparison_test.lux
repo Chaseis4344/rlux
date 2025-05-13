@@ -1,9 +1,9 @@
-print "Comparison Test:";
-print "1>0 = "+ 1>0;
-print 1>0;
-print 1>=0;
-print tern + 5 >= 10;
-print tern;
+print("Comparison Test:");
+print("1>0 = "+ 1>0);
+print(1>0);
+print(1>=0);
+print(tern + 5 >= 10);
+print(tern);
 tern = tern -5;
-print tern-1;
-print (tern-1) >0;
+print(tern-1);
+print((tern-1) >0);

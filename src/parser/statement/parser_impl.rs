@@ -24,7 +24,7 @@ impl Parser {
             else_branch,
         }))
     }
-
+/*
     fn print_statement(&mut self) -> Result<Statement, ParserError> {
         let expression = self.expression()?;
         //let expression = pass_up!(value);
@@ -32,7 +32,7 @@ impl Parser {
 
         Ok(Statement::Print(PrintStatement { expression }))
     }
-
+*/
     fn while_statement(&mut self) -> Result<Statement, ParserError> {
         let _ = self.consume(TokenType::LeftParen, "Expect '(' after while.");
         let condition = self.expression()?;
@@ -132,9 +132,9 @@ impl Parser {
     fn statement(&mut self) -> Result<Statement, ParserError> {
         if self.match_token_type(vec![TokenType::If]) {
             self.if_statement()
-        } else if self.match_token_type(vec![TokenType::Print]) {
+        }/* else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
-        } else if self.match_token_type(vec![TokenType::While]) {
+        } */else if self.match_token_type(vec![TokenType::While]) {
             self.while_statement()
         } else if self.match_token_type(vec![TokenType::For]) {
             self.for_statement()

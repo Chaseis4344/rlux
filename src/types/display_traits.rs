@@ -95,7 +95,7 @@ impl DisplayTrait for types::TokenType {
             Self::If => write!(f, "If"),
             Self::Nil => write!(f, "Nil"),
             Self::Or => write!(f, "Or"),
-            Self::Print => write!(f, "Print"),
+            // Self::Print => write!(f, "Print"),
             Self::Return => write!(f, "Return"),
             Self::Super => write!(f, "Super"),
             Self::This => write!(f, "This"),

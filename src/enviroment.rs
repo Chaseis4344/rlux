@@ -26,7 +26,7 @@ impl Enviroment {
                     return self.enclosing.unwrap().get(name,line);
                 }
                 else {
-                    let _ = crate::error(line, "Undefined Variable".to_string());
+                    let _ = crate::error(line, format!("Undefined Variable: {}",name));
                     Err(VarError::NotPresent)
                 }
             }

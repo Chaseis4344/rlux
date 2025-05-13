@@ -7,6 +7,7 @@ use crate::types::lux_functions::{
 };
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
+use crate::types::lux_functions::print::Print;
 
 macro_rules! visitable_trait {
     ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
@@ -78,8 +79,9 @@ impl Interpreter {
             variable_map: map,
         };
         let clock = OuterClock(Clock {});
-
+        let print = crate::types::lux_functions::Functions::Print(Print{});
         globals.define(String::from("clock"), LiteralType::Callable(clock));
+        globals.define(String::from("print"), LiteralType::Callable(print));
         let enviroment = Box::new(globals.clone());
         Interpreter {
             enviroment,
