@@ -126,7 +126,6 @@ impl std::fmt::Debug for types::ParserError {
 }
 
 impl DisplayTrait for crate::types::Expression {
-    ///TODO: Make this evaluate the expressions before displaying the result
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match (*self).clone() {
             Self::Grouping(group) => {
@@ -136,6 +135,8 @@ impl DisplayTrait for crate::types::Expression {
                 todo!()
             }
             Self::Literal(lit) => {
+                //This is the only path used since everything gets evaluated to a literal before it
+                //gets displayed internally in print
                 write!(f, "{}", lit.value)
             }
             Self::Unary(unary) => {

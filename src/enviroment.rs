@@ -1,4 +1,4 @@
-use crate::types::{token::Token, LiteralType};
+use crate::types::LiteralType;
 use std::{collections::HashMap, env::VarError};
 
 #[derive(Clone, Debug)]
@@ -22,8 +22,8 @@ impl Enviroment {
         match result {
             Some(lit) => Ok(lit.to_owned()),
             None => {
-                if self.enclosing.is_some() {
-                    self.enclosing.unwrap().get(name, line)
+                if let Some(underlying) = self.enclosing {
+                    underlying.get(name, line)
                 } else {
                     let _ = crate::error(line, format!("Undefined Variable: {}", name));
                     Err(VarError::NotPresent)
@@ -34,8 +34,9 @@ impl Enviroment {
 
     /// Assigns value to variable, may be used to redfine existing varibles
     pub(crate) fn assign(&mut self, name: String, value: LiteralType, line: u32) {
-        if let std::collections::hash_map::Entry::Occupied(mut entry) =
-            self.variable_map.entry(name.clone())
+        use std::collections::hash_map::*;
+
+        if let Entry::Occupied(mut entry) =self.variable_map.entry(name.clone())
         {
             entry.insert(value);
         } else if self.enclosing.is_some() {

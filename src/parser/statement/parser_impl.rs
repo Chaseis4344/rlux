@@ -162,7 +162,7 @@ impl Parser {
     }
 
     fn function_declaration(&mut self, kind: String) -> Result<Statement, ParserError> {
-        let mut name = self.consume(TokenType::Identifier, &format!("Expect {kind} name"))?;
+        let name = self.consume(TokenType::Identifier, &format!("Expect {kind} name"))?;
         let mut parameters: Vec<Token> = vec![];
 
         let _ = self.consume(TokenType::LeftParen, &format!("Expect ( after {kind}"));
@@ -197,7 +197,7 @@ impl Parser {
             "Expected \'{\' after function statement",
         );
         let body = self.block_statement()?;
-        let mut body: Vec<Statement> = match body {
+        let body: Vec<Statement> = match body {
             Statement::Block(block) => block.statements,
             _ => {
                 println!("Bad Path! Block is nothing! ");

@@ -1,10 +1,7 @@
 use super::Callable;
 use crate::enviroment::Enviroment;
-use crate::types::lux_functions::Interpreter;
-use crate::types::statement::{FunctionStatement, Statement};
-use crate::types::token::Token;
-use crate::types::Expression;
-use std::{collections::HashMap, env::VarError};
+use crate::types::{Expression, lux_functions::Interpreter, statement::FunctionStatement};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct UserFunction {

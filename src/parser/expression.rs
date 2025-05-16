@@ -1,5 +1,4 @@
 use crate::parser::Parser;
-use crate::types::statement::Statement;
 use crate::types::{expression::*, token::Token, Expression, LiteralType, ParserError, TokenType};
 
 //These macros create new types of expressions, this is so the code is understandable
@@ -273,7 +272,7 @@ impl Parser {
                     new_literal!(LiteralType::Boolean(boolean))
                 }
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
-                LiteralType::Callable(function) => {
+                LiteralType::Callable(_) => {
                     return Err(ParserError {
                         source: self.previous(),
                         cause: String::from("Cannot Evaluate a function from primary!"),

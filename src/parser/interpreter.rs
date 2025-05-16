@@ -160,8 +160,8 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     }
     fn visit_ternary(&mut self, tern: &mut Ternary) -> LiteralType {
         let evaluator = self.evaluate(&mut tern.evaluator);
-        let mut left = &mut tern.left;
-        let mut right = &mut tern.right;
+        let left = &mut tern.left;
+        let right = &mut tern.right;
 
         match evaluator {
             LiteralType::Boolean(truthy) => {
@@ -248,7 +248,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         let callee: LiteralType = self.evaluate(&mut callee);
         let error_line = paren.line;
         let mut eval_args = vec![];
-        for mut argument in &mut arguments {
+        for argument in &mut arguments {
             eval_args.push(self.evaluate(argument));
         }
 
@@ -275,7 +275,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
                     format!("Expected {} but got {}", arity, eval_args.len()),
                 );
             }
-            let mut result = function.call(self, arguments);
+            let result = function.call(self, arguments);
             if let Some(mut to_eval) = result {
                 self.evaluate(&mut to_eval)
             } else {
