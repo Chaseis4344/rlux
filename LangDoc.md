@@ -11,7 +11,7 @@ Note this may change or be innaccurate, depending on when I remeber to update th
 - Literal Types
   - Numbers: `f64` inside
   - Boolean: `bool` inside
-  - String: Read the tin
+  - String: `String` inside
   - Nil: Empty variant to represent nothing
 - Expressions
   - Grouping: `(` Exppresion `)`; groups expressions
@@ -21,7 +21,7 @@ Note this may change or be innaccurate, depending on when I remeber to update th
   - Comparison: Uses `>`, `>=`, `==`, `<`, `<=` to compare two numerical values
   - Ternary Operator: `x ? y : z`; if x then y else z
 - Keywords
-  - `if`; Conditionaly Executes Code, tab aligned
+  - `if`; Conditionaly Executes next statment, whether single statement or block statemnet is up to user
   - `else`; Executes some code if the attatched if condition evaluates to false
   - `print`; Prints a varibale or a Literal
   - `var`; Initializes a variable
@@ -32,11 +32,11 @@ Note this may change or be innaccurate, depending on when I remeber to update th
   - `or`; will return the result of `x || y` (x or y)
   - `class`; TODO
   - `fun`; TODO
-  - `for`; TODO
+  - `for`; While Loop syntactical sugar, instatiates first statement, iterates using second and check if it should continue iteration with third
   - `return`; TODO
   - `super`; TODO
   - `this`; TODO
-  - `while`; TODO
+  - `while`; C-Style while loop, while(bool){}
 
 ## Example
 
