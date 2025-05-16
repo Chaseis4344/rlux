@@ -23,7 +23,7 @@ trait StatementVisitor {
 impl StatementVisitor for Interpreter {
     fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement {
         self.evaluate(&mut expression.expression);
-       /* Statement::Print(PrintStatement {
+        /* Statement::Print(PrintStatement {
             expression: expression.expression.clone(),
         })*/
         Statement::Expression(ExpressionStatement {
@@ -102,9 +102,14 @@ impl StatementVisitor for Interpreter {
         use crate::types::lux_functions::user::UserFunction;
         use crate::types::lux_functions::Functions;
 
-        let function = Functions::User(UserFunction{declaration: Box::new(function_statement.clone())}); 
-        self.enviroment.define(function_statement.name.lexeme.clone(), LiteralType::Callable(function));
-        
+        let function = Functions::User(UserFunction {
+            declaration: Box::new(function_statement.clone()),
+        });
+        self.enviroment.define(
+            function_statement.name.lexeme.clone(),
+            LiteralType::Callable(function),
+        );
+
         Statement::Function(function_statement.to_owned())
     }
 }

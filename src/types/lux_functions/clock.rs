@@ -5,11 +5,15 @@ use crate::types::Expression::Literal;
 use crate::types::LiteralType;
 use std::time::SystemTime;
 
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Clock {}
 
 impl Callable for Clock {
-    fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Option<Expression> {
+    fn call(
+        &mut self,
+        interpreter: &mut Interpreter,
+        arguments: Vec<Expression>,
+    ) -> Option<Expression> {
         Some(Literal(Box::new(LiteralStruct {
             value: LiteralType::Number(
                 SystemTime::now()

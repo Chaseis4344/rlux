@@ -4,23 +4,24 @@ Note this may change or be innaccurate, depending on when I remeber to update th
 
 ## Features
 
-- Variables
+### Variables
   Established with var keyword then replaces with a literal
-- Comment
+### Comment
   C-style comments are supported using `//` and `/* */`
-- Literal Types
+### Literal Types
   - Numbers: `f64` inside
   - Boolean: `bool` inside
   - String: `String` inside
   - Nil: Empty variant to represent nothing
-- Expressions
+### Expressions
   - Grouping: `(` Exppresion `)`; groups expressions
   - Math: Uses `+`, `-`, `*`, `/` to return a Number literal
   - String Adding: `"Hello" + "World"` turns into `"Hello World"`
   - Assignment: `x = literalType`; Prefix with var keyword to make a new variable
   - Comparison: Uses `>`, `>=`, `==`, `<`, `<=` to compare two numerical values
   - Ternary Operator: `x ? y : z`; if x then y else z
-- Keywords
+  - String concatontaions, math and comparison are performed left to right, if a specific operation needs to  be performed first, use a grouping to specify that
+### Keywords
   - `if`; Conditionaly Executes next statment, whether single statement or block statemnet is up to user
   - `else`; Executes some code if the attatched if condition evaluates to false
   - `print`; Prints a varibale or a Literal
@@ -31,12 +32,15 @@ Note this may change or be innaccurate, depending on when I remeber to update th
   - `and`; will return the result of `x && y` (x and y)
   - `or`; will return the result of `x || y` (x or y)
   - `class`; TODO
-  - `fun`; TODO
+  - `fun`; Defines a function for later use, functions are stored in the same space as Variables, and both will overwrite each other as mangling and shadowing are not implemented currently
   - `for`; While Loop syntactical sugar, instatiates first statement, iterates using second and check if it should continue iteration with third
   - `return`; TODO
   - `super`; TODO
   - `this`; TODO
   - `while`; C-Style while loop, while(bool){}
+### Native Functions 
+  - clock(), takes no arguments and returns current Unix time in seconds as a Number
+  - print(), alias for Rust's println!() macro
 
 ## Example
 

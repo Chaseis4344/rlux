@@ -21,7 +21,7 @@ impl Callable for UserFunction {
             enclosing: Some(Box::new(interpreter.globals.clone())),
             variable_map: HashMap::new(),
         };
-        let (params,body) = (&self.declaration.parameters, &self.declaration.body);
+        let (params, body) = (&self.declaration.parameters, &self.declaration.body);
         for i in 0..params.len() {
             function_enviroment.define(
                 params[i].lexeme.clone(),

@@ -193,7 +193,7 @@ macro_rules! boolean_op {
                 },
             },
             _ =>  {
-                    eprintln!("Error: Type Mismatch! \n\tReturned false while trying to perform: {}", stringify!($op));
+                    eprintln!("Error: Type Mismatch! \n\tReturned false while trying to perform: {}, between: {:?} and {:?}", stringify!($op), $self, $other);
                     false
                 },
         }
@@ -210,7 +210,7 @@ impl PartialOrd for LiteralType {
         boolean_op!(self,other, >=)
     }
     fn gt(&self, other: &Self) -> bool {
-        boolean_op!(self,other,>)
+        boolean_op!(self,other, >)
     }
     fn le(&self, other: &Self) -> bool {
         boolean_op!(self,other, <=)

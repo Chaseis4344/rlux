@@ -24,15 +24,15 @@ impl Parser {
             else_branch,
         }))
     }
-/*
-    fn print_statement(&mut self) -> Result<Statement, ParserError> {
-        let expression = self.expression()?;
-        //let expression = pass_up!(value);
-        let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
+    /*
+        fn print_statement(&mut self) -> Result<Statement, ParserError> {
+            let expression = self.expression()?;
+            //let expression = pass_up!(value);
+            let _ = self.consume(TokenType::Semicolon, "Expect ';' after value.");
 
-        Ok(Statement::Print(PrintStatement { expression }))
-    }
-*/
+            Ok(Statement::Print(PrintStatement { expression }))
+        }
+    */
     fn while_statement(&mut self) -> Result<Statement, ParserError> {
         let _ = self.consume(TokenType::LeftParen, "Expect '(' after while.");
         let condition = self.expression()?;
@@ -123,7 +123,6 @@ impl Parser {
             statements.push(self.declaration()?);
         }
 
-
         let _ = self.consume(TokenType::RightBrace, "Expect '}' to match '{'.");
 
         Ok(Statement::Block(BlockStatement { statements }))
@@ -132,9 +131,11 @@ impl Parser {
     fn statement(&mut self) -> Result<Statement, ParserError> {
         if self.match_token_type(vec![TokenType::If]) {
             self.if_statement()
-        }/* else if self.match_token_type(vec![TokenType::Print]) {
+        }
+        /* else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
-        } */else if self.match_token_type(vec![TokenType::While]) {
+        } */
+        else if self.match_token_type(vec![TokenType::While]) {
             self.while_statement()
         } else if self.match_token_type(vec![TokenType::For]) {
             self.for_statement()
@@ -184,13 +185,17 @@ impl Parser {
                     });
                 }
                 parameters.push(self.consume(TokenType::Identifier, "Expected Parameter name")?);
-                self.match_token_type(vec![TokenType::Comma]) 
+                self.match_token_type(vec![TokenType::Comma])
             } {}
-            let _ = self.consume(TokenType::RightParen, &format!("Expected ) after parameters for {kind}"))?;
-
-
+            let _ = self.consume(
+                TokenType::RightParen,
+                &format!("Expected ) after parameters for {kind}"),
+            )?;
         }
-        let _ = self.consume(TokenType::LeftBrace, "Expected \'{\' after function statement"); 
+        let _ = self.consume(
+            TokenType::LeftBrace,
+            "Expected \'{\' after function statement",
+        );
         let body = self.block_statement()?;
         let mut body: Vec<Statement> = match body {
             Statement::Block(block) => block.statements,

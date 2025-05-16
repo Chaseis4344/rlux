@@ -23,10 +23,9 @@ impl Enviroment {
             Some(lit) => Ok(lit.to_owned()),
             None => {
                 if self.enclosing.is_some() {
-                    return self.enclosing.unwrap().get(name,line);
-                }
-                else {
-                    let _ = crate::error(line, format!("Undefined Variable: {}",name));
+                    self.enclosing.unwrap().get(name, line)
+                } else {
+                    let _ = crate::error(line, format!("Undefined Variable: {}", name));
                     Err(VarError::NotPresent)
                 }
             }

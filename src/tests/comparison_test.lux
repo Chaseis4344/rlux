@@ -1,7 +1,7 @@
 var tern = 15;
 
 print("Comparison Test:");
-print("1>0 = "+ 1>0);
+print("1>0 = "+ (1>0));
 print(1>0);
 print(1>=0);
 print(tern + 5 >= 10);

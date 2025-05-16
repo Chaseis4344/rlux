@@ -5,7 +5,11 @@ pub(crate) mod print;
 pub(crate) mod user;
 
 pub(crate) trait Callable {
-    fn call(&mut self, interpreter: &mut Interpreter, arguments: Vec<Expression>) -> Option<Expression>;
+    fn call(
+        &mut self,
+        interpreter: &mut Interpreter,
+        arguments: Vec<Expression>,
+    ) -> Option<Expression>;
     fn arity(&self) -> u64;
 }
 

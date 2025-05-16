@@ -2,12 +2,12 @@ use super::Statement;
 use crate::enviroment::Enviroment;
 use crate::types::expression::Call;
 use crate::types::expression::*;
+use crate::types::lux_functions::print::Print;
 use crate::types::lux_functions::{
     clock::Clock, Callable as CallableTrait, Functions, Functions::Clock as OuterClock,
 };
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
-use crate::types::lux_functions::print::Print;
 
 macro_rules! visitable_trait {
     ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
@@ -79,7 +79,7 @@ impl Interpreter {
             variable_map: map,
         };
         let clock = OuterClock(Clock {});
-        let print = crate::types::lux_functions::Functions::Print(Print{});
+        let print = crate::types::lux_functions::Functions::Print(Print {});
         globals.define(String::from("clock"), LiteralType::Callable(clock));
         globals.define(String::from("print"), LiteralType::Callable(print));
         let enviroment = Box::new(globals.clone());
@@ -100,14 +100,17 @@ impl Interpreter {
         statement.accept(self);
     }
 
-    pub(crate) fn execute_block_in_env(&mut self, statements: Vec<Statement>, enviroment: Enviroment) {
+    pub(crate) fn execute_block_in_env(
+        &mut self,
+        statements: Vec<Statement>,
+        enviroment: Enviroment,
+    ) {
         let old_env = self.enviroment.to_owned();
         self.enviroment = Box::new(enviroment);
         for statement in statements {
-                self.execute(statement);
+            self.execute(statement);
         }
-        self.enviroment= old_env;
-
+        self.enviroment = old_env;
     }
     pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) {
         //Wrap
@@ -189,7 +192,10 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
 
     fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
         let var = var.to_owned();
-        let result = self.enviroment.to_owned().get(var.name.lexeme, var.name.line );
+        let result = self
+            .enviroment
+            .to_owned()
+            .get(var.name.lexeme, var.name.line);
         if let Ok(item) = result {
             item
         } else {
@@ -205,7 +211,8 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         let value = self.evaluate(value);
 
         //Copy the value then echo out for the rest of the syntax tress
-        self.enviroment.assign(name.lexeme, value.clone(), name.line);
+        self.enviroment
+            .assign(name.lexeme, value.clone(), name.line);
 
         value
     }
@@ -269,8 +276,8 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
                 );
             }
             let mut result = function.call(self, arguments);
-            if result.is_some() {
-                self.evaluate(&mut result.unwrap())
+            if let Some(mut to_eval) = result {
+                self.evaluate(&mut to_eval)
             } else {
                 LiteralType::Nil
             }
