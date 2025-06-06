@@ -9,8 +9,10 @@ use crate::types::lux_functions::{
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
 
+///Shorthand to internally generate accept() functions for the Enum Variant and type passed in,
+///internally will result in performing the corresponding instruction
 macro_rules! visitable_trait {
-    ( $trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
+    ($trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
         impl Visitable<$trait_type> for $enum_variant {
             fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<$trait_type>) -> $trait_type {
                 paste::item! {visitor.[<visit_ $enum_variant:lower>](self)}
@@ -78,16 +80,20 @@ impl Interpreter {
             enclosing: None,
             variable_map: map,
         };
+        //Inject built-ins (native functions) into enviroment
         let clock = OuterClock(Clock {});
         let print = crate::types::lux_functions::Functions::Print(Print {});
+
         globals.define(String::from("clock"), LiteralType::Callable(clock));
         globals.define(String::from("print"), LiteralType::Callable(print));
+
         let enviroment = Box::new(globals.clone());
         Interpreter {
             enviroment,
             globals,
         }
     }
+
     pub(crate) fn interpret(&mut self, statements: Vec<Statement>) {
         for statement in statements {
             self.execute(statement);
@@ -129,7 +135,7 @@ impl Interpreter {
     }
 }
 
-///Logic for how the Interpreter acts with each Data Type
+///Logic for how the Interpreter acts with each operator or Token
 impl ExpressionVisitor<LiteralType> for Interpreter {
     fn visit_binary(&mut self, bin: &mut Binary) -> LiteralType {
         let left = self.evaluate(&mut bin.left);
@@ -191,14 +197,19 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
     }
 
     fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
+        //!Returns the value of a variable, will return NIL if nothing is found
         let var = var.to_owned();
-        let result = self
-            .enviroment
-            .to_owned()
-            .get(var.name.lexeme, var.name.line);
+        let name = &var.name.lexeme;
+        let result: Result<LiteralType, std::env::VarError> =
+            self.enviroment.to_owned().get(name.to_string());
         if let Ok(item) = result {
             item
         } else {
+            //Nothing was found so we return nothing
+            crate::error(
+                var.name.line,
+                "Variable not found: ".to_owned() + &var.name.lexeme,
+            );
             LiteralType::Nil
         }
     }

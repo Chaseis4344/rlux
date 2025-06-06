@@ -1,6 +1,6 @@
 use super::Callable;
 use crate::enviroment::Enviroment;
-use crate::types::{Expression, lux_functions::Interpreter, statement::FunctionStatement};
+use crate::types::{lux_functions::Interpreter, statement::FunctionStatement, Expression};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]

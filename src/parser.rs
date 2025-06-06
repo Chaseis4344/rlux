@@ -29,6 +29,7 @@ impl Parser {
     }
 
     fn check(&self, token_type: TokenType) -> bool {
+        //!Checks next Token is of a certain Type
         if self.is_at_end() {
             false
         } else {
@@ -37,6 +38,7 @@ impl Parser {
     }
 
     fn advance(&mut self) -> Token {
+        //!Returns the current token while advancing the counter
         if !self.is_at_end() {
             self.current += 1;
         }
@@ -44,18 +46,23 @@ impl Parser {
     }
 
     fn is_at_end(&self) -> bool {
+        //! Checks if at end of File
         self.peek().token_type == TokenType::Eof
     }
 
     fn peek(&self) -> Token {
+        //!Looks at next token in line
         self.tokens[self.current as usize].clone()
     }
 
     fn previous(&self) -> Token {
+        //!Looks at last token
         self.tokens[(self.current - 1) as usize].clone()
     }
 
     fn consume(&mut self, type_: TokenType, message: &str) -> Result<Token, ParserError> {
+        //!Checks token's type and errors with `message` at current spot if unexpected Token
+        //!appears
         if self.check(type_) {
             Ok(self.advance())
         } else {

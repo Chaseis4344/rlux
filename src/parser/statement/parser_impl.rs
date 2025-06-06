@@ -46,19 +46,19 @@ impl Parser {
     fn for_statement(&mut self) -> Result<Statement, ParserError> {
         let _ = self.consume(TokenType::LeftParen, "Expect '(' after for.");
 
-        let initializer: Option<Statement>;
-        if self.match_token_type(vec![TokenType::Semicolon]) {
-            initializer = None;
+        let initializer: Option<Statement> = if self.match_token_type(vec![TokenType::Semicolon]) {
+            None
         } else if self.match_token_type(vec![TokenType::Var]) {
-            initializer = Some(self.variable_decalration()?);
+            Some(self.variable_decalration()?)
         } else {
-            initializer = Some(self.expression_statement()?);
-        }
+            Some(self.expression_statement()?)
+        };
 
-        let mut condition: Option<Expression> = None;
-        if !self.check(TokenType::Semicolon) {
-            condition = Some(self.expression()?);
-        }
+        let condition: Option<Expression> = if !self.check(TokenType::Semicolon) {
+            Some(self.expression()?)
+        } else {
+            None
+        };
 
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after increment part.");
 
@@ -82,25 +82,22 @@ impl Parser {
             body = Statement::Block(BlockStatement { statements });
         }
 
-        if condition.is_none() {
-            condition = Some(Expression::Literal(Box::new(
+        //Is there a condition Present? if not just eval to true every time
+        let condition = if condition.is_none() {
+            Some(Expression::Literal(Box::new(
                 crate::types::expression::Literal {
                     value: LiteralType::Boolean(true),
                 },
             )))
-        }
-
-        if condition.is_some() {
-            body = Statement::While(WhileStatement {
-                condition: condition.unwrap(),
-                body: Box::new(body),
-            });
         } else {
-            crate::error(
-                0,
-                String::from("Interpreter Parse Error: Bad For Loop Condition Handle"),
-            );
-        }
+            condition
+        };
+
+        //No Error path needed since all errors are pre-empted
+        body = Statement::While(WhileStatement {
+            condition: condition.expect("Condition has been set to None"),
+            body: Box::new(body),
+        });
 
         if initializer.is_some() {
             body = Statement::Block(BlockStatement {
@@ -111,7 +108,7 @@ impl Parser {
         Ok(body)
     }
 
-    ///Evaluates the expression!
+    ///Evaluates the expression in the Syntax!
     fn expression_statement(&mut self) -> Result<Statement, ParserError> {
         let expression = self.expression()?;
         Ok(Statement::Expression(ExpressionStatement { expression }))

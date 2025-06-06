@@ -93,7 +93,6 @@ pub(crate) struct RuntimeError {
 }
 
 #[derive(Clone, Debug)]
-
 pub(crate) enum LuxErrors {
     ParserError(ParserError),
     RuntimeError(RuntimeError),

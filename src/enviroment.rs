@@ -16,16 +16,15 @@ impl Enviroment {
     }
 
     ///Gets a defined variable, throws a runtime error if non is found
-    pub(crate) fn get(self, name: String, line: u32) -> Result<LiteralType, VarError> {
+    pub(crate) fn get(self, name: String) -> Result<LiteralType, VarError> {
         let result = self.variable_map.get(&name);
 
         match result {
             Some(lit) => Ok(lit.to_owned()),
             None => {
                 if let Some(underlying) = self.enclosing {
-                    underlying.get(name, line)
+                    underlying.get(name)
                 } else {
-                    let _ = crate::error(line, format!("Undefined Variable: {}", name));
                     Err(VarError::NotPresent)
                 }
             }
@@ -36,13 +35,12 @@ impl Enviroment {
     pub(crate) fn assign(&mut self, name: String, value: LiteralType, line: u32) {
         use std::collections::hash_map::*;
 
-        if let Entry::Occupied(mut entry) =self.variable_map.entry(name.clone())
-        {
+        if let Entry::Occupied(mut entry) = self.variable_map.entry(name.clone()) {
             entry.insert(value);
         } else if self.enclosing.is_some() {
             self.enclosing.as_mut().unwrap().assign(name, value, line);
         } else {
-            let _ = crate::error(line, format!("Undefined Variable {}.", name));
+            let _ = crate::error(line, format!("Assignement failed on {}.", name));
         }
     }
 }

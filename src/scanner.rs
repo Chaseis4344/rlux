@@ -46,7 +46,8 @@ impl Scanner {
 
     //Advance the cursor then return resulting token
     fn scan_token(&mut self) -> Option<Token> {
-        //Basically a shitty hashmap, but too much time invested to change
+        //!Basically a shitty hashmap, but too much time invested to make in a function al style,
+        //!plus that is wayyyyy too unwieldy
         match self.advance() {
             ' ' | '\t' | '\r' => {
                 /* White Space goes here*/
@@ -110,10 +111,12 @@ impl Scanner {
             }
             '>' => {
                 if self.peek() == '=' {
-                    //Discard and return combo character
+                    //Discard "=" and return combo character
                     let _ = self.advance();
                     new_character!(TokenType::GreaterEqual, ">=", self.line)
                 } else {
+                    //We don't advance here so the scanner can pull it in as something else on the
+                    //next iteration
                     new_character!(TokenType::Greater, ">", self.line)
                 }
             }
@@ -131,7 +134,7 @@ impl Scanner {
     }
 
     fn multi_line_comment(&mut self) {
-        //Run through comment
+        //!Run through comment
         let mut in_comment = true;
         let mut current_char = self.advance();
         while in_comment {
@@ -148,6 +151,7 @@ impl Scanner {
     }
 
     fn single_line_comment(&mut self) {
+        //! Run through comment, but only one line of it
         let mut in_comment = true;
         let _ = self.advance();
         while in_comment {
@@ -160,7 +164,7 @@ impl Scanner {
     }
 
     fn strings(&mut self) -> Option<Token> {
-        let _in_string = true;
+        //!Evaluate strings and handle funky cases
         let mut result = String::from("");
         let mut current_char: char;
         //while in_string
@@ -215,6 +219,8 @@ impl Scanner {
     }
 
     fn keywords(&mut self) -> Option<Token> {
+        //!Reads word until whitespace or something illegal in an identifier and checks if it is
+        //!reserved, if not creates an indentifier token
         let mut current_char: char = self.source.as_bytes()[(self.current - 1) as usize] as char;
         let mut word_built = String::from("");
 
@@ -264,6 +270,7 @@ impl Scanner {
     }
 
     fn numbers(&mut self) -> Option<Token> {
+        //! Evaluate numbers, which are internally stored as an `f64`
         let mut current_char: char = self.source.as_bytes()[(self.current - 1) as usize] as char;
         let mut result_string: String = String::from("");
 
@@ -301,10 +308,12 @@ impl Scanner {
     }
 
     fn is_at_end(&self) -> bool {
+        //! Checks if we are end of token stream by counting number of chars 
         self.current >= self.source.len().try_into().unwrap()
     }
 
     fn advance(&mut self) -> char {
+        //! Moves to next char, defines end of string otherwise 
         if !self.is_at_end() {
             self.current += 1;
             self.source.as_bytes()[(self.current - 1) as usize] as char
@@ -316,7 +325,8 @@ impl Scanner {
     fn peek(&self) -> char {
         self.source.as_bytes()[(self.current) as usize] as char
     }
-    //Extract tokens from source
+
+    ///Extract tokens from source, essentially a "start" or "do a thing" function
     pub(crate) fn scan_tokens(&mut self) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
         //let mut current_line = 0;

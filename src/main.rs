@@ -14,11 +14,15 @@ mod types;
 #[allow(unused)]
 ///Sends runtime error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) -> Error {
-    eprintln!(" [Line {line}]Error{place}: {message}");
+    if place != *"" {
+        let place: String = "in ".to_owned() + &place;
+    }
+
+    eprintln!(" [Line {line}]Error: {message} {place}");
 
     Error::new(
         std::io::ErrorKind::InvalidData,
-        format!(" [Line {line}]Error{place}: {message}"),
+        format!(" [Line {line}]Error: {message} {place}"),
     )
 }
 

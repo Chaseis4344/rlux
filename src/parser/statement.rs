@@ -5,11 +5,26 @@ use crate::types::Expression;
 
 mod parser_impl;
 
+///Internal shorthand to generate Visitor expressions for generating statements
+macro_rules! visitable_trait {
+    ($trait_type1:ty,  $enum_variant:ty, $enum_parent:ty) => {
+        impl Visitable<$trait_type1, $enum_parent> for $enum_variant {
+            paste::paste! {
+                #[doc = "Redirect Visitors to `" $enum_variant "` version."]
+                fn accept(&mut self, visitor: &mut $enum_parent) -> $trait_type1 {
+                    paste::item! {visitor.[<visit_ $enum_variant:snake:lower>](self)}
+                }
+            }
+        }
+    };
+}
+
 pub(crate) trait Visitable<T, U> {
     fn accept(&mut self, visitor: &mut U) -> T;
 }
 
 trait StatementVisitor {
+    //Turning print into a native function
     //fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement;
     fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement;
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement;
@@ -126,19 +141,6 @@ impl Visitable<Statement, Interpreter> for Statement {
             Statement::Function(statement) => statement.accept(visitor),
         }
     }
-}
-
-macro_rules! visitable_trait {
-    ($trait_type1:ty,  $enum_variant:ty, $enum_parent:ty) => {
-        impl Visitable<$trait_type1, $enum_parent> for $enum_variant {
-            paste::paste! {
-                #[doc = "Redirect Visitors to `" $enum_variant "` version."]
-                fn accept(&mut self, visitor: &mut $enum_parent) -> $trait_type1 {
-                    paste::item! {visitor.[<visit_ $enum_variant:snake:lower>](self)}
-                }
-            }
-        }
-    };
 }
 
 visitable_trait! {Statement, IfStatement, Interpreter}
