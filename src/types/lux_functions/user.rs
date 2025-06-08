@@ -2,10 +2,17 @@ use super::Callable;
 use crate::enviroment::Enviroment;
 use crate::types::{lux_functions::Interpreter, statement::FunctionStatement, Expression};
 use std::collections::HashMap;
+use std::fmt::{Debug,Formatter};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive( Clone, PartialEq)]
 pub(crate) struct UserFunction {
     pub(crate) declaration: Box<FunctionStatement>,
+}
+
+impl Debug for UserFunction {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> { 
+        write!(f, "UserFunction: {}",self.declaration.name.lexeme)
+    }
 }
 
 impl Callable for UserFunction {
@@ -16,7 +23,7 @@ impl Callable for UserFunction {
     ) -> Option<Expression> {
         let mut function_enviroment: Enviroment = Enviroment {
             enclosing: Some(Box::new(interpreter.globals.clone())),
-            variable_map: HashMap::new(),
+            variable_map: interpreter.enviroment.variable_map.clone(),
         };
         let (params, body) = (&self.declaration.parameters, &self.declaration.body);
         for i in 0..params.len() {

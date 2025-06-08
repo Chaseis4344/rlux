@@ -117,11 +117,12 @@ impl StatementVisitor for Interpreter {
         use crate::types::lux_functions::user::UserFunction;
         use crate::types::lux_functions::Functions;
 
+        let function_name = &function_statement.name.lexeme;
         let function = Functions::User(UserFunction {
-            declaration: Box::new(function_statement.clone()),
+            declaration: Box::new(function_statement.to_owned()),
         });
         self.enviroment.define(
-            function_statement.name.lexeme.clone(),
+            function_name.to_string(),
             LiteralType::Callable(function),
         );
 

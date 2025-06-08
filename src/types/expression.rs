@@ -63,3 +63,9 @@ pub struct Function {
     parameters: Vec<Token>,
     body: Vec<Statement>,
 }
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Return {
+    keyword: Token,
+    value: Expression,
+}

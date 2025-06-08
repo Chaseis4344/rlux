@@ -248,10 +248,11 @@ impl Parser {
         }
 
         let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
-        let consumed = self.consume(
+         let consumed = self.consume(
             TokenType::Semicolon,
-            "Expected ';' after print statement",
+            "Expected ';' after function call",
         );
+        // println!("{:?}",consumed);
         error_check!(consumed);
 
         Ok(new_call!(callee, paren, arguments))

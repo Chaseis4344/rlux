@@ -160,6 +160,7 @@ impl DisplayTrait for crate::types::Expression {
             Self::Assignment(_) => todo!(),
             Self::Logical(_) => todo!(),
             Self::Call(_) => todo!(),
+            _ => todo!(),
         }
     }
 }

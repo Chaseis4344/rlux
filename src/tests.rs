@@ -69,3 +69,8 @@ fn for_loop_test() {
 fn comparison_test() {
     run_file_test("comparison_test.lux")
 }
+
+#[test]
+fn function_test() {
+    run_file_test("function_test.lux")
+}

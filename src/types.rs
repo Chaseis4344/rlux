@@ -75,6 +75,7 @@ pub enum Expression {
     Binary(Box<expression::Binary>),
     Ternary(Box<expression::Ternary>),
     Literal(Box<expression::Literal>),
+    Return(Box<expression::Return>),
     Variable(Box<expression::Variable>),
     Assignment(Box<expression::Assignment>),
     Call(Box<expression::Call>),

@@ -6,6 +6,12 @@ fun count(n) {
   print(n);
 }
 
-
-count(22)
 print(count);
+print("Hi");
+print("Hi");
+print("Hi");
+print("Hi");
+
+count(22);
+print(count);
+print(n);

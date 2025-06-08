@@ -19,3 +19,4 @@ pub(crate) enum Functions {
     Print(print::Print),
     User(user::UserFunction),
 }
+

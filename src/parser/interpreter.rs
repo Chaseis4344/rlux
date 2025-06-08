@@ -14,14 +14,14 @@ use std::collections::HashMap;
 macro_rules! visitable_trait {
     ($trait_type:ty,$enum_variant:ty, $enum_parent:ty) => {
         impl Visitable<$trait_type> for $enum_variant {
-            fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<$trait_type>) -> $trait_type {
+            fn accept(&mut self, visitor: &mut dyn InterpreterVisitor<$trait_type>) -> $trait_type {
                 paste::item! {visitor.[<visit_ $enum_variant:lower>](self)}
             }
         }
     };
 }
 
-trait ExpressionVisitor<T> {
+trait InterpreterVisitor<T> {
     fn visit_grouping(&mut self, group: &mut Grouping) -> T;
     fn visit_binary(&mut self, bin: &mut Binary) -> T;
     fn visit_unary(&mut self, unary: &mut Unary) -> T;
@@ -31,14 +31,15 @@ trait ExpressionVisitor<T> {
     fn visit_assignment(&mut self, assign: &mut Assignment) -> T;
     fn visit_logical(&mut self, logical: &mut Logical) -> T;
     fn visit_call(&mut self, call: &mut Call) -> T;
+    fn visit_return(&mut self, ret: &mut Return) -> T;
 }
 
 trait Visitable<T> {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<T>) -> T;
+    fn accept(&mut self, visitor: &mut dyn InterpreterVisitor<T>) -> T;
 }
 
 impl Visitable<LiteralType> for Expression {
-    fn accept(&mut self, visitor: &mut dyn ExpressionVisitor<LiteralType>) -> LiteralType {
+    fn accept(&mut self, visitor: &mut dyn InterpreterVisitor<LiteralType>) -> LiteralType {
         match self {
             Expression::Binary(bin) => bin.accept(visitor),
             Expression::Literal(lit) => lit.accept(visitor),
@@ -49,6 +50,7 @@ impl Visitable<LiteralType> for Expression {
             Expression::Assignment(assign) => assign.accept(visitor),
             Expression::Logical(logic) => logic.accept(visitor),
             Expression::Call(call) => call.accept(visitor),
+            Expression::Return(ret) => ret.accept(visitor),
         }
     }
 }
@@ -62,6 +64,7 @@ visitable_trait! {LiteralType,Variable,Expression}
 visitable_trait! {LiteralType,Assignment,Expression}
 visitable_trait! {LiteralType,Logical,Expression}
 visitable_trait! {LiteralType,Call,Expression}
+visitable_trait! {LiteralType,Return,Expression}
 
 pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
@@ -100,9 +103,9 @@ impl Interpreter {
         }
     }
 
+    ///Hand over between the Parser and the Interpreter
     pub(crate) fn execute(&mut self, mut statement: Statement) {
-        use super::statement::Visitable as InterpreterVisitable;
-        //Hand over between the two architectures
+        use super::statement::Visitable as ParserVisitable;
         statement.accept(self);
     }
 
@@ -136,7 +139,10 @@ impl Interpreter {
 }
 
 ///Logic for how the Interpreter acts with each operator or Token
-impl ExpressionVisitor<LiteralType> for Interpreter {
+impl InterpreterVisitor<LiteralType> for Interpreter {
+    fn visit_return(&mut self, ret: &mut Return) -> LiteralType {
+        todo!()
+    }
     fn visit_binary(&mut self, bin: &mut Binary) -> LiteralType {
         let left = self.evaluate(&mut bin.left);
         let right = self.evaluate(&mut bin.right);
@@ -202,6 +208,7 @@ impl ExpressionVisitor<LiteralType> for Interpreter {
         let name = &var.name.lexeme;
         let result: Result<LiteralType, std::env::VarError> =
             self.enviroment.to_owned().get(name.to_string());
+        // println!("{:?}", result);
         if let Ok(item) = result {
             item
         } else {
