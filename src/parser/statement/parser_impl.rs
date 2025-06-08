@@ -1,14 +1,19 @@
 use super::*;
 use crate::parser::Parser;
 use crate::types::token::Token;
+use crate::macros::error_check;
 
 impl Parser {
     /*Statement Grammar is Here Down */
     fn if_statement(&mut self) -> Result<Statement, ParserError> {
-        let _ = self.consume(TokenType::LeftParen, "Expected \"(\" after if statement");
-        let condition = self.expression()?;
-        let _ = self.consume(TokenType::RightParen, "Expected \")\" after if statement");
+        let consumed = self.consume(TokenType::LeftParen, "Expected \"(\" after if statement");
+        error_check!(consumed);
 
+        let condition = self.expression()?;
+
+        let consumed = self.consume(TokenType::RightParen, "Expected \")\" after if statement");
+        error_check!(consumed);
+        
         let then_branch = Box::new(self.statement()?);
         let else_branch: Option<Statement> = if self.match_token_type(vec![TokenType::Else]) {
             Some(self.statement()?)
@@ -34,9 +39,9 @@ impl Parser {
         }
     */
     fn while_statement(&mut self) -> Result<Statement, ParserError> {
-        let _ = self.consume(TokenType::LeftParen, "Expect '(' after while.");
+        let _ = self.consume(TokenType::LeftParen, "Expect '(' after while.")?;
         let condition = self.expression()?;
-        let _ = self.consume(TokenType::RightParen, "Expect ')' after while condition.");
+        let _ = self.consume(TokenType::RightParen, "Expect ')' after while condition.")?;
         let body = Box::new(self.statement()?);
 
         Ok(Statement::While(WhileStatement { condition, body }))
@@ -54,10 +59,10 @@ impl Parser {
             Some(self.expression_statement()?)
         };
 
-        let condition: Option<Expression> = if !self.check(TokenType::Semicolon) {
-            Some(self.expression()?)
-        } else {
+        let condition: Option<Expression> = if self.check(TokenType::Semicolon) {
             None
+        } else {
+            Some(self.expression()?)
         };
 
         let _ = self.consume(TokenType::Semicolon, "Expect ';' after increment part.");
@@ -127,31 +132,55 @@ impl Parser {
 
     fn statement(&mut self) -> Result<Statement, ParserError> {
         if self.match_token_type(vec![TokenType::If]) {
-            self.if_statement()
+            let returned = self.if_statement();
+            error_check!(returned);
+            returned
         }
         /* else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
         } */
         else if self.match_token_type(vec![TokenType::While]) {
-            self.while_statement()
+            let returned = self.while_statement();
+            error_check!(returned);
+            returned
         } else if self.match_token_type(vec![TokenType::For]) {
-            self.for_statement()
+            let returned = self.for_statement();
+            error_check!(returned);
+            returned
         } else if self.match_token_type(vec![TokenType::LeftBrace]) {
-            self.block_statement()
+            let returned = self.block_statement();
+            error_check!(returned);
+            returned
         } else {
-            self.expression_statement()
+            let returned = self.expression_statement();
+            error_check!(returned);
+            returned
         }
     }
 
     fn variable_decalration(&mut self) -> Result<Statement, ParserError> {
-        let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable")?;
-        let mut initalizer: Option<Expression> = None;
-
+        let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable");
+        error_check!(name);
+        
+        //Error was handeled at runtime, we can now expect the name to be present
+        let name = name.expect("Variable Identifier is erroring"); 
+        
+        let initalizer: Option<Expression> =
         if self.match_token_type(vec![TokenType::Equal]) {
-            initalizer = Some(self.expression()?)
-        }
+            Some(self.expression()?)
+        } else {
+            None
+        };
 
-        let _ = self.consume(TokenType::Semicolon, "Expexted \";\" following statement");
+        let consumed = self.consume(TokenType::Semicolon, "Expected \";\" following statement");
+        // println!("{:?}", consumed);
+        // This allows for loops to have assignment statements inside their heads without the
+        // parser throwing a fit at the user
+        if let Err(error) = consumed {
+           if error.source.token_type != TokenType::For && error.source.lexeme.to_lowercase() != "print" {
+                let _ = crate::error(error.source.line,error.cause);
+           }
+        }
 
         let statement = VariableStatement { name, initalizer };
 
@@ -189,10 +218,11 @@ impl Parser {
                 &format!("Expected ) after parameters for {kind}"),
             )?;
         }
-        let _ = self.consume(
+        let consumed = self.consume(
             TokenType::LeftBrace,
             "Expected \'{\' after function statement",
         );
+        error_check!(consumed);
         let body = self.block_statement()?;
         let body: Vec<Statement> = match body {
             Statement::Block(block) => block.statements,

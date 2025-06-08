@@ -1,10 +1,10 @@
 var a = 0;
 var temp;
 var start = clock();
-for (var b = 1; a < 1000000000000000; b = temp + b;) {
+for (var b = 1; a < 1000000000000000; b = temp + b) {
   print(a);
   temp = a;
   a = b;
 }
 var end = clock();
-print("time:" +(start -end));
+print("time:" +(start -end)) ;

@@ -27,3 +27,5 @@ My custom testing suite can be found in ./src/tests/ and is run with cargo t, us
 ```
 test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 ```
+## Lines of Code(LOC)
+Currently sitting at an even 2488 LOC

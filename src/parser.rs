@@ -72,7 +72,7 @@ impl Parser {
     }
 
     fn error(token: Token, message: &str) -> ParserError {
-        let _ = crate::error(token.line, message.to_string());
+        // let _ = crate::error(token.line, message.to_string());
         ParserError {
             source: token,
             cause: message.to_string(),

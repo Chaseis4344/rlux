@@ -8,6 +8,7 @@ use std::time::SystemTime;
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Clock {}
 
+#[allow(unused_variables)]
 impl Callable for Clock {
     fn call(
         &mut self,

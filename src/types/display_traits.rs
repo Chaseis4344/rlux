@@ -121,7 +121,7 @@ impl DisplayTrait for types::ParserError {
 
 impl std::fmt::Debug for types::ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ParserError: \n\t self.source: \n\t{:?};", self.source)
+        write!(f, "ParserError: \n\t Source Token: \n\t\t{:?}\n\tCause Message:\n\t\t{:?}", self.source,self.cause)
     }
 }
 
