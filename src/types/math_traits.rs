@@ -2,7 +2,7 @@ use crate::types::{LiteralType, TokenType};
 /*
  * Nested Matches v. Tuple Matching
  *
- * Tuple Matching in this case would lead to cleaner easier to read code at the cost of the rlux's
+ * Tuple Matching in this case would lead to cleaner, easier to read code at the cost of the rlux's
  * print statements being able to have formatted strings.
  *
  * Nested matches preserve the implied string concatonation and enable formatted strings in an

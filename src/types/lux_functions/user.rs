@@ -2,16 +2,16 @@ use super::Callable;
 use crate::enviroment::Enviroment;
 use crate::types::{lux_functions::Interpreter, statement::FunctionStatement, Expression};
 use std::collections::HashMap;
-use std::fmt::{Debug,Formatter};
+use std::fmt::{Debug, Formatter};
 
-#[derive( Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub(crate) struct UserFunction {
     pub(crate) declaration: Box<FunctionStatement>,
 }
 
 impl Debug for UserFunction {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> { 
-        write!(f, "UserFunction: {}",self.declaration.name.lexeme)
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(f, "UserFunction: {}", self.declaration.name.lexeme)
     }
 }
 

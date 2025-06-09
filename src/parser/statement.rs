@@ -121,10 +121,8 @@ impl StatementVisitor for Interpreter {
         let function = Functions::User(UserFunction {
             declaration: Box::new(function_statement.to_owned()),
         });
-        self.enviroment.define(
-            function_name.to_string(),
-            LiteralType::Callable(function),
-        );
+        self.enviroment
+            .define(function_name.to_string(), LiteralType::Callable(function));
 
         Statement::Function(function_statement.to_owned())
     }

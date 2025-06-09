@@ -1,7 +1,7 @@
 use super::*;
+use crate::macros::error_check;
 use crate::parser::Parser;
 use crate::types::token::Token;
-use crate::macros::error_check;
 
 impl Parser {
     /*Statement Grammar is Here Down */
@@ -13,7 +13,7 @@ impl Parser {
 
         let consumed = self.consume(TokenType::RightParen, "Expected \")\" after if statement");
         error_check!(consumed);
-        
+
         let then_branch = Box::new(self.statement()?);
         let else_branch: Option<Statement> = if self.match_token_type(vec![TokenType::Else]) {
             Some(self.statement()?)
@@ -139,7 +139,7 @@ impl Parser {
         /* else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
         } */
-               else if self.match_token_type(vec![TokenType::While]) {
+        else if self.match_token_type(vec![TokenType::While]) {
             let returned = self.while_statement();
             error_check!(returned);
             returned
@@ -161,12 +161,11 @@ impl Parser {
     fn variable_decalration(&mut self) -> Result<Statement, ParserError> {
         let name = self.consume(TokenType::Identifier, "Expected Identifier for Variable");
         error_check!(name);
-        
+
         //Error was handeled at runtime, we can now expect the name to be present
-        let name = name.expect("Variable Identifier is erroring"); 
-        
-        let initalizer: Option<Expression> =
-        if self.match_token_type(vec![TokenType::Equal]) {
+        let name = name.expect("Variable Identifier is erroring");
+
+        let initalizer: Option<Expression> = if self.match_token_type(vec![TokenType::Equal]) {
             Some(self.expression()?)
         } else {
             None
@@ -177,9 +176,11 @@ impl Parser {
         // This allows for loops to have assignment statements inside their heads without the
         // parser throwing a fit at the user
         if let Err(error) = consumed {
-           if error.source.token_type != TokenType::For && error.source.lexeme.to_lowercase() != "print" {
-                let _ = crate::error(error.source.line,error.cause);
-           }
+            if error.source.token_type != TokenType::For
+                && error.source.lexeme.to_lowercase() != "print"
+            {
+                let _ = crate::error(error.source.line, error.cause);
+            }
         }
 
         let statement = VariableStatement { name, initalizer };

@@ -1,6 +1,6 @@
+use crate::macros::error_check;
 use crate::parser::Parser;
 use crate::types::{expression::*, token::Token, Expression, LiteralType, ParserError, TokenType};
-use crate::macros::error_check;
 //These macros create new types of expressions, this is so the code is understandable
 
 macro_rules! new_ternary {
@@ -75,8 +75,6 @@ macro_rules! new_literal {
     };
 }
 
-
-
 impl Parser {
     pub(crate) fn expression(&mut self) -> Result<Expression, ParserError> {
         self.or()
@@ -117,7 +115,7 @@ impl Parser {
                 TokenType::Colon,
                 &(format!("Expected \":\" instead of {}", self.peek())),
             );
-            error_check!(consumed); 
+            error_check!(consumed);
 
             let rhs = self.assignment()?;
             ternary = new_ternary!(ternary, lhs, rhs);
@@ -248,10 +246,7 @@ impl Parser {
         }
 
         let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
-         let consumed = self.consume(
-            TokenType::Semicolon,
-            "Expected ';' after function call",
-        );
+        let consumed = self.consume(TokenType::Semicolon, "Expected ';' after function call");
         // println!("{:?}",consumed);
         error_check!(consumed);
 

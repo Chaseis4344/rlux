@@ -1,6 +1,6 @@
 use crate::types::LiteralType;
+use std::fmt::{Debug, Formatter};
 use std::{collections::HashMap, env::VarError};
-use std::fmt::{Debug,Formatter};
 #[derive(Clone)]
 ///Enclosing Enviroment for Rlux runtime
 pub struct Enviroment {
@@ -9,8 +9,12 @@ pub struct Enviroment {
 }
 
 impl Debug for Enviroment {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> { 
-        write!(f, "Current: \n\tHashMap:{:?}\nNext:\n\t{:?}\n\n",self.variable_map,self.enclosing)
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(
+            f,
+            "Current: \n\tHashMap:{:?}\nNext:\n\t{:?}\n\n",
+            self.variable_map, self.enclosing
+        )
     }
 }
 
@@ -18,8 +22,8 @@ impl Enviroment {
     ///Defines a new variable and maps the value to the Literal Provided
     pub(crate) fn define(&mut self, name: String, value: LiteralType) {
         {
-        let map = &mut self.variable_map;
-        map.insert(name.clone(), value);
+            let map = &mut self.variable_map;
+            map.insert(name.clone(), value);
         }
         // println!("Enviroment: {:?} defined: {name}",self);
     }
@@ -30,16 +34,15 @@ impl Enviroment {
 
         if let Some(lit) = result {
             // println!("Gave {lit}");
-           return Ok(lit.to_owned());
+            return Ok(lit.to_owned());
         }
-        
+
         if let Some(underlying) = self.enclosing {
             // println!("Enclosing Checked");
             underlying.get(name)
         } else {
             Err(VarError::NotPresent)
         }
-        
     }
 
     /// Assigns value to variable, may be used to redfine existing varibles

@@ -308,12 +308,12 @@ impl Scanner {
     }
 
     fn is_at_end(&self) -> bool {
-        //! Checks if we are end of token stream by counting number of chars 
+        //! Checks if we are end of token stream by counting number of chars
         self.current >= self.source.len().try_into().unwrap()
     }
 
     fn advance(&mut self) -> char {
-        //! Moves to next char, defines end of string otherwise 
+        //! Moves to next char, defines end of string otherwise
         if !self.is_at_end() {
             self.current += 1;
             self.source.as_bytes()[(self.current - 1) as usize] as char

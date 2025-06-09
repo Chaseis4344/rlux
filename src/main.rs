@@ -4,8 +4,8 @@ use std::{
     process::exit,
 };
 
-mod macros;
 mod enviroment;
+mod macros;
 mod parser;
 mod scanner;
 #[cfg(test)]
