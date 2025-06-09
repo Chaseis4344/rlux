@@ -1,4 +1,13 @@
 use crate::types::{LiteralType, TokenType};
+/*
+ * Nested Matches v. Tuple Matching
+ *
+ * Tuple Matching in this case would lead to cleaner easier to read code at the cost of the rlux's
+ * print statements being able to have formatted strings.
+ *
+ * Nested matches preserve the implied string concatonation and enable formatted strings in an
+ * ergonomic way that users expect.
+ */
 ///Defines an operation to be performed with 2 numbers, the operand is passed into $op
 macro_rules! number_op {
     ($self:expr, $rhs:expr, $op:tt) => {
