@@ -5,31 +5,7 @@ pub struct Scanner {
     pub line: u32,
 }
 
-macro_rules! init_value {
-    ($default:ident , $val:literal) => {
-        let $default = match $default {
-            Some(thing) => thing,
-            None => $val,
-        };
-    };
-}
 
-macro_rules! new_character {
-    ($token_type:expr, $string:expr, $line:expr) => {
-        Some(Token::new($token_type, String::from($string), None, $line))
-    };
-}
-
-macro_rules! new_literal {
-    ($token_type:expr, $string:expr, $literal_type:expr, $line:expr) => {
-        Some(Token::new(
-            $token_type,
-            String::from($string),
-            Some($literal_type),
-            $line,
-        ))
-    };
-}
 
 #[allow(clippy::manual_range_contains)]
 impl Scanner {

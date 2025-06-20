@@ -31,8 +31,8 @@ trait StatementVisitor {
     fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement;
     fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement;
     fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement;
-    fn visit_function_statement(&mut self, function_statement: &mut FunctionStatement)
-        -> Statement;
+    fn visit_function_statement(&mut self, function_statement: &mut FunctionStatement) -> Statement;
+    fn visit_return_statement(&mut self, return_statement: &mut ReturnStatement) -> Statement;
 }
 
 impl StatementVisitor for Interpreter {

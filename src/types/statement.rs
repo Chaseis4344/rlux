@@ -41,6 +41,12 @@ pub(crate) struct BlockStatement {
     pub(crate) statements: Vec<Statement>,
 }
 
+#[derive(Clone,Debug, PartialEq)]
+pub(crate) struct ReturnStatement {
+    keyword: Token,
+    value: Option<Expression>,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum Statement {
     // Print(PrintStatement),
@@ -50,4 +56,5 @@ pub(crate) enum Statement {
     If(IfStatement),
     Block(BlockStatement),
     Function(FunctionStatement),
+    Return(ReturnStatement),
 }

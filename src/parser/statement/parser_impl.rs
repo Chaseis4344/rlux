@@ -29,6 +29,22 @@ impl Parser {
             else_branch,
         }))
     }
+    fn return_statement(&mut self) -> Result<Statement, ParserError> {
+        let keyword: Token = self.previous();
+        let value: Option<Expression> = if self.match_token_type(vec![TokenType::Semicolon]) {
+            None
+        } else {
+            Some(self.expression()?)
+        };
+
+        let consumed = self.consume(TokenType::Semicolon, "Expected ';' after return");
+        error_check!(consumed);
+
+        Ok(Statement::Return( ReturnStatement {
+           keyword,
+           value, 
+        }))
+    }
     /*
         fn print_statement(&mut self) -> Result<Statement, ParserError> {
             let expression = self.expression()?;
