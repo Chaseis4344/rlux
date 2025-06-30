@@ -6,5 +6,7 @@ var a = 1;
   print("Actual: "+a);
   print("");
 }
+//Start doing function scope tests
+if (0==0) 
 print("Expected: 1");
 print("Actual: "+a);
