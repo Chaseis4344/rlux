@@ -43,8 +43,8 @@ pub(crate) struct BlockStatement {
 
 #[derive(Clone,Debug, PartialEq)]
 pub(crate) struct ReturnStatement {
-    keyword: Token,
-    value: Option<Expression>,
+    pub(crate) keyword: Token,
+    pub(crate) value: Option<Expression>,
 }
 
 #[derive(Clone, Debug, PartialEq)]

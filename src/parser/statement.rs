@@ -43,6 +43,7 @@ visitable_trait! {Statement, ExpressionStatement, Interpreter}
 visitable_trait! {Statement, WhileStatement, Interpreter}
 visitable_trait! {Statement, BlockStatement, Interpreter}
 visitable_trait! {Statement, FunctionStatement, Interpreter}
+visitable_trait! {Statement, ReturnStatement, Interpreter}
 
 
 impl Visitable<Statement, Interpreter> for Statement {
@@ -56,6 +57,7 @@ impl Visitable<Statement, Interpreter> for Statement {
             Statement::While(statement) => statement.accept(visitor),
             Statement::Block(statement) => statement.accept(visitor),
             Statement::Function(statement) => statement.accept(visitor),
+            Statement::Return(statement) => statement.accept(visitor),
         }
     }
 }
