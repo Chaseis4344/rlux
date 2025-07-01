@@ -2,12 +2,11 @@ mod tests;
 
 #[derive(Debug)]
 enum IR_Block {
-    Jump(Jump),
-    ,
+    
 }
 
 pub fn statement_to_ir_block() -> IR_Block {
-
+    todo!("Finish Visitor Structure for IR Blocks");
 }
 
 

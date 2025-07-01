@@ -4,7 +4,6 @@ use crate::types::token::Token;
 use crate::types::*;
 
 pub(crate) mod expression;
-pub(crate) mod interpreter;
 pub(crate) mod statement;
 
 pub struct Parser {

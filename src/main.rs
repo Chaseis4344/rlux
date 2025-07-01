@@ -4,6 +4,7 @@ use std::{
     process::exit,
 };
 
+pub(crate) mod interpreter;
 mod enviroment;
 mod macros;
 mod parser;
@@ -50,7 +51,7 @@ fn run(source: String) -> Result<i32, Error> {
     let mut parser = parser::Parser::new(tokens, 0);
     let statements = parser.parse();
 
-    let mut interpreter = parser::interpreter::Interpreter::new();
+    let mut interpreter = interpreter::Interpreter::new();
     interpreter.interpret(statements);
 
     Result::Ok(0)

@@ -1,5 +1,5 @@
 use super::{Callable, Expression};
-use crate::parser::interpreter::Interpreter;
+use crate::interpreter::Interpreter;
 use crate::types::expression::Literal as LiteralStruct;
 use crate::types::Expression::Literal;
 use crate::types::LiteralType;
