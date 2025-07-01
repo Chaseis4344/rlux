@@ -4,14 +4,19 @@ use std::{
     process::exit,
 };
 
-pub(crate) mod interpreter;
-mod enviroment;
-mod macros;
+//Execution Path Modules
+mod interpreter;
 mod parser;
 mod scanner;
+
+//Misc Utility Modules
+mod enviroment;
+mod types;
+
+//Meta Modules
+mod macros;
 #[cfg(test)]
 mod tests;
-mod types;
 
 #[allow(unused)]
 ///Sends runtime error report to user with specific additonal details

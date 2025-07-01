@@ -1,18 +1,16 @@
 
 fun count(n) {
-
+  
   if (n > 1) {
     count(n - 1);
-}
+  }
+
   print(n);
 }
 
-print(count);
-print("Hi");
-print("Hi");
-print("Hi");
-print("Hi");
 
-count(22);
+count(5);
 print(count);
+
+print("Below Should Error");
 print(n);

@@ -1,16 +1,16 @@
 use crate::enviroment::Enviroment;
+use crate::interpreter::Interpreter;
+use crate::interpreter::InterpreterVisitor;
+use crate::parser::statement::Visitable;
 use crate::types::expression::Call;
 use crate::types::expression::*;
 use crate::types::lux_functions::print::Print;
 use crate::types::lux_functions::{
     clock::Clock, Callable as CallableTrait, Functions, Functions::Clock as OuterClock,
 };
+use crate::types::statement::Statement;
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
-use crate::interpreter::Interpreter;
-use crate::parser::statement::Visitable;
-use crate::interpreter::InterpreterVisitor;
-use crate::types::statement::Statement;
 // fun -> LiteralType | fun
 
 impl Interpreter {
@@ -155,6 +155,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             item
         } else {
             //Nothing was found so we return nothing
+            // println!("{:?}",self.enviroment.clone());
             crate::error(
                 var.name.line,
                 "Variable not found: ".to_owned() + &var.name.lexeme,

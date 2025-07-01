@@ -41,7 +41,7 @@ pub(crate) struct BlockStatement {
     pub(crate) statements: Vec<Statement>,
 }
 
-#[derive(Clone,Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) struct ReturnStatement {
     pub(crate) keyword: Token,
     pub(crate) value: Option<Expression>,

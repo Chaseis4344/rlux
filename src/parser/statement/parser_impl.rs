@@ -40,10 +40,7 @@ impl Parser {
         let consumed = self.consume(TokenType::Semicolon, "Expected ';' after return");
         error_check!(consumed);
 
-        Ok(Statement::Return( ReturnStatement {
-           keyword,
-           value, 
-        }))
+        Ok(Statement::Return(ReturnStatement { keyword, value }))
     }
     /*
         fn print_statement(&mut self) -> Result<Statement, ParserError> {

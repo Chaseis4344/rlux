@@ -1,8 +1,7 @@
-use crate::types::statement::*;
 use crate::interpreter::Interpreter;
-use crate::parser::LiteralType;
 use crate::parser::statement::StatementVisitor;
-
+use crate::parser::LiteralType;
+use crate::types::statement::*;
 
 impl StatementVisitor for Interpreter {
     fn visit_return_statement(&mut self, ret: &mut ReturnStatement) -> Statement {

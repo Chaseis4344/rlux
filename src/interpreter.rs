@@ -1,6 +1,6 @@
-use interpreter_traits::InterpreterVisitor;
 use crate::enviroment::Enviroment;
 use crate::types::{Expression, LiteralType};
+use interpreter_traits::InterpreterVisitor;
 
 pub(crate) struct Interpreter {
     pub(crate) enviroment: Box<Enviroment>,
@@ -26,5 +26,3 @@ impl interpreter_traits::Visitable<LiteralType> for Expression {
         }
     }
 }
-
-
