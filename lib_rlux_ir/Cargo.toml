@@ -1,5 +1,5 @@
 [package]
-name = "lib-rlux-ir"
+name = "lib_rlux_ir"
 version = "0.1.0"
 edition = "2021"
 

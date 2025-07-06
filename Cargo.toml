@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-lib-rlux-ir = { version = "0.1.0", path = "lib-rlux-ir" }
+lib_rlux_ir = { version = "0.1.0", path = "lib_rlux_ir" }
 paste = "1.0.15"
