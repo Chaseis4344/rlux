@@ -66,6 +66,6 @@ pub struct Function {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Return {
-    keyword: Token,
-    value: Option<Expression>,
+    pub(crate) keyword: Token,
+    pub(crate) value: Option<Expression>,
 }

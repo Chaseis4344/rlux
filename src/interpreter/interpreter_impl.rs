@@ -150,7 +150,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         let name = &var.name.lexeme;
         let result: Result<LiteralType, std::env::VarError> =
             self.enviroment.to_owned().get(name.to_string());
-        // println!("{:?}", result);
+        // println!("{:?}", self.enviroment);
         if let Ok(item) = result {
             item
         } else {
