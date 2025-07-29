@@ -7,4 +7,5 @@ edition = "2024"
 
 [dependencies]
 lib_rlux_ir = { version = "0.1.0", path = "lib_rlux_ir" }
+lib_rlux_types = { version = "0.1.0", path = "lib_rlux_types" }
 paste = "1.0.15"

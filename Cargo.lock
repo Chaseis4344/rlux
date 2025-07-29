@@ -7,6 +7,10 @@ name = "lib_rlux_ir"
 version = "0.1.0"
 
 [[package]]
+name = "lib_rlux_types"
+version = "0.1.0"
+
+[[package]]
 name = "paste"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -17,5 +21,6 @@ name = "rlux"
 version = "0.2.0"
 dependencies = [
  "lib_rlux_ir",
+ "lib_rlux_types",
  "paste",
 ]
