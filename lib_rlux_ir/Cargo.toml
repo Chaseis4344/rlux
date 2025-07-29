@@ -1,6 +1,4 @@
 [package]
 name = "lib_rlux_ir"
 version = "0.1.0"
-edition = "2021"
-
-[dependencies]
+edition = "2024"

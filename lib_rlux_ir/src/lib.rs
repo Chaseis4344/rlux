@@ -1,17 +1,10 @@
-mod tests;
 
 #[derive(Debug)]
-enum IR_Block {
+enum IrBlock {
     
 }
 
-pub fn statement_to_ir_block() -> IR_Block {
+pub fn statement_to_ir_block() -> IrBlock {
     todo!("Finish Visitor Structure for IR Blocks");
-}
-
-
-pub fn add(left: u64, right: u64) -> u64 {
-
-    left + right
 }
 
