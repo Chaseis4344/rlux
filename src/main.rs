@@ -1,11 +1,12 @@
 use std::{
     env, fs,
-    io::{stdin, Error},
+    io::{Error, stdin},
     process::exit,
 };
 
 //Execution Path Modules
 mod interpreter;
+mod ir;
 mod parser;
 mod scanner;
 
@@ -54,10 +55,12 @@ fn run(source: String) -> Result<i32, Error> {
     });
 
     let mut parser = parser::Parser::new(tokens, 0);
-    let statements = parser.parse();
+    let statements: Vec<types::statement::Statement> = parser.parse();
+
+    let ir = ir::statements_to_ir(statements);
 
     let mut interpreter = interpreter::Interpreter::new();
-    interpreter.interpret(statements);
+    interpreter.interpret_ir(ir);
 
     Result::Ok(0)
 }

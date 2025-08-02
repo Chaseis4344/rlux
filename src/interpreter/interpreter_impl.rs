@@ -6,7 +6,7 @@ use crate::types::expression::Call;
 use crate::types::expression::*;
 use crate::types::lux_functions::print::Print;
 use crate::types::lux_functions::{
-    clock::Clock, Callable as CallableTrait, Functions, Functions::Clock as OuterClock,
+    Callable as CallableTrait, Functions, Functions::Clock as OuterClock, clock::Clock,
 };
 use crate::types::statement::Statement;
 use crate::types::{Expression, LiteralType, TokenType};

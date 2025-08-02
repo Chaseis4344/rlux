@@ -1,6 +1,6 @@
 use crate::macros::error_check;
 use crate::parser::Parser;
-use crate::types::{expression::*, token::Token, Expression, LiteralType, ParserError, TokenType};
+use crate::types::{Expression, LiteralType, ParserError, TokenType, expression::*, token::Token};
 //These macros create new types of expressions, this is so the code is understandable
 
 macro_rules! new_ternary {
@@ -278,7 +278,7 @@ impl Parser {
                     return Err(ParserError {
                         source: self.previous(),
                         cause: String::from("Cannot Evaluate a function from primary!"),
-                    })
+                    });
                 }
             };
 

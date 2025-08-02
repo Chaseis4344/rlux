@@ -1,6 +1,6 @@
+use crate::types::LiteralType;
 use crate::types::expression::Call;
 use crate::types::expression::*;
-use crate::types::LiteralType;
 
 ///Shorthand to internally generate accept() functions for the Enum Variant and type passed in,
 ///internally will result in performing the corresponding instruction

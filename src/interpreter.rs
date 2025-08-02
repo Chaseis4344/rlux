@@ -7,6 +7,7 @@ pub(crate) struct Interpreter {
     pub(crate) globals: Enviroment,
 }
 
+mod interpret_ir;
 mod interpreter_impl;
 mod interpreter_traits;
 

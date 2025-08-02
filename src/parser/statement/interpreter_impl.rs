@@ -1,7 +1,7 @@
+#![allow(unused_imports)]
 use crate::interpreter::Interpreter;
-use crate::parser::statement::StatementVisitor;
 use crate::parser::LiteralType;
-use crate::types::statement::*;
+use crate::parser::statement::*;
 
 impl StatementVisitor for Interpreter {
     fn visit_return_statement(&mut self, ret: &mut ReturnStatement) -> Statement {
@@ -85,8 +85,8 @@ impl StatementVisitor for Interpreter {
         &mut self,
         function_statement: &mut FunctionStatement,
     ) -> Statement {
-        use crate::types::lux_functions::user::UserFunction;
         use crate::types::lux_functions::Functions;
+        use crate::types::lux_functions::user::UserFunction;
 
         let function_name = &function_statement.name.lexeme;
         let function = Functions::User(UserFunction {

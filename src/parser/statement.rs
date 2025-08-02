@@ -1,8 +1,8 @@
 use crate::interpreter::Interpreter;
-use crate::parser::{LiteralType, ParserError, TokenType};
-use crate::types::statement::*;
-use crate::types::Expression;
 use crate::macros::visitable_trait_two_elements as visitable_trait;
+use crate::parser::{LiteralType, ParserError, TokenType};
+use crate::types::Expression;
+use crate::types::statement::*;
 
 mod interpreter_impl;
 mod parser_impl;
@@ -19,17 +19,17 @@ pub(crate) trait StatementVisitor {
     fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement;
     fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement;
     fn visit_function_statement(&mut self, function_statement: &mut FunctionStatement)
-        -> Statement;
+    -> Statement;
     fn visit_return_statement(&mut self, return_statement: &mut ReturnStatement) -> Statement;
 }
 
-
 impl Visitable<Statement, Interpreter> for Statement {
     fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
+        #[allow(clippy::unused_imports)]
+        //Import required for trait to work, no idea why
         use crate::parser::statement::Visitable;
         match self {
             // Statement::Print(statement) => statement.accept(visitor),
-            Statement::Return(statement) => statement.accept(visitor),
             Statement::Expression(statement) => statement.accept(visitor),
             Statement::Variable(statement) => statement.accept(visitor),
             Statement::If(statement) => statement.accept(visitor),
@@ -49,4 +49,3 @@ visitable_trait! {Statement, ExpressionStatement, Interpreter}
 visitable_trait! {Statement, WhileStatement, Interpreter}
 visitable_trait! {Statement, BlockStatement, Interpreter}
 visitable_trait! {Statement, FunctionStatement, Interpreter}
-

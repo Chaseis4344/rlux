@@ -1,5 +1,5 @@
-use crate::types::{token::Token, LiteralType, TokenType};
-use crate::macros::{new_character, init_value,new_literal};
+use crate::macros::{init_value, new_character, new_literal};
+use crate::types::{LiteralType, TokenType, token::Token};
 pub struct Scanner {
     source: String,
     current: u32,
