@@ -1,12 +1,12 @@
 mod display_traits;
-pub(crate) mod expression;
-pub(crate) mod lux_functions;
-pub(crate) mod math_traits;
-pub(crate) mod statement;
-pub(crate) mod token;
+pub mod expression;
+pub mod lux_functions;
+pub mod math_traits;
+pub mod statement;
+pub mod token;
 
 #[derive(Clone, Debug)]
-pub(crate) enum LiteralType {
+pub enum LiteralType {
     Number(f64),
     Boolean(bool),
     String(String),
@@ -15,7 +15,7 @@ pub(crate) enum LiteralType {
 }
 
 #[derive(Clone, Debug, Copy)]
-pub(crate) enum TokenType {
+pub enum TokenType {
     //Single Character Tokens
     LeftParen,
     RightParen,
@@ -84,17 +84,17 @@ pub enum Expression {
 #[derive(Clone)]
 
 pub struct ParserError {
-    pub(crate) source: token::Token,
-    pub(crate) cause: String,
+    pub source: token::Token,
+    pub cause: String,
 }
 
 #[derive(Clone, Debug)]
-pub(crate) struct RuntimeError {
-    pub(crate) source: token::Token,
+pub struct RuntimeError {
+    pub source: token::Token,
 }
 
 #[derive(Clone, Debug)]
-pub(crate) enum LuxErrors {
+pub enum LuxErrors {
     ParserError(ParserError),
     RuntimeError(RuntimeError),
 }
