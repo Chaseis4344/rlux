@@ -1,11 +1,9 @@
-
-
 #![allow(unused_imports, unused_macros)]
 
 macro_rules! debug {
     ($e:expr) => {
         #[cfg(debug_assertions)]
-        println!("{:?}",$e);
+        println!("{:?}", $e);
     };
 }
 

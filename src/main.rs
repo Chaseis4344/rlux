@@ -4,8 +4,6 @@ use std::{
     process::exit,
 };
 
-
-
 //Execution Path Modules
 mod interpreter;
 mod ir;
@@ -21,14 +19,14 @@ mod macros;
 #[cfg(test)]
 mod tests;
 
-use macros::debug as debug;
+use macros::debug;
 
 enum ExitCode {
     Okay = 0,
     GenerallyBad = 1,
     CommandLineErr = 64,
-    DataErr= 65,
-    OSErr=72,
+    DataErr = 65,
+    OSErr = 72,
 }
 
 #[allow(unused)]
@@ -65,7 +63,7 @@ fn run(source: String) -> Result<i32, Error> {
         literal: None,
         line: scanner.line,
     });
-     
+
     debug!("Tokenizing Done");
 
     let mut parser = parser::Parser::new(tokens, 0);
@@ -80,7 +78,7 @@ fn run(source: String) -> Result<i32, Error> {
     // let mut interpreter = interpreter::Interpreter::new();
     // interpreter.interpret_ir(ir);
 
-     Result::Ok(ExitCode::Okay as i32)
+    Result::Ok(ExitCode::Okay as i32)
 }
 
 use std::path::Path;
@@ -157,19 +155,16 @@ pub fn run_prompt() {
     }
 }
 
-
 use clap::Parser;
 ///A small language focused on learning and fun
 #[derive(Parser, Debug)]
-#[command(version, about,  author)]
+#[command(version, about, author)]
 struct Args {
-
-
-    ///If this flag is set, instead of being interpreted input will be compiled into llvm 
+    ///If this flag is set, instead of being interpreted input will be compiled into llvm
     #[arg(short, long, default_value_t = true)]
-    ir:bool,
+    ir: bool,
 
-    ///If this flag set, rlux will enter an interactive REPL 
+    ///If this flag set, rlux will enter an interactive REPL
     #[arg(short = 'n', long, default_value_t = false)]
     interpret: bool,
 
@@ -192,6 +187,4 @@ fn main() {
     }
 
     exit(0);
-    
-
 }

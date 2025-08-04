@@ -1,5 +1,5 @@
-use inkwell;
 use crate::types::statement::Statement;
+use inkwell;
 #[derive(Debug)]
 pub(crate) enum IrBlock {
     Return,
