@@ -25,7 +25,5 @@ You can reach me at [mctownsend2002@gmail.com](mailto:mctownsend2002@gmail.com).
 ## Last Test Results
 My custom testing suite can be found in ./src/tests/ and is run with cargo t, use --show-output to see Runtime errors in the code from *.lux files
 ```
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 ```
-## Lines of Code(LOC)
-Currently sitting at an even 2488 LOC
