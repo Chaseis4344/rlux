@@ -1,4 +1,14 @@
+
+
 #![allow(unused_imports, unused_macros)]
+
+macro_rules! debug {
+    ($e:expr) => {
+        #[cfg(debug_assertions)]
+        println!("{:?}",$e);
+    };
+}
+
 macro_rules! init_value {
     ($default:ident , $val:literal) => {
         let $default = match $default {
@@ -50,6 +60,7 @@ macro_rules! visitable_trait_two_elements {
     };
 }
 
+pub(crate) use debug;
 pub(crate) use error_check;
 pub(crate) use init_value;
 pub(crate) use new_character;

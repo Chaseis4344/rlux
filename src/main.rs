@@ -4,6 +4,8 @@ use std::{
     process::exit,
 };
 
+
+
 //Execution Path Modules
 mod interpreter;
 mod ir;
@@ -18,6 +20,16 @@ mod types;
 mod macros;
 #[cfg(test)]
 mod tests;
+
+use macros::debug as debug;
+
+enum ExitCode {
+    Okay = 0,
+    GenerallyBad = 1,
+    CommandLineErr = 64,
+    DataErr= 65,
+    OSErr=72,
+}
 
 #[allow(unused)]
 ///Sends runtime error report to user with specific additonal details
@@ -53,16 +65,22 @@ fn run(source: String) -> Result<i32, Error> {
         literal: None,
         line: scanner.line,
     });
+     
+    debug!("Tokenizing Done");
 
     let mut parser = parser::Parser::new(tokens, 0);
     let statements: Vec<types::statement::Statement> = parser.parse();
 
+    debug!("Parsing Done");
+
     let ir = ir::statements_to_ir(statements);
 
-    let mut interpreter = interpreter::Interpreter::new();
-    interpreter.interpret_ir(ir);
+    dbg!("{}", ir);
 
-    Result::Ok(0)
+    // let mut interpreter = interpreter::Interpreter::new();
+    // interpreter.interpret_ir(ir);
+
+     Result::Ok(ExitCode::Okay as i32)
 }
 
 use std::path::Path;
@@ -91,7 +109,7 @@ pub fn run_file(filepath: String) {
     if source.is_err() {
         let error = source.unwrap_err();
         println!("File Error: {error}");
-        exit(1);
+        exit(ExitCode::GenerallyBad as i32);
     }
 
     let valid_source = source.unwrap();
@@ -99,11 +117,11 @@ pub fn run_file(filepath: String) {
     //Run the code
     match run(valid_source) {
         Ok(_) => {
-            exit(0);
+            // exit(ExitCode::Okay as i32);
         }
         Err(err) => {
             println!("{err}");
-            exit(1);
+            // exit(ExitCode::GenerallyBad as i32);
         }
     };
 }
@@ -118,7 +136,7 @@ pub fn run_prompt() {
         if matcher.is_err() {
             let err = matcher.unwrap_err();
             println!("{err}");
-            exit(65);
+            exit(ExitCode::DataErr as i32);
         }
 
         //Core function of REPL
@@ -128,27 +146,52 @@ pub fn run_prompt() {
         if result.is_err() {
             let err = result.unwrap_err();
             println!("{err}");
-            exit(65);
+            exit(ExitCode::DataErr as i32);
         }
 
         //Check if we exit Normally
         let number = result.unwrap();
         if number == 0 {
-            exit(64);
+            // exit(ExitCode::CommandLineErr as i32);
         }
     }
 }
 
+
+use clap::Parser;
+///A small language focused on learning and fun
+#[derive(Parser, Debug)]
+#[command(version, about,  author)]
+struct Args {
+
+
+    ///If this flag is set, instead of being interpreted input will be compiled into llvm 
+    #[arg(short, long, default_value_t = true)]
+    ir:bool,
+
+    ///If this flag set, rlux will enter an interactive REPL 
+    #[arg(short = 'n', long, default_value_t = false)]
+    interpret: bool,
+
+    ///Filepath for .lux source file
+    #[arg(short, long)]
+    filepath: Option<String>,
+}
+
 fn main() {
     //Collect arguments then run based on number of arguments
-    let args: Vec<String> = env::args().collect();
+    // let args: Vec<String> = env::args().collect();
+    let args = Args::parse();
 
-    match args.len() {
-        2 => run_file(args[1].to_owned()),
-        1 => run_prompt(),
-        _ => {
-            println!("Usage: rlux [script]");
-            exit(64);
-        }
+    if let Some(filepath) = args.filepath {
+        run_file(filepath);
     }
+
+    if args.interpret {
+        run_prompt();
+    }
+
+    exit(0);
+    
+
 }
