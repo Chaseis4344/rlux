@@ -77,6 +77,7 @@ macro_rules! boolean_op {
     };
 }
 
+pub(crate) use boolean_op;
 pub(crate) use debug;
 pub(crate) use error_check;
 pub(crate) use init_value;
