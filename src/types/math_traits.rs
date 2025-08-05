@@ -127,6 +127,8 @@ impl PartialEq for LiteralType {
     fn eq(&self, other: &Self) -> bool {
         //How does this all make perfect sense to me?
         //also how did I manage to exhaust all the paths by emulating C?
+        //
+        //This approach also alerts me when a new type needs to be added 
         match self {
             Self::Boolean(left_boolean) => match other {
                 Self::Boolean(right_boolean) => *left_boolean == *right_boolean,
@@ -163,7 +165,17 @@ impl PartialEq for LiteralType {
             }
             //If both are Nil, true else false
             Self::Nil => matches!(other, Self::Nil),
-            Self::Callable(_) => todo!(),
+            Self::Callable(left_function) => {
+                if let Self::Callable(right_function) = other {
+                        *left_function == *right_function
+                } else {
+                    /*Type Mismatch*/
+                    eprintln!(
+                        "Error: Type Mismatch! \n\tReturned false from a String while trying to check equality!"
+                    );
+                    false
+                }
+            },
         }
     }
 }
@@ -197,24 +209,6 @@ impl From<LiteralType> for String {
     }
 }
 
-///Defines helper macro for any boolean operation (Requiring 2 inputs and an operator)
-macro_rules! boolean_op {
-    ($self:ident, $other:ident, $op:tt) => {
-        match $self {
-            Self::Number(left_num) => match $other {
-                Self::Number(right_num) => *left_num $op *right_num,
-                _ =>  {
-                    eprintln!("Error: Type Mismatch! \n\tReturned false from a Number while trying to perform: {}" , stringify!($op));
-                    false
-                },
-            },
-            _ =>  {
-                    eprintln!("Error: Type Mismatch! \n\tReturned false while trying to perform: {}, between: {:?} and {:?}", stringify!($op), $self, $other);
-                    false
-                },
-        }
-    };
-}
 
 ///>=, >, <=, <
 impl PartialOrd for LiteralType {

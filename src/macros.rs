@@ -58,6 +58,25 @@ macro_rules! visitable_trait_two_elements {
     };
 }
 
+///Defines helper macro for any boolean operation (Requiring 2 inputs and an operator)
+macro_rules! boolean_op {
+    ($self:ident, $other:ident, $op:tt) => {
+        match $self {
+            Self::Number(left_num) => match $other {
+                Self::Number(right_num) => *left_num $op *right_num,
+                _ =>  {
+                    eprintln!("Error: Type Mismatch! \n\tReturned false from a Number while trying to perform: {}" , stringify!($op));
+                    false
+                },
+            },
+            _ =>  {
+                    eprintln!("Error: Type Mismatch! \n\tReturned false while trying to perform: {}, between: {:?} and {:?}", stringify!($op), $self, $other);
+                    false
+                },
+        }
+    };
+}
+
 pub(crate) use debug;
 pub(crate) use error_check;
 pub(crate) use init_value;

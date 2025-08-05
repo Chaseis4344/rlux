@@ -1,5 +1,7 @@
-use crate::types::statement::Statement;
+#[allow(unused_imports)]
 use inkwell;
+use crate::types::statement::Statement;
+
 #[derive(Debug)]
 pub(crate) enum IrBlock {
     Return,

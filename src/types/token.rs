@@ -13,7 +13,7 @@ impl std::fmt::Display for Token {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{} {} {}",
+            "Type: {}, Lexeme: \'{}\', Literal Value: {}",
             self.token_type,
             self.lexeme,
             self.literal.as_ref().unwrap_or(&LiteralType::Nil)

@@ -97,7 +97,9 @@ pub fn run_file(filepath: String) {
         let extension = unvalidated_extension.unwrap();
 
         if extension != "lux" {
-            println!("Please provide a lux source file");
+            //This panic is for user safety, we don't want to parse or compile the wrong type of
+            //file
+            panic!("Please provide a lux source file");
         }
     }
 
@@ -177,6 +179,10 @@ fn main() {
     //Collect arguments then run based on number of arguments
     // let args: Vec<String> = env::args().collect();
     let args = Args::parse();
+
+    //Runs file then an interactive prompt depending on command-line flags
+    //TODO: Intoduce a feature where the file can pass it's enviroment ot the interacttive shell,
+    //like Python
 
     if let Some(filepath) = args.filepath {
         run_file(filepath);

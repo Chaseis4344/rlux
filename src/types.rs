@@ -5,6 +5,8 @@ pub mod math_traits;
 pub mod statement;
 pub mod token;
 
+//TODO: Find a replacement for Strings that allows for Copy to be implemented
+//TODO: Replace "String" with a Box<str> or Cow<str> which will reduce velocity but give memory compaction
 #[derive(Clone, Debug)]
 pub(crate) enum LiteralType {
     Number(f64),
@@ -67,6 +69,7 @@ pub enum TokenType {
     Eof,
 }
 
+///Rlux's basic expression type, uses Box<T> so that recursive types can be captured
 #[derive(Clone, Debug, PartialEq)]
 pub enum Expression {
     Grouping(Box<expression::Grouping>),
@@ -82,7 +85,6 @@ pub enum Expression {
 }
 
 #[derive(Clone)]
-
 pub struct ParserError {
     pub source: token::Token,
     pub cause: String,

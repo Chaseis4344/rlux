@@ -11,8 +11,7 @@ fn run_file_test(filepath: &str) {
     let file_path = Path::new(files);
     //println!("File Path: {}", filepath);
     if !file_path.exists() {
-        println!("Please provide a valid file.");
-        return;
+        panic!("File not provieded")
     }
 
     let unvalidated_extension = file_path.extension();
@@ -20,7 +19,7 @@ fn run_file_test(filepath: &str) {
         let extension = unvalidated_extension.unwrap();
 
         if extension != "lux" {
-            println!("Please provide a lux source file");
+            panic!("Please provide a *.lux source file");
         }
     }
 

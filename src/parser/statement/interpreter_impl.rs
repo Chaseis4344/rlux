@@ -5,7 +5,7 @@ use crate::parser::statement::*;
 
 impl StatementVisitor for Interpreter {
     fn visit_return_statement(&mut self, ret: &mut ReturnStatement) -> Statement {
-        todo!()
+        todo!("Return Statements")
     }
     fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement {
         self.evaluate(&mut expression.expression);

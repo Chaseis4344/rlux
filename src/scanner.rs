@@ -21,7 +21,7 @@ impl Scanner {
 
     //Advance the cursor then return resulting token
     fn scan_token(&mut self) -> Option<Token> {
-        //!Basically a shitty hashmap, but too much time invested to make in a function al style,
+        //!Basically a shitty hashmap, but too much time invested to make in a functional style,
         //!plus that is wayyyyy too unwieldy
         match self.advance() {
             ' ' | '\t' | '\r' => {
@@ -142,6 +142,7 @@ impl Scanner {
         //!Evaluate strings and handle funky cases
         let mut result = String::from("");
         let mut current_char: char;
+
         //while in_string
         loop {
             current_char = self.advance();
@@ -248,6 +249,7 @@ impl Scanner {
         //! Evaluate numbers, which are internally stored as an `f64`
         let mut current_char: char = self.source.as_bytes()[(self.current - 1) as usize] as char;
         let mut result_string: String = String::from("");
+        let mut is_decimal: bool = false;
 
         while is_ascii_num(current_char) {
             result_string.push(current_char);
@@ -255,7 +257,9 @@ impl Scanner {
         }
 
         //Decimal Stuff
-        if current_char == '.' && is_ascii_num(self.peek()) {
+        if current_char == '.' && is_ascii_num(self.peek()) && !is_decimal {
+            //Only let one decimal point be read in per number
+            is_decimal = true;
             result_string.push('.');
             current_char = self.advance();
             while is_ascii_num(current_char) {
