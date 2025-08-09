@@ -14,6 +14,9 @@ If you notice any major flaws, please let me know.
 
 In the book I am basing this project on, [Crafting Interpreters](https://craftinginterpreters.com/), two versions of the language are specified and built: jlox and clox. They are built in [Java](https://www.java.com/) and [C](https://en.wikipedia.org/wiki/C_(programming_language)) respectively. I will be converting the Java version of the language to Rust.
 
+## LLVM Migration
+This project is undergoing an extremely major renovation to change from an interpreter to a compiler using LLVM
+
 ## Professionalism
 
 This project is by no means professional. I will not and do not work on it for a living. Please keep this in mind if you choose to contact me, as I will not always be able to respond immediately or at all. Thank you for any consideration you may have already taken in this regard.
@@ -22,8 +25,3 @@ This project is by no means professional. I will not and do not work on it for a
 
 You can reach me at [mctownsend2002@gmail.com](mailto:mctownsend2002@gmail.com).
 
-## Last Test Results
-My custom testing suite can be found in ./src/tests/ and is run with cargo t, use --show-output to see Runtime errors in the code from *.lux files
-```
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-```
