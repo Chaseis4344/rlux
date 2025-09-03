@@ -37,6 +37,7 @@ fn block_ir(block_statement: BlockStatement) -> IrBlock {
 
 fn function_ir(function_declaration: FunctionStatement) -> IrBlock {
     //TODO: Create Function in LLVM
+    todo!()
 }
 
 pub(crate) fn statements_to_ir(statements: Vec<Statement>) -> IrBlock {
