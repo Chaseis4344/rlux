@@ -1,8 +1,9 @@
 use crate::macros::error_check;
 use crate::parser::Parser;
 use crate::types::{Expression, LiteralType, ParserError, TokenType, expression::*, token::Token};
-//These macros create new types of expressions, this is so the code is understandable
 
+
+//These macros create new types of expressions, this is so the code is understandable
 macro_rules! new_ternary {
     ($eval:expr, $lhs:expr,  $rhs:expr) => {
         Expression::Ternary(Box::new(Ternary {
@@ -110,7 +111,7 @@ impl Parser {
         while self.match_token_type(vec![TokenType::Question]) {
             let lhs = self.assignment()?;
 
-            /*Consume ":"/ Enforces Grammar */
+            /* Consume ":", Enforces Grammar */
             let consumed = self.consume(
                 TokenType::Colon,
                 &(format!("Expected \":\" instead of {}", self.peek())),
@@ -138,7 +139,7 @@ impl Parser {
             match expression.clone() {
                 Expression::Variable(var) => {
                     let name = var.name;
-                    return Ok(Expression::Assignment(Box::new(Assignment { name, value })));
+                    return Ok(new_assignment!(name,value));
                 }
                 _ => {
                     return Err(ParserError {
@@ -220,20 +221,17 @@ impl Parser {
     fn call(&mut self) -> Result<Expression, ParserError> {
         let mut expression = self.primary();
 
-        loop {
-            if self.match_token_type(vec![TokenType::LeftParen]) {
-                expression =
-                    self.finish_call(expression.expect("Expression Expected, ParserError Found"));
-            } else {
-                break;
-            }
+        while self.match_token_type(vec![TokenType::LeftParen]) {
+            expression = self.finish_call(expression.expect("Expression Expected, ParserError Found"));
         }
 
         expression
     }
 
     fn finish_call(&mut self, callee: Expression) -> Result<Expression, ParserError> {
+        
         let mut arguments: Vec<Expression> = vec![];
+
         if !self.check(TokenType::RightParen) {
             //Secretly a do while
             while {
@@ -242,7 +240,7 @@ impl Parser {
 
                 //Then Eval Condition
                 self.match_token_type(vec![TokenType::Comma])
-            } {}
+            }{}
         }
 
         let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
@@ -270,9 +268,7 @@ impl Parser {
             let return_val = match underlying_value {
                 LiteralType::Number(num) => new_literal!(LiteralType::Number(num)),
                 LiteralType::String(string) => new_literal!(LiteralType::String(string)),
-                LiteralType::Boolean(boolean) => {
-                    new_literal!(LiteralType::Boolean(boolean))
-                }
+                LiteralType::Boolean(boolean) => new_literal!(LiteralType::Boolean(boolean)), 
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
                 LiteralType::Callable(_) => {
                     return Err(ParserError {

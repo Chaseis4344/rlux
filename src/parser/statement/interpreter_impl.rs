@@ -1,4 +1,3 @@
-#![allow(unused_imports)]
 use crate::interpreter::Interpreter;
 use crate::parser::LiteralType;
 use crate::parser::statement::*;

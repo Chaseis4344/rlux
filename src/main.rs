@@ -1,12 +1,14 @@
 use std::{
-    env, fs,
-    io::{Error, stdin},
+    fs,
+    io::{
+        Error, 
+        stdin,
+    },
     process::exit,
 };
 
 //Execution Path Modules
 mod interpreter;
-mod ir;
 mod parser;
 mod scanner;
 
@@ -71,12 +73,9 @@ fn run(source: String) -> Result<i32, Error> {
 
     debug!("Parsing Done");
 
-    let ir = ir::statements_to_ir(statements);
 
-    dbg!("{}", ir);
-
-    // let mut interpreter = interpreter::Interpreter::new();
-    // interpreter.interpret_ir(ir);
+    let mut interpreter = interpreter::Interpreter::new();
+    interpreter.interpret(statements);
 
     Result::Ok(ExitCode::Okay as i32)
 }

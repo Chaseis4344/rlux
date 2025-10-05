@@ -249,7 +249,7 @@ impl Scanner {
         //! Evaluate numbers, which are internally stored as an `f64`
         let mut current_char: char = self.source.as_bytes()[(self.current - 1) as usize] as char;
         let mut result_string: String = String::from("");
-        let mut is_decimal: bool = false;
+        let mut is_decimal = false;
 
         while is_ascii_num(current_char) {
             result_string.push(current_char);

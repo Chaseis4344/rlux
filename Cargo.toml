@@ -8,5 +8,4 @@ authors = ["Chase Townsend <mctownsend2002@gmail.com>"]
 
 [dependencies]
 paste = "1.0.15"
-inkwell = {version = "0.6.0", features = ["llvm18-1"]}
 clap = { version = "4.5.42", features = ["derive"] }
