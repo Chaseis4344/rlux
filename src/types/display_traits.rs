@@ -1,9 +1,11 @@
+use crate::parser::statement;
 use crate::types;
 use std::error::Error;
 use std::fmt::Display as DisplayTrait;
 
 use super::RuntimeError;
 use crate::types::lux_functions::user::UserFunction;
+use std::vec::Vec;
 
 //Token Display implementation moved to token.rs because of private field implementation
 
@@ -164,6 +166,36 @@ impl DisplayTrait for crate::types::Expression {
             Self::Assignment(_) => todo!(),
             Self::Logical(_) => todo!(),
             Self::Call(_) => todo!(),
+        }
+    }
+}
+
+
+impl DisplayTrait for crate::types::statement::Statement {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match (*self).clone() {
+            Self::Return(ret) => {
+                if let Some(value) = ret.value{
+                write!(f,"(Return Statement: value:{}, token:{}",
+                        value,
+                        ret.keyword
+                    )
+                }else{
+
+                write!(f,"(Return Statement: value:{}, token:{}",
+                        "None",
+                        ret.keyword
+                    )
+                }
+            }
+            Self::Block(block) => {
+                for statement in block.statements {
+                    if let Err(e) =write!(f, "(Block Statement: inner:{})",statement) {
+                        return Err(e);
+                    }
+                }
+                Ok(())
+            },
             _ => todo!(),
         }
     }
