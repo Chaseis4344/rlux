@@ -25,9 +25,6 @@ pub(crate) trait StatementVisitor {
 
 impl Visitable<Statement, Interpreter> for Statement {
     fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
-        #[allow(clippy::unused_imports)]
-        //Import required for trait to work, no idea why
-        use crate::parser::statement::Visitable;
         match self {
             // Statement::Print(statement) => statement.accept(visitor),
             Statement::Expression(statement) => statement.accept(visitor),

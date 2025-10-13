@@ -271,29 +271,27 @@ impl Parser {
                 LiteralType::Boolean(boolean) => new_literal!(LiteralType::Boolean(boolean)), 
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
                 LiteralType::Callable(_) => {
-                    return Err(ParserError {
-                        source: self.previous(),
-                        cause: String::from("Cannot Evaluate a function from primary!"),
-                    });
+                   // This specific literal will always get caught higher up on the tree
+                   unreachable!() 
                 }
             };
 
             Ok(return_val)
         } else if self.match_token_type(vec![TokenType::LeftParen]) {
             let expression = self.expression()?;
-            let consumed = self.consume(TokenType::RightParen, "Expect \')\' after expression.");
+            let consumed = self.consume(TokenType::RightParen, "Expect \')\' after grouping expression.");
             error_check!(consumed);
 
-            return Ok(new_grouping!(expression));
+            Ok(new_grouping!(expression))
         } else if self.match_token_type(vec![TokenType::Identifier]) {
-            return Ok(Expression::Variable(Box::new(Variable {
+            Ok(Expression::Variable(Box::new(Variable {
                 name: self.previous(),
-            })));
+            })))
         } else {
-            return Err(ParserError {
+            Err(ParserError {
                 source: self.peek(),
-                cause: String::from("Unexpected Character"),
-            });
+                cause: String::from("Not in Parser AST: \'".to_owned()+ &self.peek().lexeme+ "\'"),
+            })
         }
     }
 }

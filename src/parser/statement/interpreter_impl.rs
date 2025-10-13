@@ -2,17 +2,26 @@ use crate::interpreter::Interpreter;
 use crate::parser::LiteralType;
 use crate::parser::statement::*;
 
+macro_rules! new_literal {
+    ($value:expr) => {
+        Expression::Literal(Box::new(crate::types::expression::Literal { value: $value }))
+    };
+}
+
 impl StatementVisitor for Interpreter {
-    fn visit_return_statement(&mut self, ret: &mut ReturnStatement) -> Statement {
-        todo!("Return Statements")
+    fn visit_return_statement(&mut self, ret: &mut ReturnStatement) ->Statement {
+        if ret.value.is_some(){
+          let mut ret = ret.to_owned();
+           ret.value = Some(new_literal!(self.evaluate(&mut ret.value.unwrap())));
+          Statement::Return(ret)
+        }else {
+            Statement::Return(ret.to_owned())
+        }
     }
     fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement {
-        self.evaluate(&mut expression.expression);
-        /* Statement::Print(PrintStatement {
-            expression: expression.expression.clone(),
-        })*/
+        let result = self.evaluate(&mut expression.expression);
         Statement::Expression(ExpressionStatement {
-            expression: expression.expression.clone(),
+            expression: new_literal!(result),
         })
     }
     /*fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement {
@@ -75,9 +84,13 @@ impl StatementVisitor for Interpreter {
     }
 
     fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement {
-        self.execute_block(block_statement.statements.to_owned());
-
+        // println!("Before Block Execution");
+        if let Some(return_val) = self.execute_block(block_statement.statements.to_owned()){
+            return Statement::Return(return_val);    
+        }else{
+        // println!("After Block Execution");
         Statement::Block(block_statement.to_owned())
+        }
     }
 
     fn visit_function_statement(

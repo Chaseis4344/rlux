@@ -1,7 +1,7 @@
 var a = 1;
 {
-
-  print(a);
+  print("Expected: 1");
+  print("Actual: " + a);
   var a = a + 2;
   print("Expected: 3");
   print("Actual: "+a);

@@ -1,36 +1,26 @@
 use crate::enviroment::Enviroment;
 use crate::interpreter::Interpreter;
 use crate::interpreter::InterpreterVisitor;
+use crate::macros::new_literal;
+use crate::types::expression::Call;
 use crate::types::expression::*;
+use crate::types::lux_functions::print::Print;
 use crate::types::lux_functions::{
     Callable as CallableTrait,
     Functions, 
+    Functions::Clock as OuterClock, 
     clock::Clock,
-    print::Print,
 };
+use crate::types::statement::ReturnStatement;
 use crate::types::statement::Statement;
 use crate::types::{Expression, LiteralType, TokenType};
 use std::collections::HashMap;
 // fun -> LiteralType | fun
 
 impl Interpreter {
-
     pub(crate) fn evaluate(&mut self, expr: &mut Expression) -> LiteralType {
         use crate::interpreter::interpreter_traits::Visitable;
         expr.accept(self)
-    }
-
-    ///Execute list of statements
-    pub(crate) fn interpret(&mut self, statements: Vec<Statement>) {
-        for statement in statements {
-            self.execute(statement);
-        }
-    }
-
-    ///Parser --> Interpreter, will execute a single instruction
-    pub(crate) fn execute(&mut self, mut statement: Statement) {
-        use crate::parser::statement::Visitable as ParserVisitable;
-        statement.accept(self);
     }
 
     pub(crate) fn new() -> Interpreter {
@@ -40,8 +30,7 @@ impl Interpreter {
             variable_map: map,
         };
         //Inject built-ins (native functions) into enviroment
-        //TODO: Do this automatically
-        let clock = crate::types::lux_functions::Functions::Clock(Clock {});
+        let clock = OuterClock(Clock {});
         let print = crate::types::lux_functions::Functions::Print(Print {});
 
         globals.define(String::from("clock"), LiteralType::Callable(clock));
@@ -55,20 +44,44 @@ impl Interpreter {
     }
 
 
+    ///Hand over between the Parser and the Interpreter
+    pub(crate) fn execute(&mut self, mut statement: Statement) -> Option<Expression> {
+        use crate::parser::statement::Visitable as ParserVisitable;
+        //If we come back up and it's a return statement then return the expression
+        if let Statement::Return(ReturnStatement { keyword:_token, value:expr }) = statement.accept(self) {
+            println!("Returned from second: {:?}", expr);
+            return expr;
+        }
+        None
+    }
+
     pub(crate) fn execute_block_in_env(
-        &mut self,
         statements: Vec<Statement>,
         enviroment: Enviroment,
-    ) {
-        //Store Old env, execute in new env, then switch back to old env
-        let old_env = self.enviroment.to_owned();
-        self.enviroment = Box::new(enviroment);
+    ) -> Option<Expression>{
+        //Wrap 
+        let mut temporary_int: Interpreter = Interpreter::new();
+        temporary_int.enviroment = Box::new(enviroment);
+        
+        //Execute
         for statement in statements {
-            self.execute(statement);
+            
+            let temp_result = temporary_int.execute(statement.clone());
+            println!("executed statement from function: {}", statement );
+            if let Some(mut expr) = temp_result {
+                println!("Returned from execute_block_in_env, bottom if let");
+                //If execution Returns an expression we know it's an expression, so eval it, wrap
+                //in literal and propogate upwards, before we exit the temp enviroment
+                return Some(new_literal!( temporary_int.evaluate(&mut expr)));
+            }else {
+                println!("execute returned nothing");
+            }                
+            
         }
-        self.enviroment = old_env;
+        
+        None
     }
-    pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) {
+    pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) -> Option<ReturnStatement>{
         //Wrap
         self.enviroment = Box::new(Enviroment {
             enclosing: Some(self.enviroment.to_owned()),
@@ -77,22 +90,23 @@ impl Interpreter {
 
         //Execute
         for statement in statements {
-            self.execute(statement);
+            if let Statement::Return(ret) = statement {
+                //Is return so stop execution and get stuff back
+                    return Some(ret);
+            }
+            else {
+                        self.execute(statement);
+            }
         }
-
         //Unwrap
         self.enviroment = self.enviroment.enclosing.to_owned().unwrap();
+        None
     }
 }
 
 ///Logic for how the Interpreter acts with each operator or Token
 impl InterpreterVisitor<LiteralType> for Interpreter {
-    
-    fn visit_return(&mut self, ret: &mut Return) -> LiteralType {
-        todo!()
-    }
-    
-    fn visit_binary(&mut self, bin: &mut Binary) -> LiteralType {
+        fn visit_binary(&mut self, bin: &mut Binary) -> LiteralType {
         let left = self.evaluate(&mut bin.left);
         let right = self.evaluate(&mut bin.right);
         let operator = &bin.operator;
@@ -113,15 +127,12 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             _ => left,
         }
     }
-
     fn visit_grouping(&mut self, group: &mut Grouping) -> LiteralType {
         self.evaluate(&mut group.expression)
     }
-    
     fn visit_literal(&mut self, lit: &mut Literal) -> LiteralType {
         lit.value.to_owned()
     }
-    
     fn visit_ternary(&mut self, tern: &mut Ternary) -> LiteralType {
         let evaluator = self.evaluate(&mut tern.evaluator);
         let left = &mut tern.left;
@@ -138,7 +149,6 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             _ => evaluator,
         }
     }
-    
     fn visit_unary(&mut self, unary: &mut Unary) -> LiteralType {
         let right = self.evaluate(&mut unary.operand);
 
@@ -159,10 +169,10 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         //!Returns the value of a variable, will return NIL if nothing is found
         let var = var.to_owned();
         let name = &var.name.lexeme;
-        let result: Result<LiteralType, std::env::VarError> = self.enviroment.to_owned().get(name.to_string());
+        let result: Result<LiteralType, std::env::VarError> =
+            self.enviroment.to_owned().get(name.to_string());
         // println!("{:?}", self.enviroment);
         if let Ok(item) = result {
-        
             item
         } else {
             //Nothing was found so we return nothing
@@ -213,7 +223,6 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         self.evaluate(&mut logical.right)
     }
     fn visit_call(&mut self, call: &mut Call) -> LiteralType {
-        
         //Taking Ownership here isn't a bad thing because we are decomposing to produce an output,
         //plus the original data is still stored in a file
         let deref = call.to_owned();
@@ -221,12 +230,10 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         let callee: LiteralType = self.evaluate(&mut callee);
         let error_line = paren.line;
         let mut eval_args = vec![];
-        
         for argument in &mut arguments {
             eval_args.push(self.evaluate(argument));
         }
 
-        //Extract Function itself
         let function: Option<Box<dyn CallableTrait>> = match callee {
             LiteralType::Callable(function) => match function {
                 Functions::Print(function) => Some(Box::new(function)),
@@ -239,7 +246,8 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         if function.is_some() {
             let mut function = function.expect("Expected a function");
             let arity: u64 = function.arity();
-            if arity != eval_args
+            if arity
+                != eval_args
                     .len()
                     .try_into()
                     .expect("Expected a length in u64 range")
@@ -249,7 +257,6 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
                     format!("Expected {} but got {}", arity, eval_args.len()),
                 );
             }
-            //Call is a virtual function which
             let result = function.call(self, arguments);
             if let Some(mut to_eval) = result {
                 self.evaluate(&mut to_eval)

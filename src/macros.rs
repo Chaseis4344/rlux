@@ -23,8 +23,9 @@ macro_rules! new_character {
     };
 }
 
-///Removes Syntactical Ugliness in the Parser
+///Removes Syntactical Ugliness in the Parser, and in the scanner
 macro_rules! new_literal {
+    //Scanner
     ($token_type:expr, $string:expr, $literal_type:expr, $line:expr) => {
         Some(Token::new(
             $token_type,
@@ -33,13 +34,18 @@ macro_rules! new_literal {
             $line,
         ))
     };
+    //Expressions
+    ($value:expr) => {
+        Expression::Literal(Box::new(Literal { value: $value }))
+    };
 }
 
 ///Let's me push errors into corrections for the user at runtime, good examples are syntax, etc
 macro_rules! error_check {
     ($variable:ident ) => {
         if let Err(ref error) = $variable {
-            let _ = crate::error(error.source.line, error.cause.clone());
+            let _err = crate::error(error.source.line.clone(), error.cause.clone());
+            return Err(error.clone());
         }
     };
 }

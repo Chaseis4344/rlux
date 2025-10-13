@@ -38,11 +38,11 @@ fn report(line: u32, place: String, message: String) -> Error {
         let place: String = "in ".to_owned() + &place;
     }
 
-    eprintln!(" [Line {line}]Error: {message} {place}");
+    eprintln!(" [Line {line}] Error: {message} {place}");
 
     Error::new(
         std::io::ErrorKind::InvalidData,
-        format!(" [Line {line}]Error: {message} {place}"),
+        format!(" [Line {line}] Error: {message} {place}"),
     )
 }
 
@@ -75,7 +75,9 @@ fn run(source: String) -> Result<i32, Error> {
 
 
     let mut interpreter = interpreter::Interpreter::new();
-    interpreter.interpret(statements);
+    for statement in statements {
+        interpreter.execute(statement);
+    }
 
     Result::Ok(ExitCode::Okay as i32)
 }
@@ -105,8 +107,7 @@ pub fn run_file(filepath: String) {
     let source = fs::read_to_string(file_path);
 
     //Check source for OS Errors
-    if source.is_err() {
-        let error = source.unwrap_err();
+    if let Err(error) = source {
         println!("File Error: {error}");
         exit(ExitCode::GenerallyBad as i32);
     }
@@ -132,8 +133,7 @@ pub fn run_prompt() {
         let matcher = stdin().read_line(input);
 
         //Bad Path 1
-        if matcher.is_err() {
-            let err = matcher.unwrap_err();
+        if let Err(err) = matcher {
             println!("{err}");
             exit(ExitCode::DataErr as i32);
         }
@@ -142,8 +142,7 @@ pub fn run_prompt() {
         let result = run((*input).to_string());
 
         // Bad Path 2
-        if result.is_err() {
-            let err = result.unwrap_err();
+        if let Err(err) = result {
             println!("{err}");
             exit(ExitCode::DataErr as i32);
         }

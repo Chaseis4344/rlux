@@ -1,5 +1,6 @@
 use super::{Callable, Interpreter};
 use crate::enviroment::Enviroment;
+use crate::interpreter;
 use crate::types::{statement::*, *};
 use std::fmt::{Debug, Formatter};
 
@@ -29,6 +30,7 @@ impl Callable for UserFunction {
             &self.declaration.body,
             &self.declaration.name.lexeme,
         );
+
         for i in 0..params.len() {
             function_enviroment.define(
                 params[i].lexeme.clone(),
@@ -40,13 +42,24 @@ impl Callable for UserFunction {
         let function = crate::types::lux_functions::Functions::User(UserFunction {
             declaration: Box::new(*self.declaration.clone()),
         });
-        function_enviroment.define(function_name.to_string(), LiteralType::Callable(function));
+    
 
-        interpreter.execute_block_in_env(body.clone(), function_enviroment);
-        None
+        function_enviroment.define(function_name.to_string(), LiteralType::Callable(function));
+       let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
+       match ret {
+           Some(thing) => {
+               println!("Returned: {}", thing);
+               Some(thing)
+           }
+           _ => {
+               println!("Returned nothing");
+               None}
+       }
     }
 
     fn arity(&self) -> u64 {
         self.declaration.parameters.len().try_into().unwrap()
     }
 }
+
+

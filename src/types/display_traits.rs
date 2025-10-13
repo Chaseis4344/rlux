@@ -138,7 +138,8 @@ impl DisplayTrait for crate::types::Expression {
                 write!(f, "{}", group.expression)
             }
             Self::Binary(bin) => {
-                todo!()
+
+                write!(f,"(Binary: left:{}, right{}, operator:{})", bin.left,bin.right,bin.operator)
             }
             Self::Literal(lit) => {
                 //This is the only path used since everything gets evaluated to a literal before it
@@ -163,9 +164,15 @@ impl DisplayTrait for crate::types::Expression {
                 write!(f, "(variable:{})", var.name)
             }
             //TODO: IMPLEMENT BELOW
-            Self::Assignment(_) => todo!(),
-            Self::Logical(_) => todo!(),
-            Self::Call(_) => todo!(),
+            Self::Assignment(assign) => {
+                write!(f,"(Assignment: value: {}, name:{})", assign.value, assign.name)
+            },
+            Self::Logical(logic) =>  {
+                write!(f,"(Logical: left:{}, right{}, operator:{})", logic.left,logic.right,logic.operator)
+            },
+            Self::Call(call) => {
+                write!(f,"(Call: callee:{})",call.callee)
+            },
         }
     }
 }
@@ -196,7 +203,25 @@ impl DisplayTrait for crate::types::statement::Statement {
                 }
                 Ok(())
             },
-            _ => todo!(),
+            Self::If(iffy) => {
+                if let Some(else_branch) = *iffy.else_branch {
+
+                write!(f,"(If Statement: condition: {}, body:{}, else:{})", iffy.condition,*iffy.then_branch,else_branch)
+                }else {
+
+                write!(f,"(If Statement: condition: {}, body:{}, else: None)", iffy.condition,*iffy.then_branch)
+                } 
+            }
+            Self::While(whilly) =>{
+                write!(f,"(Whille Statement: condition: {}, body: {})", whilly.condition,whilly.body)
+            },
+            Self::Expression(expr) => {
+                write!(f,"(Expression: {})",expr.expression)
+            }
+            Self::Function(func) => {
+                write!(f,"(Func declaration: {})",func.name)
+            }
+            _ => todo!("Unimplemented Display on Statement"),
         }
     }
 }

@@ -152,6 +152,11 @@ impl Parser {
         /* else if self.match_token_type(vec![TokenType::Print]) {
             self.print_statement()
         } */
+        else if self.match_token_type(vec![TokenType::Return]){
+            let returned = self.return_statement();
+            error_check!(returned);
+            returned
+        }
         else if self.match_token_type(vec![TokenType::While]) {
             let returned = self.while_statement();
             error_check!(returned);
@@ -269,8 +274,7 @@ impl Parser {
         } else {
             let result = self.statement();
 
-            if result.is_err() {
-                let err = result.unwrap_err();
+            if let Err(err) = result {
                 println!("{}", err);
                 self.synchronize();
                 return Err(err);
