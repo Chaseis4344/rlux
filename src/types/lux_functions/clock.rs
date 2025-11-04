@@ -2,10 +2,14 @@ use super::{
     Callable,
     Expression,
 };
-use crate::interpreter::Interpreter;
-use crate::types::Expression::Literal;
-use crate::types::LiteralType;
-use crate::types::expression::Literal as LiteralStruct;
+use crate::{
+    interpreter::Interpreter,
+    types::{
+        Expression::Literal,
+        LiteralType,
+        expression::Literal as LiteralStruct,
+    },
+};
 use std::time::SystemTime;
 
 #[derive(Clone, Debug, PartialEq)]

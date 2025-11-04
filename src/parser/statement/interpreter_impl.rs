@@ -1,6 +1,10 @@
-use crate::interpreter::Interpreter;
-use crate::parser::LiteralType;
-use crate::parser::statement::*;
+use crate::{
+    interpreter::Interpreter,
+    parser::{
+        LiteralType,
+        statement::*,
+    },
+};
 
 macro_rules! new_literal {
     ($value:expr) => {
@@ -108,8 +112,10 @@ impl StatementVisitor for Interpreter {
         function_statement: &mut FunctionStatement,
     ) -> Statement {
         //! Define user function declarations
-        use crate::types::lux_functions::Functions;
-        use crate::types::lux_functions::user::UserFunction;
+        use crate::types::lux_functions::{
+            Functions,
+            user::UserFunction,
+        };
 
         let function_name = &function_statement.name.lexeme;
         let function = Functions::User(UserFunction {

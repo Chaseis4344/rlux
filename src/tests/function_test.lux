@@ -11,6 +11,7 @@ fun count(n) {
 fun count2(n)  {
   while (n < 10) {
     if (n == 3) {
+      print(n);
       return n;
       } // <--
     print(n);

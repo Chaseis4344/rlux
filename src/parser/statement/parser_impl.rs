@@ -1,7 +1,9 @@
 use super::*;
-use crate::macros::error_check;
-use crate::parser::Parser;
-use crate::types::token::Token;
+use crate::{
+    macros::error_check,
+    parser::Parser,
+    types::token::Token,
+};
 
 impl Parser {
     /*Statement Grammar is Here Down */
@@ -192,13 +194,13 @@ impl Parser {
         // println!("{:?}", consumed);
         // This allows for loops to have assignment statements inside their heads without the
         // parser throwing a fit at the user
-        if let Err(error) = consumed {
-            if error.source.token_type != TokenType::For
+        if let Err(error) = consumed 
+            && error.source.token_type != TokenType::For
                 && error.source.lexeme.to_lowercase() != "print"
             {
-                Parser::error(error.source.line, error.cause);
+                Parser::error(error.source, &error.cause);
             }
-        }
+        
 
         let statement = VariableStatement { name, initalizer };
 
@@ -262,8 +264,7 @@ impl Parser {
         } else if self.match_token_type(vec![TokenType::Var]) {
             let result = self.variable_decalration();
 
-            if result.is_err() {
-                let err = result.unwrap_err();
+            if let Err(err) = result {
                 println!("{}", err);
                 self.synchronize();
                 return Err(err);

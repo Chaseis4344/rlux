@@ -1,11 +1,11 @@
 use crate::types::LiteralType;
-use std::fmt::{
-    Debug,
-    Formatter,
-};
 use std::{
     collections::HashMap,
     env::VarError,
+    fmt::{
+        Debug,
+        Formatter,
+    },
 };
 #[derive(Clone)]
 ///Enclosing Enviroment for Rlux runtime

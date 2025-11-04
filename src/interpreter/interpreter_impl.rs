@@ -1,21 +1,29 @@
-use crate::enviroment::Enviroment;
-use crate::interpreter::Interpreter;
-use crate::interpreter::InterpreterVisitor;
-use crate::types::expression::Call;
-use crate::types::expression::*;
-use crate::types::lux_functions::print::Print;
-use crate::types::lux_functions::{
-    Callable as CallableTrait,
-    Functions,
-    Functions::Clock as OuterClock,
-    clock::Clock,
-};
-use crate::types::statement::ReturnStatement;
-use crate::types::statement::Statement;
-use crate::types::{
-    Expression,
-    LiteralType,
-    TokenType,
+use crate::{
+    enviroment::Enviroment,
+    interpreter::{
+        Interpreter,
+        InterpreterVisitor,
+    },
+    types::{
+        Expression,
+        LiteralType,
+        TokenType,
+        expression::{
+            Call,
+            *,
+        },
+        lux_functions::{
+            Callable as CallableTrait,
+            Functions,
+            Functions::Clock as OuterClock,
+            clock::Clock,
+            print::Print,
+        },
+        statement::{
+            ReturnStatement,
+            Statement,
+        },
+    },
 };
 use std::collections::HashMap;
 // fun -> LiteralType | fun
@@ -101,7 +109,6 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         let operator = &bin.operator;
 
         //We can abstract all this logic away to rust's traits
-        /*TODO: ARCHITECT WAY FOR TYPE ERRORS TO BE PASSED UP FROM HERE TO USER */
         match operator.token_type {
             TokenType::Plus => left + right,
             TokenType::Star => left * right,
@@ -113,7 +120,10 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             TokenType::LessEqual => LiteralType::Boolean(left <= right),
             TokenType::EqualEqual => LiteralType::Boolean(left == right),
             TokenType::BangEqual => LiteralType::Boolean(left != right),
-            _ => left,
+            _ => {
+                crate::error(operator.line, "Operator not defined for this operation".to_string());
+                LiteralType::Nil
+            },
         }
     }
     fn visit_grouping(&mut self, group: &mut Grouping) -> LiteralType {
@@ -150,7 +160,10 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
                 LiteralType::Boolean(boolean) => LiteralType::Boolean(!boolean),
                 _ => right,
             },
-            _ => right,
+           _ => {
+                crate::error(unary.operator.line, "Operator not defined for this operation".to_string());
+                LiteralType::Nil
+            },
         }
     }
 
@@ -196,6 +209,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             LiteralType::Boolean(val) => val,
             _ => panic!("Cannot coerce Non-Boolean to Boolean"),
         };
+
         //Short Cirucuit if we can
         if logical.operator.token_type == TokenType::Or {
             // True or X will alway be True, so if True, then return True
@@ -233,8 +247,8 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             _ => None,
         };
 
-        if function.is_some() {
-            let mut function = function.expect("Expected a function");
+        if let Some(func) = function {
+            let mut function = func;
             let arity: u64 = function.arity();
             if arity
                 != eval_args
@@ -242,7 +256,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
                     .try_into()
                     .expect("Expected a length in u64 range")
             {
-                _ = crate::error(
+                crate::error(
                     error_line,
                     format!("Expected {} but got {}", arity, eval_args.len()),
                 );

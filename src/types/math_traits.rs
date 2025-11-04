@@ -1,7 +1,9 @@
-use crate::macros::boolean_op;
-use crate::types::{
-    LiteralType,
-    TokenType,
+use crate::{
+    macros::boolean_op,
+    types::{
+        LiteralType,
+        TokenType,
+    },
 };
 /*
  * Nested Matches v. Tuple Matching

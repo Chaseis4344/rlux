@@ -2,16 +2,20 @@ use super::{
     Callable,
     Interpreter,
 };
-use crate::enviroment::Enviroment;
-use crate::types::{
-    statement::*,
-    *,
+use crate::{
+    enviroment::Enviroment,
+    types::{
+        statement::*,
+        *,
+    },
 };
-use std::fmt::{
-    Debug,
-    Formatter,
+use std::{
+    fmt::{
+        Debug,
+        Formatter,
+    },
+    panic::catch_unwind,
 };
-use std::panic::catch_unwind;
 
 #[derive(Clone, PartialEq)]
 pub(crate) struct UserFunction {
@@ -64,13 +68,8 @@ impl Callable for UserFunction {
                         thing.downcast::<crate::types::statement::Statement>()
                     {
                         match *return_statement {
-                            Statement::Return(ret_val) => match ret_val.value {
-                                Some(val) => Some(val),
-                                None => None,
-                            },
-                            _ => {
-                                return None;
-                            }
+                            Statement::Return(ret_val) => ret_val.value,
+                            _ => None,
                         }
                     } else {
                         panic!("Not a Return Statement")
@@ -80,11 +79,11 @@ impl Callable for UserFunction {
                 }
             }
             Ok(value) => {
-                println!("Returned nothing");
+                // println!("Returned nothing");
                 if value.is_some() {
                     panic!("Returned Nothing from function that has a value");
                 }
-                return value;
+                value
             }
         }
     }

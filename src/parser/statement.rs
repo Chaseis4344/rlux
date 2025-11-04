@@ -1,13 +1,15 @@
-use crate::interpreter::Interpreter;
-use crate::macros::visitable_trait_two_elements as visitable_trait;
-use crate::parser::{
-    LiteralType,
-    ParserError,
-    TokenType,
-};
-use crate::types::{
-    Expression,
-    statement::*,
+use crate::{
+    interpreter::Interpreter,
+    macros::visitable_trait_two_elements as visitable_trait,
+    parser::{
+        LiteralType,
+        ParserError,
+        TokenType,
+    },
+    types::{
+        Expression,
+        statement::*,
+    },
 };
 
 mod interpreter_impl;

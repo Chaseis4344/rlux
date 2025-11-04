@@ -9,9 +9,11 @@ var threshold =5;
 var adder = 1+0-5;
 var tern = false ? 5 : 10;
 
-print("false ? 5 : 10 = "+ tern);
-print("4/2 = "+_arg);
-print("0 = "+cat);
+print("Expected: 10");
+print("Actual: "+ tern);
+print("Expected: 2");
+print("Actual: "+_arg);
+print("Expected: 0 \n Actual: "+cat);
 print("12*4 = " +dog);
 print("(13/2) = "+turt);
 print("\"strung\" = "+tester);

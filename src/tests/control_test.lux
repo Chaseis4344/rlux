@@ -24,9 +24,9 @@ if (tern - 6 > 0 and vardoolean)
     
 while(adder < 10 )
 {
-   adder = 1+ adder;
    var while_loop_scope_test = "while_loop_scope_test failed";
    print(adder);
+   adder = 1+ adder;
 }
 
 //This should throw a Runtime error - then print NIL

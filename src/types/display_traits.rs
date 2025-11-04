@@ -1,8 +1,12 @@
 use super::RuntimeError;
-use crate::types;
-use crate::types::lux_functions::user::UserFunction;
-use std::error::Error;
-use std::fmt::Display as DisplayTrait;
+use crate::{
+    types,
+    types::lux_functions::user::UserFunction,
+};
+use std::{
+    error::Error,
+    fmt::Display as DisplayTrait,
+};
 
 //Token Display implementation moved to token.rs because of private field implementation
 impl DisplayTrait for super::expression::Call {
@@ -162,7 +166,6 @@ impl DisplayTrait for crate::types::Expression {
             Self::Variable(var) => {
                 write!(f, "(variable:{})", var.name)
             }
-            //TODO: IMPLEMENT BELOW
             Self::Assignment(assign) => {
                 write!(
                     f,
@@ -197,8 +200,8 @@ impl DisplayTrait for crate::types::statement::Statement {
                 } else {
                     write!(
                         f,
-                        "(Return Statement: value:{}, token:{}",
-                        "None", ret.keyword
+                        "(Return Statement: value:None, token:{}",
+                        ret.keyword
                     )
                 }
             }

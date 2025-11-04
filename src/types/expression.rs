@@ -1,5 +1,7 @@
-use super::token::Token;
-use super::*;
+use super::{
+    token::Token,
+    *,
+};
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Ternary {

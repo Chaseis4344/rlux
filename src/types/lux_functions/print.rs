@@ -1,6 +1,10 @@
-use crate::types::Expression;
-use crate::types::lux_functions::Callable;
-use crate::types::lux_functions::Interpreter;
+use crate::types::{
+    Expression,
+    lux_functions::{
+        Callable,
+        Interpreter,
+    },
+};
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Print {}

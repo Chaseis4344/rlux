@@ -1,12 +1,14 @@
-use crate::macros::error_check;
-use crate::parser::Parser;
-use crate::types::{
-    Expression,
-    LiteralType,
-    ParserError,
-    TokenType,
-    expression::*,
-    token::Token,
+use crate::{
+    macros::error_check,
+    parser::Parser,
+    types::{
+        Expression,
+        LiteralType,
+        ParserError,
+        TokenType,
+        expression::*,
+        token::Token,
+    },
 };
 
 //These macros create new types of expressions, this is so the code is understandable

@@ -1,7 +1,9 @@
-use crate::enviroment::Enviroment;
-use crate::types::{
-    Expression,
-    LiteralType,
+use crate::{
+    enviroment::Enviroment,
+    types::{
+        Expression,
+        LiteralType,
+    },
 };
 use interpreter_traits::InterpreterVisitor;
 

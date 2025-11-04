@@ -21,8 +21,7 @@ mod macros;
 #[cfg(test)]
 mod tests;
 
-use macros::debug;
-
+#[allow(unused)]
 enum ExitCode {
     Okay = 0,
     GenerallyBad = 1,
@@ -88,15 +87,13 @@ pub fn run_file(filepath: String) {
     }
 
     let unvalidated_extension = file_path.extension();
-    if unvalidated_extension.is_some() {
-        let extension = unvalidated_extension.unwrap();
-
-        if extension != "lux" {
+    if let Some(extension) = unvalidated_extension  
+         && extension != "lux" {
             //This panic is for user safety, we don't want to parse or compile the wrong type of
             //file
             panic!("Please provide a lux source file");
         }
-    }
+    
 
     let source = fs::read_to_string(file_path);
 
