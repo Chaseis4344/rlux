@@ -4,23 +4,25 @@ use crate::parser::statement::*;
 
 macro_rules! new_literal {
     ($value:expr) => {
-        Expression::Literal(Box::new(crate::types::expression::Literal { value: $value }))
+        Expression::Literal(Box::new(crate::types::expression::Literal {
+            value: $value,
+        }))
     };
 }
 
 impl StatementVisitor for Interpreter {
-    fn visit_return_statement(&mut self, ret: &mut ReturnStatement) ->Statement {
+    fn visit_return_statement(&mut self, ret: &mut ReturnStatement) -> Statement {
         use std::panic;
-        let original_hook = 
+        // let original_hook =
         //Prevent Display of this particluar panic
-        panic::set_hook(Box::new(|_info|{
+        panic::set_hook(Box::new(|_info| {
             // do nothing
         }));
-        let ret_value: Statement = if ret.value.is_some(){
-          let mut ret = ret.to_owned();
-           ret.value = Some(new_literal!(self.evaluate(&mut ret.value.unwrap())));
-          Statement::Return(ret)
-        }else {  
+        let ret_value: Statement = if ret.value.is_some() {
+            let mut ret = ret.to_owned();
+            ret.value = Some(new_literal!(self.evaluate(&mut ret.value.unwrap())));
+            Statement::Return(ret)
+        } else {
             Statement::Return(ret.to_owned())
         };
 
@@ -77,7 +79,6 @@ impl StatementVisitor for Interpreter {
         } else {
             Statement::If(return_thing)
         }
-
     }
 
     fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement {
@@ -94,10 +95,10 @@ impl StatementVisitor for Interpreter {
 
     fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement {
         // println!("Before Block Execution");
-        if let Some(return_val) = self.execute_block(block_statement.statements.to_owned()){
-            Statement::Return(return_val)    
+        if let Some(return_val) = self.execute_block(block_statement.statements.to_owned()) {
+            Statement::Return(return_val)
         } else {
-        // println!("After Block Execution");
+            // println!("After Block Execution");
             Statement::Block(block_statement.to_owned())
         }
     }

@@ -1,5 +1,8 @@
-use crate::types::{LiteralType, TokenType};
 use crate::macros::boolean_op;
+use crate::types::{
+    LiteralType,
+    TokenType,
+};
 /*
  * Nested Matches v. Tuple Matching
  *
@@ -129,7 +132,7 @@ impl PartialEq for LiteralType {
         //How does this all make perfect sense to me?
         //also how did I manage to exhaust all the paths by emulating C?
         //
-        //This approach also alerts me when a new type needs to be added 
+        //This approach also alerts me when a new type needs to be added
         match self {
             Self::Boolean(left_boolean) => match other {
                 Self::Boolean(right_boolean) => *left_boolean == *right_boolean,
@@ -168,7 +171,7 @@ impl PartialEq for LiteralType {
             Self::Nil => matches!(other, Self::Nil),
             Self::Callable(left_function) => {
                 if let Self::Callable(right_function) = other {
-                        *left_function == *right_function
+                    *left_function == *right_function
                 } else {
                     /*Type Mismatch*/
                     eprintln!(
@@ -176,7 +179,7 @@ impl PartialEq for LiteralType {
                     );
                     false
                 }
-            },
+            }
         }
     }
 }
@@ -209,7 +212,6 @@ impl From<LiteralType> for String {
         }
     }
 }
-
 
 ///>=, >, <=, <
 impl PartialOrd for LiteralType {

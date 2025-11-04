@@ -1,4 +1,7 @@
-use super::{Callable, Expression};
+use super::{
+    Callable,
+    Expression,
+};
 use crate::interpreter::Interpreter;
 use crate::types::Expression::Literal;
 use crate::types::LiteralType;

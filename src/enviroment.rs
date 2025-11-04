@@ -1,6 +1,12 @@
 use crate::types::LiteralType;
-use std::fmt::{Debug, Formatter};
-use std::{collections::HashMap, env::VarError};
+use std::fmt::{
+    Debug,
+    Formatter,
+};
+use std::{
+    collections::HashMap,
+    env::VarError,
+};
 #[derive(Clone)]
 ///Enclosing Enviroment for Rlux runtime
 pub struct Enviroment {

@@ -1,7 +1,7 @@
 use std::{
     fs,
     io::{
-        Error, 
+        Error,
         stdin,
     },
     process::exit,
@@ -33,7 +33,7 @@ enum ExitCode {
 
 #[allow(unused)]
 ///Sends runtime error report to user with specific additonal details
-fn report(line: u32, place: String, message: String)  {
+fn report(line: u32, place: String, message: String) {
     if place != *"" {
         let place: String = "in ".to_owned() + &place;
     }
@@ -67,7 +67,6 @@ fn run(source: String) -> Result<i32, Error> {
     let statements: Vec<types::statement::Statement> = parser.parse();
 
     // debug!("Parsing Done");
-
 
     let mut interpreter = interpreter::Interpreter::new();
     for statement in statements {

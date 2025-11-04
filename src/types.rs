@@ -99,4 +99,3 @@ pub enum LuxErrors {
     ParserError(ParserError),
     RuntimeError(RuntimeError),
 }
-

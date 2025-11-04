@@ -1,5 +1,8 @@
 use crate::enviroment::Enviroment;
-use crate::types::{Expression, LiteralType};
+use crate::types::{
+    Expression,
+    LiteralType,
+};
 use interpreter_traits::InterpreterVisitor;
 
 pub(crate) struct Interpreter {

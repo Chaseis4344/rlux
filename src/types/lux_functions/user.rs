@@ -1,7 +1,16 @@
-use super::{Callable, Interpreter};
+use super::{
+    Callable,
+    Interpreter,
+};
 use crate::enviroment::Enviroment;
-use crate::types::{statement::*, *};
-use std::fmt::{Debug, Formatter};
+use crate::types::{
+    statement::*,
+    *,
+};
+use std::fmt::{
+    Debug,
+    Formatter,
+};
 use std::panic::catch_unwind;
 
 #[derive(Clone, PartialEq)]
@@ -45,50 +54,42 @@ impl Callable for UserFunction {
         //Define this function in it's own enviroment
         function_enviroment.define(function_name.to_string(), LiteralType::Callable(function));
 
-       // let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
-        let ret = catch_unwind(|| {
-            Interpreter::execute_block_in_env(body, function_enviroment)
-        });
+        // let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
+        let ret = catch_unwind(|| Interpreter::execute_block_in_env(body, function_enviroment));
 
-       match ret {
-           Err(thing) => {
-               if thing.is::<crate::types::statement::Statement>()
-               {
-                  if let Ok(return_statement) = thing.downcast::<crate::types::statement::Statement>() {
-                      match *return_statement  {
-                          Statement::Return(ret_val) => {
-                              match ret_val.value {
-                                 Some(val) => {
-                                     Some(val)
-                                 }
-                                 None => None, 
-                              }
-                              
-                          },
-                          _ => {return None;},
-                      }
-                  }else {
-                      panic!("Not a Return Statement")
-                  } 
-               }else {
-                   panic!("Uncaught")
-               }
-
-                   
-           }
-           Ok(value) => {
-               println!("Returned nothing");
-               if value.is_some() {
-                   panic!("Returned Nothing from function that has a value");
-               }
-               return value;
-           }
-       }
+        match ret {
+            Err(thing) => {
+                if thing.is::<crate::types::statement::Statement>() {
+                    if let Ok(return_statement) =
+                        thing.downcast::<crate::types::statement::Statement>()
+                    {
+                        match *return_statement {
+                            Statement::Return(ret_val) => match ret_val.value {
+                                Some(val) => Some(val),
+                                None => None,
+                            },
+                            _ => {
+                                return None;
+                            }
+                        }
+                    } else {
+                        panic!("Not a Return Statement")
+                    }
+                } else {
+                    panic!("Uncaught")
+                }
+            }
+            Ok(value) => {
+                println!("Returned nothing");
+                if value.is_some() {
+                    panic!("Returned Nothing from function that has a value");
+                }
+                return value;
+            }
+        }
     }
 
     fn arity(&self) -> u64 {
         self.declaration.parameters.len().try_into().unwrap()
     }
 }
-
-

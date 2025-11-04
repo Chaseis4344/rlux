@@ -1,4 +1,7 @@
-use super::{LiteralType, TokenType};
+use super::{
+    LiteralType,
+    TokenType,
+};
 use std::fmt::Formatter;
 
 #[derive(Clone, Debug, PartialEq)]

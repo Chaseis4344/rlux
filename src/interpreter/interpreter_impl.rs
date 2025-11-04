@@ -6,13 +6,17 @@ use crate::types::expression::*;
 use crate::types::lux_functions::print::Print;
 use crate::types::lux_functions::{
     Callable as CallableTrait,
-    Functions, 
-    Functions::Clock as OuterClock, 
+    Functions,
+    Functions::Clock as OuterClock,
     clock::Clock,
 };
 use crate::types::statement::ReturnStatement;
 use crate::types::statement::Statement;
-use crate::types::{Expression, LiteralType, TokenType};
+use crate::types::{
+    Expression,
+    LiteralType,
+    TokenType,
+};
 use std::collections::HashMap;
 // fun -> LiteralType | fun
 
@@ -42,12 +46,15 @@ impl Interpreter {
         }
     }
 
-
     ///Hand over between the Parser and the Interpreter
     pub(crate) fn execute(&mut self, mut statement: Statement) -> Option<Expression> {
         use crate::parser::statement::Visitable as ParserVisitable;
         //If we come back up and it's a return statement then return the expression
-        if let Statement::Return(ReturnStatement { keyword:_token, value:expr }) = statement.accept(self) {
+        if let Statement::Return(ReturnStatement {
+            keyword: _token,
+            value: expr,
+        }) = statement.accept(self)
+        {
             // println!("Returned from second: {:?}", expr);
             return expr;
         }
@@ -57,19 +64,19 @@ impl Interpreter {
     pub(crate) fn execute_block_in_env(
         statements: Vec<Statement>,
         enviroment: Enviroment,
-    ) -> Option<Expression>{
-        //Wrap 
+    ) -> Option<Expression> {
+        //Wrap
         let mut temporary_int: Interpreter = Interpreter::new();
         temporary_int.enviroment = Box::new(enviroment);
-        
+
         //Execute
         for statement in statements {
             temporary_int.execute(statement);
         }
-        
+
         None
     }
-    pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) -> Option<ReturnStatement>{
+    pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) -> Option<ReturnStatement> {
         //Wrap
         self.enviroment = Box::new(Enviroment {
             enclosing: Some(self.enviroment.to_owned()),
@@ -78,7 +85,7 @@ impl Interpreter {
 
         //Execute
         for statement in statements {
-                        self.execute(statement);
+            self.execute(statement);
         }
         //Unwrap
         self.enviroment = self.enviroment.enclosing.to_owned().unwrap();
@@ -88,7 +95,7 @@ impl Interpreter {
 
 ///Logic for how the Interpreter acts with each operator or Token
 impl InterpreterVisitor<LiteralType> for Interpreter {
-        fn visit_binary(&mut self, bin: &mut Binary) -> LiteralType {
+    fn visit_binary(&mut self, bin: &mut Binary) -> LiteralType {
         let left = self.evaluate(&mut bin.left);
         let right = self.evaluate(&mut bin.right);
         let operator = &bin.operator;

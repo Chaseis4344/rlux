@@ -1,7 +1,13 @@
 use crate::macros::error_check;
 use crate::parser::Parser;
-use crate::types::{Expression, LiteralType, ParserError, TokenType, expression::*, token::Token};
-
+use crate::types::{
+    Expression,
+    LiteralType,
+    ParserError,
+    TokenType,
+    expression::*,
+    token::Token,
+};
 
 //These macros create new types of expressions, this is so the code is understandable
 macro_rules! new_ternary {
@@ -139,7 +145,7 @@ impl Parser {
             match expression.clone() {
                 Expression::Variable(var) => {
                     let name = var.name;
-                    return Ok(new_assignment!(name,value));
+                    return Ok(new_assignment!(name, value));
                 }
                 _ => {
                     return Err(ParserError {
@@ -222,14 +228,14 @@ impl Parser {
         let mut expression = self.primary();
 
         while self.match_token_type(vec![TokenType::LeftParen]) {
-            expression = self.finish_call(expression.expect("Expression Expected, ParserError Found"));
+            expression =
+                self.finish_call(expression.expect("Expression Expected, ParserError Found"));
         }
 
         expression
     }
 
     fn finish_call(&mut self, callee: Expression) -> Result<Expression, ParserError> {
-        
         let mut arguments: Vec<Expression> = vec![];
 
         if !self.check(TokenType::RightParen) {
@@ -240,7 +246,7 @@ impl Parser {
 
                 //Then Eval Condition
                 self.match_token_type(vec![TokenType::Comma])
-            }{}
+            } {}
         }
 
         let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
@@ -268,18 +274,21 @@ impl Parser {
             let return_val = match underlying_value {
                 LiteralType::Number(num) => new_literal!(LiteralType::Number(num)),
                 LiteralType::String(string) => new_literal!(LiteralType::String(string)),
-                LiteralType::Boolean(boolean) => new_literal!(LiteralType::Boolean(boolean)), 
+                LiteralType::Boolean(boolean) => new_literal!(LiteralType::Boolean(boolean)),
                 LiteralType::Nil => new_literal!(LiteralType::Nil),
                 LiteralType::Callable(_) => {
-                   // This specific literal will always get caught higher up on the tree
-                   unreachable!() 
+                    // This specific literal will always get caught higher up on the tree
+                    unreachable!()
                 }
             };
 
             Ok(return_val)
         } else if self.match_token_type(vec![TokenType::LeftParen]) {
             let expression = self.expression()?;
-            let consumed = self.consume(TokenType::RightParen, "Expect \')\' after grouping expression.");
+            let consumed = self.consume(
+                TokenType::RightParen,
+                "Expect \')\' after grouping expression.",
+            );
             error_check!(consumed);
 
             Ok(new_grouping!(expression))
@@ -290,7 +299,9 @@ impl Parser {
         } else {
             Err(ParserError {
                 source: self.peek(),
-                cause: String::from("Not in Parser AST: \'".to_owned()+ &self.peek().lexeme+ "\'"),
+                cause: String::from(
+                    "Not in Parser AST: \'".to_owned() + &self.peek().lexeme + "\'",
+                ),
             })
         }
     }

@@ -1,13 +1,10 @@
-use crate::parser::statement;
+use super::RuntimeError;
 use crate::types;
+use crate::types::lux_functions::user::UserFunction;
 use std::error::Error;
 use std::fmt::Display as DisplayTrait;
 
-use super::RuntimeError;
-use crate::types::lux_functions::user::UserFunction;
-
 //Token Display implementation moved to token.rs because of private field implementation
-
 impl DisplayTrait for super::expression::Call {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         write!(
@@ -137,8 +134,11 @@ impl DisplayTrait for crate::types::Expression {
                 write!(f, "group:{}", group.expression)
             }
             Self::Binary(bin) => {
-
-                write!(f,"(Binary: left:{}, right{}, operator:{})", bin.left,bin.right,bin.operator)
+                write!(
+                    f,
+                    "(Binary: left:{}, right{}, operator:{})",
+                    bin.left, bin.right, bin.operator
+                )
             }
             Self::Literal(lit) => {
                 //This is the only path used since everything gets evaluated to a literal before it
@@ -164,75 +164,91 @@ impl DisplayTrait for crate::types::Expression {
             }
             //TODO: IMPLEMENT BELOW
             Self::Assignment(assign) => {
-                write!(f,"(Assignment: value:{}, name:{})", assign.value, assign.name)
-            },
-            Self::Logical(logic) =>  {
-                write!(f,"(Logical: left:{}, right:{}, operator:{})", logic.left,logic.right,logic.operator)
-            },
+                write!(
+                    f,
+                    "(Assignment: value:{}, name:{})",
+                    assign.value, assign.name
+                )
+            }
+            Self::Logical(logic) => {
+                write!(
+                    f,
+                    "(Logical: left:{}, right:{}, operator:{})",
+                    logic.left, logic.right, logic.operator
+                )
+            }
             Self::Call(call) => {
-                write!(f,"(Call: callee:{})",call.callee)
-            },
+                write!(f, "(Call: callee:{})", call.callee)
+            }
         }
     }
 }
-
 
 impl DisplayTrait for crate::types::statement::Statement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match (*self).clone() {
             Self::Return(ret) => {
-                if let Some(value) = ret.value{
-                write!(f,"(Return Statement: value:{}, token:{}",
-                        value,
-                        ret.keyword
+                if let Some(value) = ret.value {
+                    write!(
+                        f,
+                        "(Return Statement: value:{}, token:{}",
+                        value, ret.keyword
                     )
-                }else{
-
-                write!(f,"(Return Statement: value:{}, token:{}",
-                        "None",
-                        ret.keyword
+                } else {
+                    write!(
+                        f,
+                        "(Return Statement: value:{}, token:{}",
+                        "None", ret.keyword
                     )
                 }
             }
             Self::Block(block) => {
                 for statement in block.statements {
-                    if let Err(e) =write!(f, "(Block Statement: inner:{})",statement) {
+                    if let Err(e) = write!(f, "(Block Statement: inner:{})", statement) {
                         return Err(e);
                     }
                 }
                 Ok(())
-            },
+            }
             Self::If(iffy) => {
                 if let Some(else_branch) = *iffy.else_branch {
-
-                write!(f,"(If Statement: condition: {}, body:{}, else:{})", iffy.condition,*iffy.then_branch,else_branch)
-                }else {
-
-                write!(f,"(If Statement: condition: {}, body:{}, else: None)", iffy.condition,*iffy.then_branch)
-                } 
+                    write!(
+                        f,
+                        "(If Statement: condition: {}, body:{}, else:{})",
+                        iffy.condition, *iffy.then_branch, else_branch
+                    )
+                } else {
+                    write!(
+                        f,
+                        "(If Statement: condition: {}, body:{}, else: None)",
+                        iffy.condition, *iffy.then_branch
+                    )
+                }
             }
-            Self::While(whilly) =>{
-                write!(f,"(Whille Statement: condition: {}, body: {})", whilly.condition,whilly.body)
-            },
+            Self::While(whilly) => {
+                write!(
+                    f,
+                    "(Whille Statement: condition: {}, body: {})",
+                    whilly.condition, whilly.body
+                )
+            }
             Self::Expression(expr) => {
-                write!(f,"(Expression: {})",expr.expression)
+                write!(f, "(Expression: {})", expr.expression)
             }
             Self::Function(func) => {
-                write!(f,"(Func declaration: {})",func.name)
+                write!(f, "(Func declaration: {})", func.name)
             }
             _ => todo!("Unimplemented Display on Statement"),
         }
     }
 }
 
-impl DisplayTrait for crate::types::statement::ReturnStatement  {
-   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> { 
-       if let Some(val) = &self.value {
-
-        write!(f,"Ret:{}", val)
-
-       } else {
-           write!(f,"None")
-       }
-   } 
+impl DisplayTrait for crate::types::statement::ReturnStatement {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        if let Some(val) = &self.value {
+            write!(f, "Ret:{}", val)
+        } else {
+            write!(f, "None")
+        }
+    }
 }
