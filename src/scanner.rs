@@ -162,13 +162,22 @@ impl Scanner {
             if current_char == '\\' {
                 let next_char = self.peek();
                 match next_char {
-                    '"' | 'n' => {
+                    '"'  => {
                         result.push(next_char);
                         //Over the Literal "
                         self.advance();
                         continue;
                     }
-
+                    'n' => {
+                        result.push('\n');
+                        self.advance();
+                        continue;
+                    }
+                    't' => {
+                        result.push('\t');
+                        self.advance();
+                        continue;
+                    }
                     _ => {}
                 }
             }
@@ -177,9 +186,6 @@ impl Scanner {
                 break;
             }
 
-            if current_char == '\n' {
-                self.line += 1;
-            }
             if self.is_at_end() {
                 let _ = crate::error(self.line, String::from("Unterminated String"));
                 // in_string = false;
