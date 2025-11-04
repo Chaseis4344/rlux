@@ -57,15 +57,4 @@ pub struct Call {
     pub(crate) arguments: Vec<Expression>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Function {
-    name: Token,
-    parameters: Vec<Token>,
-    body: Vec<Statement>,
-}
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Return {
-    pub(crate) keyword: Token,
-    pub(crate) value: Option<Expression>,
-}

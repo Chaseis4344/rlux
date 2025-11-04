@@ -1,7 +1,7 @@
 use crate::interpreter::Interpreter;
 use crate::macros::visitable_trait_two_elements as visitable_trait;
 use crate::parser::{LiteralType, ParserError, TokenType};
-use crate::types::Expression;
+use crate::types::{Expression};
 use crate::types::statement::*;
 
 mod interpreter_impl;

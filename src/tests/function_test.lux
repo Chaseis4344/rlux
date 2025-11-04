@@ -9,8 +9,10 @@ fun count(n) {
 }
 
 fun count2(n)  {
-  while (n < 5) {
-    if (n == 3) { return n;} // <--
+  while (n < 10) {
+    if (n == 3) {
+      return n;
+      } // <--
     print(n);
     n = n + 1;
   }
@@ -25,19 +27,21 @@ fun nested_stuff() {
   }
 }
 
-
+print("Function Declare Test:");
 print(count);
 print(stuff);
 print(count2);
 
+print("Function Return Tests:")
 print("Expected: 1");
-print("Actual: " + stuff(););
+print("Actual: " + stuff());
 
 print("Expected: 3");
-print("Actual: " + nested_stuff(););
+print("Actual: " + nested_stuff());
 
 print("Expected: Break at 3");
 count2(1);
 
+print("Function Scoping Test:");
 print("Below Should Error");
 print(n);

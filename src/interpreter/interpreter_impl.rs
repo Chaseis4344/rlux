@@ -1,7 +1,6 @@
 use crate::enviroment::Enviroment;
 use crate::interpreter::Interpreter;
 use crate::interpreter::InterpreterVisitor;
-use crate::macros::new_literal;
 use crate::types::expression::Call;
 use crate::types::expression::*;
 use crate::types::lux_functions::print::Print;
@@ -49,7 +48,7 @@ impl Interpreter {
         use crate::parser::statement::Visitable as ParserVisitable;
         //If we come back up and it's a return statement then return the expression
         if let Statement::Return(ReturnStatement { keyword:_token, value:expr }) = statement.accept(self) {
-            println!("Returned from second: {:?}", expr);
+            // println!("Returned from second: {:?}", expr);
             return expr;
         }
         None
@@ -65,18 +64,7 @@ impl Interpreter {
         
         //Execute
         for statement in statements {
-            
-            let temp_result = temporary_int.execute(statement.clone());
-            println!("executed statement from function: {}", statement );
-            if let Some(mut expr) = temp_result {
-                println!("Returned from execute_block_in_env, bottom if let");
-                //If execution Returns an expression we know it's an expression, so eval it, wrap
-                //in literal and propogate upwards, before we exit the temp enviroment
-                return Some(new_literal!( temporary_int.evaluate(&mut expr)));
-            }else {
-                println!("execute returned nothing");
-            }                
-            
+            temporary_int.execute(statement);
         }
         
         None
@@ -90,13 +78,7 @@ impl Interpreter {
 
         //Execute
         for statement in statements {
-            if let Statement::Return(ret) = statement {
-                //Is return so stop execution and get stuff back
-                    return Some(ret);
-            }
-            else {
                         self.execute(statement);
-            }
         }
         //Unwrap
         self.enviroment = self.enviroment.enclosing.to_owned().unwrap();
@@ -175,6 +157,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         if let Ok(item) = result {
             item
         } else {
+            //TODO: This branch keeps getting called twice, need to investigate why
             //Nothing was found so we return nothing
             // println!("{:?}",self.enviroment.clone());
             crate::error(

@@ -33,21 +33,16 @@ enum ExitCode {
 
 #[allow(unused)]
 ///Sends runtime error report to user with specific additonal details
-fn report(line: u32, place: String, message: String) -> Error {
+fn report(line: u32, place: String, message: String)  {
     if place != *"" {
         let place: String = "in ".to_owned() + &place;
     }
 
-    eprintln!(" [Line {line}] Error: {message} {place}");
-
-    Error::new(
-        std::io::ErrorKind::InvalidData,
-        format!(" [Line {line}] Error: {message} {place}"),
-    )
+    println!(" [Line {line}] Error: {message} {place}");
 }
 
 ///Sends an error report to user - semantic sugar
-fn error(line: u32, message: String) -> Error {
+fn error(line: u32, message: String) {
     report(line, String::from(""), message)
 }
 
@@ -66,12 +61,12 @@ fn run(source: String) -> Result<i32, Error> {
         line: scanner.line,
     });
 
-    debug!("Tokenizing Done");
+    // debug!("Tokenizing Done");
 
     let mut parser = parser::Parser::new(tokens, 0);
     let statements: Vec<types::statement::Statement> = parser.parse();
 
-    debug!("Parsing Done");
+    // debug!("Parsing Done");
 
 
     let mut interpreter = interpreter::Interpreter::new();

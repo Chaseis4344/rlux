@@ -5,7 +5,6 @@ use std::fmt::Display as DisplayTrait;
 
 use super::RuntimeError;
 use crate::types::lux_functions::user::UserFunction;
-use std::vec::Vec;
 
 //Token Display implementation moved to token.rs because of private field implementation
 
@@ -13,7 +12,7 @@ impl DisplayTrait for super::expression::Call {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         write!(
             f,
-            "Call: (callee: {}, paren: {}, arguments: {})",
+            "Call: (callee:{}, paren:{}, arguments:{})",
             self.callee,
             self.paren,
             self.arguments.len()
@@ -135,7 +134,7 @@ impl DisplayTrait for crate::types::Expression {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match (*self).clone() {
             Self::Grouping(group) => {
-                write!(f, "{}", group.expression)
+                write!(f, "group:{}", group.expression)
             }
             Self::Binary(bin) => {
 
@@ -144,19 +143,19 @@ impl DisplayTrait for crate::types::Expression {
             Self::Literal(lit) => {
                 //This is the only path used since everything gets evaluated to a literal before it
                 //gets displayed internally in print
-                write!(f, "{}", lit.value)
+                write!(f, "literal:{}", lit.value)
             }
             Self::Unary(unary) => {
                 write!(
                     f,
-                    "(unary:  Operator:({}) Operand:{})",
+                    "(unary:  Operator:{} Operand:{})",
                     unary.operator, unary.operand
                 )
             }
             Self::Ternary(tern) => {
                 write!(
                     f,
-                    "(ternary: Evaluator:({}) , leftHand side:({}),  rightHand side:({}) )",
+                    "(ternary: Evaluator:{} , leftHand side:{},  rightHand side:{})",
                     tern.evaluator, tern.left, tern.right
                 )
             }
@@ -165,10 +164,10 @@ impl DisplayTrait for crate::types::Expression {
             }
             //TODO: IMPLEMENT BELOW
             Self::Assignment(assign) => {
-                write!(f,"(Assignment: value: {}, name:{})", assign.value, assign.name)
+                write!(f,"(Assignment: value:{}, name:{})", assign.value, assign.name)
             },
             Self::Logical(logic) =>  {
-                write!(f,"(Logical: left:{}, right{}, operator:{})", logic.left,logic.right,logic.operator)
+                write!(f,"(Logical: left:{}, right:{}, operator:{})", logic.left,logic.right,logic.operator)
             },
             Self::Call(call) => {
                 write!(f,"(Call: callee:{})",call.callee)
@@ -224,4 +223,16 @@ impl DisplayTrait for crate::types::statement::Statement {
             _ => todo!("Unimplemented Display on Statement"),
         }
     }
+}
+
+impl DisplayTrait for crate::types::statement::ReturnStatement  {
+   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> { 
+       if let Some(val) = &self.value {
+
+        write!(f,"Ret:{}", val)
+
+       } else {
+           write!(f,"None")
+       }
+   } 
 }

@@ -1,8 +1,8 @@
 use super::{Callable, Interpreter};
 use crate::enviroment::Enviroment;
-use crate::interpreter;
 use crate::types::{statement::*, *};
 use std::fmt::{Debug, Formatter};
+use std::panic::catch_unwind;
 
 #[derive(Clone, PartialEq)]
 pub(crate) struct UserFunction {
@@ -27,7 +27,7 @@ impl Callable for UserFunction {
         };
         let (params, body, function_name) = (
             &self.declaration.parameters,
-            &self.declaration.body,
+            self.declaration.body.clone(),
             &self.declaration.name.lexeme,
         );
 
@@ -42,18 +42,47 @@ impl Callable for UserFunction {
         let function = crate::types::lux_functions::Functions::User(UserFunction {
             declaration: Box::new(*self.declaration.clone()),
         });
-    
-
+        //Define this function in it's own enviroment
         function_enviroment.define(function_name.to_string(), LiteralType::Callable(function));
-       let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
+
+       // let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
+        let ret = catch_unwind(|| {
+            Interpreter::execute_block_in_env(body, function_enviroment)
+        });
+
        match ret {
-           Some(thing) => {
-               println!("Returned: {}", thing);
-               Some(thing)
+           Err(thing) => {
+               if thing.is::<crate::types::statement::Statement>()
+               {
+                  if let Ok(return_statement) = thing.downcast::<crate::types::statement::Statement>() {
+                      match *return_statement  {
+                          Statement::Return(ret_val) => {
+                              match ret_val.value {
+                                 Some(val) => {
+                                     Some(val)
+                                 }
+                                 None => None, 
+                              }
+                              
+                          },
+                          _ => {return None;},
+                      }
+                  }else {
+                      panic!("Not a Return Statement")
+                  } 
+               }else {
+                   panic!("Uncaught")
+               }
+
+                   
            }
-           _ => {
+           Ok(value) => {
                println!("Returned nothing");
-               None}
+               if value.is_some() {
+                   panic!("Returned Nothing from function that has a value");
+               }
+               return value;
+           }
        }
     }
 

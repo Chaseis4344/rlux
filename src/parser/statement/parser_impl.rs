@@ -197,7 +197,7 @@ impl Parser {
             if error.source.token_type != TokenType::For
                 && error.source.lexeme.to_lowercase() != "print"
             {
-                let _ = crate::error(error.source.line, error.cause);
+                Parser::error(error.source.line, error.cause);
             }
         }
 

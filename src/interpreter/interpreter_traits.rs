@@ -14,6 +14,7 @@ macro_rules! visitable_trait {
     };
 }
 
+///Required Trait for Interpreter to garuntee we can accomadate all expressions
 pub(crate) trait InterpreterVisitor<T> {
     fn visit_grouping(&mut self, group: &mut Grouping) -> T;
     fn visit_binary(&mut self, bin: &mut Binary) -> T;

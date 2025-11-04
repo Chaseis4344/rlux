@@ -10,13 +10,21 @@ macro_rules! new_literal {
 
 impl StatementVisitor for Interpreter {
     fn visit_return_statement(&mut self, ret: &mut ReturnStatement) ->Statement {
-        if ret.value.is_some(){
+        use std::panic;
+        let original_hook = 
+        //Prevent Display of this particluar panic
+        panic::set_hook(Box::new(|_info|{
+            // do nothing
+        }));
+        let ret_value: Statement = if ret.value.is_some(){
           let mut ret = ret.to_owned();
            ret.value = Some(new_literal!(self.evaluate(&mut ret.value.unwrap())));
           Statement::Return(ret)
-        }else {
+        }else {  
             Statement::Return(ret.to_owned())
-        }
+        };
+
+        panic::panic_any(ret_value);
     }
     fn visit_expression_statement(&mut self, expression: &mut ExpressionStatement) -> Statement {
         let result = self.evaluate(&mut expression.expression);
@@ -34,8 +42,10 @@ impl StatementVisitor for Interpreter {
     }*/
 
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement {
+        let var = var.to_owned();
         let init: LiteralType = if var.initalizer.is_some() {
-            self.evaluate(var.initalizer.as_mut().unwrap())
+            //Should be fine because we are directly checking there is something before unwrapping
+            self.evaluate(&mut var.initalizer.clone().unwrap())
         } else {
             LiteralType::Nil
         };
@@ -43,10 +53,9 @@ impl StatementVisitor for Interpreter {
         self.enviroment
             .define(var.name.lexeme.clone(), init.to_owned());
 
-        let clone = var.clone();
         Statement::Variable(VariableStatement {
-            name: clone.name,
-            initalizer: clone.initalizer,
+            name: var.name,
+            initalizer: var.initalizer,
         })
     }
     fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement {
@@ -59,24 +68,24 @@ impl StatementVisitor for Interpreter {
         if self.evaluate(&mut condition).into() {
             self.execute(then_branch.clone());
 
-            return then_branch;
+            then_branch
         } else if else_branch.is_some() {
             let else_branch = else_branch.unwrap();
             self.execute(else_branch.clone());
 
-            return else_branch;
+            else_branch
+        } else {
+            Statement::If(return_thing)
         }
 
-        Statement::If(return_thing)
     }
 
     fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement {
         let unboxed = while_statement.to_owned();
         let return_thing = unboxed.clone();
-        let mut condition = unboxed.condition;
-        let body = *(unboxed.body);
+        let (body, mut condition) = (*(unboxed.body), unboxed.condition);
 
-        while self.evaluate(&mut condition).into() {
+        while Into::<bool>::into(self.evaluate(&mut condition)) {
             self.execute(body.clone());
         }
 
@@ -86,10 +95,10 @@ impl StatementVisitor for Interpreter {
     fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement {
         // println!("Before Block Execution");
         if let Some(return_val) = self.execute_block(block_statement.statements.to_owned()){
-            return Statement::Return(return_val);    
-        }else{
+            Statement::Return(return_val)    
+        } else {
         // println!("After Block Execution");
-        Statement::Block(block_statement.to_owned())
+            Statement::Block(block_statement.to_owned())
         }
     }
 
@@ -97,6 +106,7 @@ impl StatementVisitor for Interpreter {
         &mut self,
         function_statement: &mut FunctionStatement,
     ) -> Statement {
+        //! Define user function declarations
         use crate::types::lux_functions::Functions;
         use crate::types::lux_functions::user::UserFunction;
 

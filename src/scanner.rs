@@ -102,7 +102,7 @@ impl Scanner {
 
             '"' => self.strings(),
             chara => {
-                let _ = crate::error(self.line, format!("Unexpected Token: '{}'", chara));
+                crate::error(self.line, format!("Unexpected Token: '{}'", chara));
                 None
             }
         }

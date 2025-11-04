@@ -44,8 +44,8 @@ macro_rules! new_literal {
 macro_rules! error_check {
     ($variable:ident ) => {
         if let Err(ref error) = $variable {
-            let _err = crate::error(error.source.line.clone(), error.cause.clone());
-            return Err(error.clone());
+            crate::error(error.source.line, error.cause.clone());
+            // return Err(error.clone());
         }
     };
 }
