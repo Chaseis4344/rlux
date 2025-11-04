@@ -204,13 +204,7 @@ impl Scanner {
         )
     }
 
-    fn is_ascii_ident(ch: char) -> bool {
-        (ch >= 'a' && ch <= 'z')
-            || (ch >= 'A' && ch <= 'Z')
-            || (ch >= '0' && ch <= '9')
-            || ch == '_'
-    }
-
+  
     fn keywords(&mut self) -> Option<Token> {
         //!Reads word until whitespace or something illegal in an identifier and checks if it is
         //!reserved, if not creates an indentifier token
@@ -218,14 +212,15 @@ impl Scanner {
         let mut word_built = String::from("");
 
         //Read in full word
-        while Self::is_ascii_ident(current_char) && (self.current <= self.source.len() as u32) {
+        while is_ascii_ident(current_char) && (self.current <= self.source.len() as u32) {
             word_built.push(current_char);
             self.current += 1;
             current_char = self.source.as_bytes()[(self.current - 1) as usize] as char
         }
         self.current -= 1;
         let matching = word_built.to_ascii_lowercase();
-        //Fat Match lol - Match to keywords
+        //Match to keywords, if we don't have the keyword reserved, then its
+        //probably a variable
         match matching.as_str() {
             "and" => new_character!(TokenType::And, word_built.as_str(), self.line),
             "class" => new_character!(TokenType::Class, word_built.as_str(), self.line),
@@ -320,20 +315,23 @@ impl Scanner {
         self.source.as_bytes()[(self.current) as usize] as char
     }
 
-    ///Extract tokens from source, essentially a "start" or "do a thing" function
     pub(crate) fn scan_tokens(&mut self) -> Vec<Token> {
+    //!Extract tokens from source, essentially a "start" or "do a thing" function
         let mut tokens: Vec<Token> = vec![];
-        //let mut current_line = 0;
-
         while !self.is_at_end() {
-            //let current_char: char = self.source.as_bytes()[i] as char;
-            //let next_char: char = self.source.as_bytes()[i + 1] as char;
             if let Some(current_token) = self.scan_token() {
                 tokens.push(current_token);
             };
         }
         tokens
     }
+}
+fn is_ascii_ident(ch: char) -> bool {
+        //!Defines the rules for what is allowed in an Identifier
+        (ch >= 'a' && ch <= 'z')
+            || (ch >= 'A' && ch <= 'Z')
+            || (ch >= '0' && ch <= '9')
+            || ch == '_'
 }
 
 #[allow(clippy::manual_range_contains)]

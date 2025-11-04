@@ -1,3 +1,6 @@
+//! My custom test suite for Rlux, tweaked over multiple iterations to get as many edge cases as
+//! possible
+
 #[cfg(test)]
 use crate::run;
 use std::{

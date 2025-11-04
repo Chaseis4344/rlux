@@ -69,7 +69,7 @@ pub enum TokenType {
     Eof,
 }
 
-///Rlux's basic expression type, uses Box<T> so that recursive types can be captured
+///Rlux's basic expression type, uses `Box<T>` so that recursive types can be captured
 #[derive(Clone, Debug, PartialEq)]
 pub enum Expression {
     Grouping(Box<expression::Grouping>),
