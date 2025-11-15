@@ -18,7 +18,7 @@ pub struct Scanner {
 }
 
 #[allow(clippy::manual_range_contains)]
-impl Scanner {
+impl<'scanner> Scanner {
     pub fn new(source: String, current: Option<u32>, line: Option<u32>) -> Scanner {
         init_value!(current, 0);
         init_value!(line, 1);
@@ -149,9 +149,9 @@ impl Scanner {
         self.line += 1;
     }
 
-    fn strings(&mut self) -> Option<Token> {
+    fn strings<'token>(&mut self) -> Option<Token<'token>> {
         //!Evaluate strings and handle funky cases
-        let mut result = String::from("");
+        let mut result: String = String::new();
         let mut current_char: char;
 
         //while in_string
@@ -198,14 +198,14 @@ impl Scanner {
 
         new_literal!(
             TokenType::String,
-            result.to_owned(),
-            LiteralType::String(result),
+            result.clone().as_str(),
+            LiteralType::String(result.as_str()),
             self.line
         )
     }
 
   
-    fn keywords(&mut self) -> Option<Token> {
+    fn keywords<'token>(&mut self) -> Option<Token<'token>> {
         //!Reads word until whitespace or something illegal in an identifier and checks if it is
         //!reserved, if not creates an indentifier token
         let mut current_char: char = self.source.as_bytes()[(self.current - 1) as usize] as char;
@@ -222,15 +222,15 @@ impl Scanner {
         //Match to keywords, if we don't have the keyword reserved, then its
         //probably a variable
         match matching.as_str() {
-            "and" => new_character!(TokenType::And, word_built.as_str(), self.line),
-            "class" => new_character!(TokenType::Class, word_built.as_str(), self.line),
-            "else" => new_character!(TokenType::Else, word_built.as_str(), self.line),
-            "fun" => new_character!(TokenType::Fun, word_built.as_str(), self.line),
-            "for" => new_character!(TokenType::For, word_built.as_str(), self.line),
-            "if" => new_character!(TokenType::If, word_built.as_str(), self.line),
-            "or" => new_character!(TokenType::Or, word_built.as_str(), self.line),
+            "and" => new_character!(TokenType::And, "and", self.line),
+            "class" => new_character!(TokenType::Class, "class", self.line),
+            "else" => new_character!(TokenType::Else, "else", self.line),
+            "fun" => new_character!(TokenType::Fun, "fun", self.line),
+            "for" => new_character!(TokenType::For, "for", self.line),
+            "if" => new_character!(TokenType::If, "if", self.line),
+            "or" => new_character!(TokenType::Or, "or", self.line),
             // "print" => new_character!(TokenType::Print, word_built.as_str(), self.line),
-            "return" => new_character!(TokenType::Return, word_built.as_str(), self.line),
+            "return" => new_character!(TokenType::Return, "return", self.line),
             "super" => new_character!(TokenType::Super, word_built.as_str(), self.line),
             "this" => new_character!(TokenType::This, word_built.as_str(), self.line),
             "var" => new_character!(TokenType::Var, word_built.as_str(), self.line),
@@ -243,21 +243,21 @@ impl Scanner {
             ),
             "false" => new_literal!(
                 TokenType::False,
-                word_built.as_str(),
+                "false",
                 LiteralType::Boolean(false),
                 self.line
             ),
             "true" => new_literal!(
                 TokenType::True,
-                word_built.as_str(),
+                "true",
                 LiteralType::Boolean(true),
                 self.line
             ),
-            _ => new_character!(TokenType::Identifier, word_built, self.line),
+            _ => new_character!(TokenType::Identifier, &word_built, self.line),
         }
     }
 
-    fn numbers(&mut self) -> Option<Token> {
+    fn numbers<'token>(&'scanner mut self) -> Option<Token<'token>> {
         //! Evaluate numbers, which are internally stored as an `f64`
         let mut current_char: char = self.source.as_bytes()[(self.current - 1) as usize] as char;
         let mut result_string: String = String::from("");
@@ -290,7 +290,7 @@ impl Scanner {
 
         new_literal!(
             TokenType::Number,
-            result_string.to_owned(),
+            result_string.to_owned().as_str(),
             LiteralType::Number(result_string.parse::<f64>().unwrap()),
             self.line
         )
@@ -298,7 +298,7 @@ impl Scanner {
 
     fn is_at_end(&self) -> bool {
         //! Checks if we are end of token stream by counting number of chars
-        self.current >= self.source.len().try_into().unwrap()
+        self.current >= self.source.len() as u32    
     }
 
     fn advance(&mut self) -> char {
@@ -315,17 +315,32 @@ impl Scanner {
         self.source.as_bytes()[(self.current) as usize] as char
     }
 
-    pub(crate) fn scan_tokens(&mut self) -> Vec<Token> {
+    pub(crate) fn scan_tokens<'token>(&'scanner mut self) -> Vec<Token<'token>> where 'token: 'scanner {
     //!Extract tokens from source, essentially a "start" or "do a thing" function
-        let mut tokens: Vec<Token> = vec![];
+        let mut tokens: Vec<Token<'token>> = vec![];
+
+
         while !self.is_at_end() {
             if let Some(current_token) = self.scan_token() {
                 tokens.push(current_token);
             };
         }
+        
+        //Push Final EOF token
+        tokens.push(Token {
+            token_type: TokenType::Eof,
+            lexeme: "",
+            literal: None,
+            line: self.line.clone(),
+        });
+
+
         tokens
     }
 }
+
+
+#[inline(always)]
 fn is_ascii_ident(ch: char) -> bool {
         //!Defines the rules for what is allowed in an Identifier
         (ch >= 'a' && ch <= 'z')
@@ -334,7 +349,7 @@ fn is_ascii_ident(ch: char) -> bool {
             || ch == '_'
 }
 
-#[allow(clippy::manual_range_contains)]
+#[inline(always)]
 pub(crate) fn is_ascii_num(ch: char) -> bool {
     ch >= '0' && ch <= '9'
 }

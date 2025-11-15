@@ -35,12 +35,12 @@ pub(crate) trait Visitable<T> {
     fn accept(&mut self, visitor: &mut dyn InterpreterVisitor<T>) -> T;
 }
 
-visitable_trait! {LiteralType,Binary,Expression}
-visitable_trait! {LiteralType,Literal,Expression}
-visitable_trait! {LiteralType,Grouping,Expression}
-visitable_trait! {LiteralType,Unary,Expression}
-visitable_trait! {LiteralType,Ternary,Expression}
-visitable_trait! {LiteralType,Variable,Expression}
-visitable_trait! {LiteralType,Assignment,Expression}
-visitable_trait! {LiteralType,Logical,Expression}
-visitable_trait! {LiteralType,Call,Expression}
+visitable_trait! {LiteralType<'_>,Binary,Expression}
+visitable_trait! {LiteralType<'_>,Literal,Expression}
+visitable_trait! {LiteralType<'_>,Grouping,Expression}
+visitable_trait! {LiteralType<'_>,Unary,Expression}
+visitable_trait! {LiteralType<'_>,Ternary,Expression}
+visitable_trait! {LiteralType<'_>,Variable,Expression}
+visitable_trait! {LiteralType<'_>,Assignment,Expression}
+visitable_trait! {LiteralType<'_>,Logical,Expression}
+visitable_trait! {LiteralType<'_>,Call,Expression}

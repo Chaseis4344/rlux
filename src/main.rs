@@ -50,17 +50,9 @@ fn run(source: String) -> Result<i32, Error> {
     let mut scanner = scanner::Scanner::new(source, None, Some(1));
 
     //Scan in & Store token string
-    let mut tokens: Vec<types::token::Token> = scanner.scan_tokens();
+    let tokens: Vec<types::token::Token> = scanner.scan_tokens();
 
-    //Push Final EOF token
-    tokens.push(types::token::Token {
-        token_type: types::TokenType::Eof,
-        lexeme: String::from(""),
-        literal: None,
-        line: scanner.line,
-    });
-
-    // debug!("Tokenizing Done");
+       // debug!("Tokenizing Done");
 
     let mut parser = parser::Parser::new(tokens, 0);
     let statements: Vec<types::statement::Statement> = parser.parse();

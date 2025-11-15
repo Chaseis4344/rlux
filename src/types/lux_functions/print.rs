@@ -21,6 +21,8 @@ impl Callable for Print {
         println!("{printable}");
         None
     }
+
+    #[inline]
     fn arity(&self) -> u64 {
         1
     }

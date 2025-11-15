@@ -301,9 +301,7 @@ impl Parser {
         } else {
             Err(ParserError {
                 source: self.peek(),
-                cause: String::from(
-                    "Not in Parser AST: \'".to_owned() + &self.peek().lexeme + "\'",
-                ),
+                cause:  "Not in Parser AST: \'".to_owned() + &self.peek().lexeme + "\'",
             })
         }
     }

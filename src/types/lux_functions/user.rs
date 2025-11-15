@@ -17,18 +17,29 @@ use std::{
     panic::catch_unwind,
 };
 
-#[derive(Clone, PartialEq)]
-pub(crate) struct UserFunction {
+#[derive(Clone)]
+pub(crate) struct UserFunction <'function>{
     pub(crate) declaration: Box<FunctionStatement>,
+    pub(crate) closure: Box<Enviroment<'function>>,
 }
 
-impl Debug for UserFunction {
+impl PartialEq for UserFunction<'_> {
+        
+    fn eq(&self, other: &Self) -> bool {
+        //What is in the closure is entirely dependent on what is in the declaration, so we can
+        //ignore the closure when comparing them, since identical declarations will produce
+        //identical closures 
+        self.declaration == other.declaration
+    }
+}
+
+impl Debug for UserFunction<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         write!(f, "UserFunction: {}", self.declaration.name.lexeme)
     }
 }
 
-impl Callable for UserFunction {
+impl Callable for UserFunction<'_> {
     fn call(
         &mut self,
         interpreter: &mut Interpreter,
@@ -54,6 +65,7 @@ impl Callable for UserFunction {
         //Enabling Recursion
         let function = crate::types::lux_functions::Functions::User(UserFunction {
             declaration: Box::new(*self.declaration.clone()),
+            closure: Box::new(*self.closure.clone())
         });
         //Define this function in it's own enviroment
         function_enviroment.define(function_name.to_string(), LiteralType::Callable(function));

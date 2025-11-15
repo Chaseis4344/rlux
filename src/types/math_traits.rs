@@ -50,8 +50,8 @@ impl PartialEq for TokenType {
 }
 
 ///Add Literals Together if possible, concatonate if string
-impl std::ops::Add for LiteralType {
-    type Output = LiteralType;
+impl<'math> std::ops::Add for LiteralType<'math> {
+    type Output = LiteralType<'math>;
     fn add(self, rhs: Self) -> Self::Output {
         match self {
             /*
@@ -73,17 +73,17 @@ impl std::ops::Add for LiteralType {
              */
             Self::String(left_string) => match rhs {
                 Self::String(right_string) => {
-                    LiteralType::String(left_string.to_owned() + &right_string.to_owned())
+                    LiteralType::String(&format!("{left_string}{right_string}"))
                 }
-                Self::Boolean(boolean) => LiteralType::String(left_string + &boolean.to_string()),
-                Self::Number(num) => LiteralType::String(left_string + &num.to_string()),
-                Self::Nil => LiteralType::String(left_string + &Self::Nil.to_string()),
+                Self::Boolean(boolean) => LiteralType::String(&format!("{left_string}{}", &boolean.to_string())),
+                Self::Number(num) => LiteralType::String(&format!("{left_string}{}", &num.to_string())),
+                Self::Nil => LiteralType::String(&format!("{left_string}{}", &Self::Nil.to_string())),
                 Self::Callable(function) => {
                     eprintln!(
                         "Error: Type Mismatch! \n\tCannot add {:?} function to {}!",
                         function, left_string
                     );
-                    LiteralType::String(String::from("Function"))
+                    LiteralType::String("Function")
                 }
             },
 
@@ -103,16 +103,16 @@ impl std::ops::Add for LiteralType {
 }
 
 ///Subtract two literals, if possible
-impl std::ops::Sub for LiteralType {
-    type Output = LiteralType;
+impl<'math> std::ops::Sub for LiteralType<'math> {
+    type Output = LiteralType<'math>;
     fn sub(self, rhs: Self) -> Self::Output {
         number_op!(self,rhs, -)
     }
 }
 
 ///Multiplies two literal nums together
-impl std::ops::Mul for LiteralType {
-    type Output = LiteralType;
+impl<'math> std::ops::Mul for LiteralType<'math> {
+    type Output = LiteralType<'math>;
     fn mul(self, rhs: Self) -> Self::Output {
         //if left is number and right is number, multiply them together
         number_op!(self,rhs,*)
@@ -120,15 +120,15 @@ impl std::ops::Mul for LiteralType {
 }
 
 ///Divide literals if possible
-impl std::ops::Div for LiteralType {
-    type Output = LiteralType;
+impl<'math> std::ops::Div for LiteralType<'math> {
+    type Output = LiteralType<'math>;
     fn div(self, rhs: Self) -> Self::Output {
         number_op!(self,rhs,/)
     }
 }
 
 /// ==, != is derived
-impl PartialEq for LiteralType {
+impl PartialEq for LiteralType<'_> {
     /// For each path we extract both values and directly compare them to one another via Rust
     fn eq(&self, other: &Self) -> bool {
         //How does this all make perfect sense to me?
@@ -187,7 +187,7 @@ impl PartialEq for LiteralType {
 }
 
 ///Type Casting from Literal to Rust boolean
-impl From<LiteralType> for bool {
+impl From<LiteralType<'_>> for bool {
     fn from(value: LiteralType) -> Self {
         match value {
             LiteralType::Boolean(ret) => ret,
@@ -196,7 +196,7 @@ impl From<LiteralType> for bool {
     }
 }
 ///Type casting from literal to Rust float
-impl From<LiteralType> for f64 {
+impl From<LiteralType<'_>> for f64 {
     fn from(value: LiteralType) -> Self {
         match value {
             LiteralType::Number(number) => number,
@@ -206,8 +206,8 @@ impl From<LiteralType> for f64 {
 }
 
 ///Type casting from Literal to Rust String
-impl From<LiteralType> for String {
-    fn from(value: LiteralType) -> Self {
+impl<'LiteralType, 'str> From<LiteralType<'LiteralType>> for  &'str str where 'LiteralType: 'str {
+    fn from(value: LiteralType<'LiteralType>) -> Self {
         match value {
             LiteralType::String(stringy) => stringy,
             _ => panic!("Coecercing Non-string into string"),
@@ -216,7 +216,7 @@ impl From<LiteralType> for String {
 }
 
 ///>=, >, <=, <
-impl PartialOrd for LiteralType {
+impl PartialOrd for LiteralType<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
@@ -236,7 +236,7 @@ impl PartialOrd for LiteralType {
 }
 
 ///Implements ordering for numeric rlux types
-impl Ord for LiteralType {
+impl Ord for LiteralType<'_> {
     #[allow(clippy::comparison_chain)]
     fn cmp(&self, other: &LiteralType) -> std::cmp::Ordering {
         //Ripped Striaght from rust's own source
@@ -251,4 +251,4 @@ impl Ord for LiteralType {
 }
 
 ///Strange Rust things are Happening
-impl Eq for LiteralType {}
+impl Eq for LiteralType<'_> {}

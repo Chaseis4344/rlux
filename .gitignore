@@ -1,2 +1,5 @@
 /target/
 /lib-rlux-ir/target
+perf.data
+perf.data.old
+flamegraph.svg

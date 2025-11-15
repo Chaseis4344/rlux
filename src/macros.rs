@@ -19,7 +19,7 @@ macro_rules! init_value {
 ///Removes some of Syntactical ugliness in the Scanner
 macro_rules! new_character {
     ($token_type:expr, $string:expr, $line:expr) => {
-        Some(Token::new($token_type, String::from($string), None, $line))
+        Some(Token::new($token_type, $string, None, $line))
     };
 }
 
@@ -29,7 +29,7 @@ macro_rules! new_literal {
     ($token_type:expr, $string:expr, $literal_type:expr, $line:expr) => {
         Some(Token::new(
             $token_type,
-            String::from($string),
+            $string,
             Some($literal_type),
             $line,
         ))

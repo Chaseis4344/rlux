@@ -38,14 +38,6 @@ impl StatementVisitor for Interpreter {
             expression: new_literal!(result),
         })
     }
-    /*fn visit_print_statement(&mut self, print: &mut PrintStatement) -> Statement {
-        let expression = self.evaluate(&mut print.expression);
-
-        println!("{}", expression);
-        Statement::Expression(ExpressionStatement {
-            expression: print.expression.clone(),
-        })
-    }*/
 
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement {
         let var = var.to_owned();
@@ -116,10 +108,11 @@ impl StatementVisitor for Interpreter {
             Functions,
             user::UserFunction,
         };
-
+        
         let function_name = &function_statement.name.lexeme;
         let function = Functions::User(UserFunction {
             declaration: Box::new(function_statement.to_owned()),
+            closure: Box::new(crate::enviroment::Enviroment { enclosing: None, variable_map: self.enviroment.variable_map.clone() }) 
         });
         self.enviroment
             .define(function_name.to_string(), LiteralType::Callable(function));

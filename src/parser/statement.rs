@@ -31,7 +31,7 @@ pub(crate) trait StatementVisitor {
     fn visit_return_statement(&mut self, return_statement: &mut ReturnStatement) -> Statement;
 }
 
-impl Visitable<Statement, Interpreter> for Statement {
+impl Visitable<Statement, Interpreter<'_>> for Statement {
     fn accept(&mut self, visitor: &mut Interpreter) -> Statement {
         match self {
             // Statement::Print(statement) => statement.accept(visitor),
@@ -46,11 +46,10 @@ impl Visitable<Statement, Interpreter> for Statement {
     }
 }
 
-visitable_trait! {Statement, IfStatement, Interpreter}
-// visitable_trait! {Statement, PrintStatement, Interpreter}
-visitable_trait! {Statement, ReturnStatement, Interpreter}
-visitable_trait! {Statement, VariableStatement, Interpreter}
-visitable_trait! {Statement, ExpressionStatement, Interpreter}
-visitable_trait! {Statement, WhileStatement, Interpreter}
-visitable_trait! {Statement, BlockStatement, Interpreter}
-visitable_trait! {Statement, FunctionStatement, Interpreter}
+visitable_trait! {Statement, IfStatement, Interpreter<'_>}
+visitable_trait! {Statement, ReturnStatement, Interpreter<'_>}
+visitable_trait! {Statement, VariableStatement, Interpreter<'_>}
+visitable_trait! {Statement, ExpressionStatement, Interpreter<'_>}
+visitable_trait! {Statement, WhileStatement, Interpreter<'_>}
+visitable_trait! {Statement, BlockStatement, Interpreter<'_>}
+visitable_trait! {Statement, FunctionStatement, Interpreter<'_>}

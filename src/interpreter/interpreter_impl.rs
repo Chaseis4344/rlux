@@ -28,13 +28,13 @@ use crate::{
 use std::collections::HashMap;
 // fun -> LiteralType | fun
 
-impl Interpreter {
+impl<'interpreter> Interpreter<'interpreter> {
     pub(crate) fn evaluate(&mut self, expr: &mut Expression) -> LiteralType {
         use crate::interpreter::interpreter_traits::Visitable;
         expr.accept(self)
     }
 
-    pub(crate) fn new() -> Interpreter {
+    pub(crate) fn new() -> Interpreter<'interpreter> {
         let map = HashMap::new();
         let mut globals = Enviroment {
             enclosing: None,
@@ -44,8 +44,8 @@ impl Interpreter {
         let clock = OuterClock(Clock {});
         let print = crate::types::lux_functions::Functions::Print(Print {});
 
-        globals.define(String::from("clock"), LiteralType::Callable(clock));
-        globals.define(String::from("print"), LiteralType::Callable(print));
+        globals.define("clock", LiteralType::Callable(clock));
+        globals.define("print", LiteralType::Callable(print));
 
         let enviroment = Box::new(globals.clone());
         Interpreter {
@@ -102,8 +102,8 @@ impl Interpreter {
 }
 
 ///Logic for how the Interpreter acts with each operator or Token
-impl InterpreterVisitor<LiteralType> for Interpreter {
-    fn visit_binary(&mut self, bin: &mut Binary) -> LiteralType {
+impl <'interpreter>InterpreterVisitor<LiteralType<'interpreter>> for Interpreter<'interpreter> {
+    fn visit_binary<'interpreter>(&'interpreter mut self, bin: &'interpreter mut Binary) -> LiteralType {
         let left = self.evaluate(&mut bin.left);
         let right = self.evaluate(&mut bin.right);
         let operator = &bin.operator;
@@ -167,12 +167,12 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         }
     }
 
-    fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
+    fn visit_variable(&'interpreter mut self, var: &'interpreter mut Variable) -> LiteralType<'_> {
         //!Returns the value of a variable, will return NIL if nothing is found
         let var = var.to_owned();
-        let name = &var.name.lexeme;
+        let name: &str = &var.name.lexeme;
         let result: Result<LiteralType, std::env::VarError> =
-            self.enviroment.to_owned().get(name.to_string());
+            self.enviroment.to_owned().get(name);
         // println!("{:?}", self.enviroment);
         if let Ok(item) = result {
             item

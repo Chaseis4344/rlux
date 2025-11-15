@@ -8,10 +8,10 @@ pub mod token;
 //TODO: Find a replacement for Strings that allows for Copy to be implemented
 //TODO: Replace "String" with a Box<str> or Cow<str> which will reduce velocity but give memory compaction
 #[derive(Clone, Debug)]
-pub(crate) enum LiteralType {
+pub(crate) enum LiteralType <'LiteralType>{
     Number(f64),
     Boolean(bool),
-    String(String),
+    String(&'LiteralType str),
     Callable(lux_functions::Functions),
     Nil, //This will be wrapped in an option,
 }
@@ -84,18 +84,18 @@ pub enum Expression {
 }
 
 #[derive(Clone)]
-pub struct ParserError {
-    pub source: token::Token,
+pub struct ParserError<'error> {
+    pub source: token::Token<'error>,
     pub cause: String,
 }
 
 #[derive(Clone, Debug)]
-pub struct RuntimeError {
-    pub source: token::Token,
+pub struct RuntimeError<'error> {
+    pub source: token::Token<'error>,
 }
 
 #[derive(Clone, Debug)]
-pub enum LuxErrors {
-    ParserError(ParserError),
-    RuntimeError(RuntimeError),
+pub enum LuxErrors<'error> {
+    ParserError(ParserError<'error>),
+    RuntimeError(RuntimeError<'error>),
 }

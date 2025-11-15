@@ -7,9 +7,9 @@ use crate::{
 };
 use interpreter_traits::InterpreterVisitor;
 
-pub(crate) struct Interpreter {
-    pub(crate) enviroment: Box<Enviroment>,
-    pub(crate) globals: Enviroment,
+pub(crate) struct Interpreter<'interpreter> {
+    pub(crate) enviroment: Box<Enviroment<'interpreter>>,
+    pub(crate) globals: Enviroment<'interpreter>,
 }
 
 mod interpret_ir;

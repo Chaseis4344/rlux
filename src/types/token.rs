@@ -5,14 +5,14 @@ use super::{
 use std::fmt::Formatter;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Token {
+pub struct Token <'token>{
     pub token_type: TokenType,
-    pub lexeme: String,
-    pub literal: Option<LiteralType>,
+    pub lexeme: &'token str,
+    pub literal: Option<LiteralType<'token>>,
     pub line: u32,
 }
 
-impl std::fmt::Display for Token {
+impl std::fmt::Display for Token<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -24,13 +24,13 @@ impl std::fmt::Display for Token {
     }
 }
 
-impl Token {
+impl<'token> Token<'_> {
     pub fn new(
         token_type: TokenType,
-        lexeme: String,
-        literal: Option<LiteralType>,
+        lexeme: &'token str,
+        literal: Option<LiteralType<'token>>,
         line: u32,
-    ) -> Token {
+    ) -> Token<'token> {
         Token {
             token_type,
             lexeme,

@@ -9,12 +9,12 @@ use std::{
 };
 #[derive(Clone)]
 ///Enclosing Enviroment for Rlux runtime
-pub struct Enviroment {
-    pub(crate) enclosing: Option<Box<Enviroment>>,
-    pub(crate) variable_map: HashMap<String, LiteralType>,
+pub struct Enviroment<'env> {
+    pub(crate) enclosing: Option<Box<Enviroment<'env>>>,
+    pub(crate) variable_map: HashMap<&'env str, LiteralType<'env>>,
 }
 
-impl Debug for Enviroment {
+impl Debug for Enviroment<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         write!(
             f,
@@ -24,18 +24,18 @@ impl Debug for Enviroment {
     }
 }
 
-impl Enviroment {
+impl<'env> Enviroment<'env> {
     ///Defines a new variable and maps the value to the Literal Provided
-    pub(crate) fn define(&mut self, name: String, value: LiteralType) {
+    pub(crate) fn define(&mut self, name: &str, value: LiteralType) {
         {
-            let map = &mut self.variable_map;
+            let map = &mut self.variable_map.to_owned();
             map.insert(name.clone(), value);
         }
         // println!("Enviroment: {:?} defined: {name}",self);
     }
 
     ///Gets a defined variable, throws a runtime error if non is found
-    pub(crate) fn get(self, name: String) -> Result<LiteralType, VarError> {
+    pub(crate) fn get<'get>(self, name: &'env str) -> Result<LiteralType, VarError> {
         let result = self.variable_map.get(&name);
 
         if let Some(lit) = result {
@@ -52,7 +52,7 @@ impl Enviroment {
     }
 
     /// Assigns value to variable, may be used to redfine existing varibles
-    pub(crate) fn assign(&mut self, name: String, value: LiteralType, line: u32) {
+    pub(crate) fn assign<'assign>(&mut self, name: &'env str, value: LiteralType<'env>, line: u32) {
         use std::collections::hash_map::*;
 
         if let Entry::Occupied(mut entry) = self.variable_map.entry(name.clone()) {
