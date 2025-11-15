@@ -16,7 +16,7 @@ impl Callable for Print {
         arguments: Vec<Expression>,
     ) -> Option<Expression> {
         //We are garunteeing that only 1 argument will ever be passed
-        let mut arg = arguments[0].to_owned();
+        let mut arg = arguments[0].clone();
         let printable: String = interpreter.evaluate(&mut arg).to_string();
         println!("{printable}");
         None

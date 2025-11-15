@@ -23,11 +23,10 @@ impl StatementVisitor for Interpreter {
             // do nothing
         }));
         let ret_value: Statement = if ret.value.is_some() {
-            let mut ret = ret.to_owned();
-            ret.value = Some(new_literal!(self.evaluate(&mut ret.value.unwrap())));
-            Statement::Return(ret)
+            ret.value = Some(new_literal!(self.evaluate(&mut ret.value.clone().unwrap())));
+            Statement::Return(ret.clone())
         } else {
-            Statement::Return(ret.to_owned())
+            Statement::Return(ret.clone())
         };
 
         panic::panic_any(ret_value);
@@ -48,7 +47,6 @@ impl StatementVisitor for Interpreter {
     }*/
 
     fn visit_variable_statement(&mut self, var: &mut VariableStatement) -> Statement {
-        let var = var.to_owned();
         let init: LiteralType = if var.initalizer.is_some() {
             //Should be fine because we are directly checking there is something before unwrapping
             self.evaluate(&mut var.initalizer.clone().unwrap())
@@ -57,15 +55,16 @@ impl StatementVisitor for Interpreter {
         };
 
         self.enviroment
-            .define(var.name.lexeme.clone(), init.to_owned());
+            .define(&var.name.lexeme.clone(), init);
 
+        let var = var.clone();
         Statement::Variable(VariableStatement {
             name: var.name,
             initalizer: var.initalizer,
         })
     }
     fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement {
-        let unboxed = if_statement.to_owned();
+        let unboxed = if_statement.clone();
         let return_thing = unboxed.clone();
         let mut condition = unboxed.condition;
         let then_branch = *(unboxed.then_branch);
@@ -86,12 +85,12 @@ impl StatementVisitor for Interpreter {
     }
 
     fn visit_while_statement(&mut self, while_statement: &mut WhileStatement) -> Statement {
-        let unboxed = while_statement.to_owned();
-        let return_thing = unboxed.clone();
+        let return_thing = while_statement.clone();
+        let unboxed = while_statement.clone();
         let (body, mut condition) = (*(unboxed.body), unboxed.condition);
 
         while Into::<bool>::into(self.evaluate(&mut condition)) {
-            self.execute(body.clone());
+                self.execute(body.clone());
         }
 
         Statement::While(return_thing)
@@ -99,11 +98,11 @@ impl StatementVisitor for Interpreter {
 
     fn visit_block_statement(&mut self, block_statement: &mut BlockStatement) -> Statement {
         // println!("Before Block Execution");
-        if let Some(return_val) = self.execute_block(block_statement.statements.to_owned()) {
+        if let Some(return_val) = self.execute_block(block_statement.statements.clone()) {
             Statement::Return(return_val)
         } else {
             // println!("After Block Execution");
-            Statement::Block(block_statement.to_owned())
+            Statement::Block(block_statement.clone())
         }
     }
 
@@ -119,11 +118,12 @@ impl StatementVisitor for Interpreter {
 
         let function_name = &function_statement.name.lexeme;
         let function = Functions::User(UserFunction {
-            declaration: Box::new(function_statement.to_owned()),
+            closure: *self.enviroment.clone(),
+            declaration: Box::new(function_statement.clone()),
         });
         self.enviroment
-            .define(function_name.to_string(), LiteralType::Callable(function));
+            .define(function_name, LiteralType::Callable(function));
 
-        Statement::Function(function_statement.to_owned())
+        Statement::Function(function_statement.clone())
     }
 }

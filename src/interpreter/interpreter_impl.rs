@@ -44,8 +44,8 @@ impl Interpreter {
         let clock = OuterClock(Clock {});
         let print = crate::types::lux_functions::Functions::Print(Print {});
 
-        globals.define(String::from("clock"), LiteralType::Callable(clock));
-        globals.define(String::from("print"), LiteralType::Callable(print));
+        globals.define("clock", LiteralType::Callable(clock));
+        globals.define("print", LiteralType::Callable(print));
 
         let enviroment = Box::new(globals.clone());
         Interpreter {
@@ -85,9 +85,11 @@ impl Interpreter {
         None
     }
     pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) -> Option<ReturnStatement> {
+
+        
         //Wrap
         self.enviroment = Box::new(Enviroment {
-            enclosing: Some(self.enviroment.to_owned()),
+            enclosing: Some(self.enviroment.clone()),
             variable_map: HashMap::new(),
         });
 
@@ -95,8 +97,8 @@ impl Interpreter {
         for statement in statements {
             self.execute(statement);
         }
-        //Unwrap
-        self.enviroment = self.enviroment.enclosing.to_owned().unwrap();
+        
+        self.enviroment =  self.enviroment.enclosing.clone().unwrap();
         None
     }
 }
@@ -130,7 +132,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         self.evaluate(&mut group.expression)
     }
     fn visit_literal(&mut self, lit: &mut Literal) -> LiteralType {
-        lit.value.to_owned()
+        lit.value.clone()
     }
     fn visit_ternary(&mut self, tern: &mut Ternary) -> LiteralType {
         let evaluator = self.evaluate(&mut tern.evaluator);
@@ -169,10 +171,9 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
 
     fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
         //!Returns the value of a variable, will return NIL if nothing is found
-        let var = var.to_owned();
-        let name = &var.name.lexeme;
+        let name = &var.name.lexeme.clone();
         let result: Result<LiteralType, std::env::VarError> =
-            self.enviroment.to_owned().get(name.to_string());
+            self.enviroment.get(name).cloned();
         // println!("{:?}", self.enviroment);
         if let Ok(item) = result {
             item
@@ -190,14 +191,14 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
 
     fn visit_assignment(&mut self, assign: &mut Assignment) -> LiteralType {
         //Decompose assignment to avoid excess cloning
-        let (name, value) = (assign.name.to_owned(), &mut assign.value);
+        let (name, value) = (assign.name.clone(), &mut assign.value);
 
         //Evaluate expression inside
         let value = self.evaluate(value);
 
         //Copy the value then echo out for the rest of the syntax tress
         self.enviroment
-            .assign(name.lexeme, value.clone(), name.line);
+            .assign(&name.lexeme, value.clone(), name.line);
 
         value
     }
@@ -229,7 +230,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
     fn visit_call(&mut self, call: &mut Call) -> LiteralType {
         //Taking Ownership here isn't a bad thing because we are decomposing to produce an output,
         //plus the original data is still stored in a file
-        let deref = call.to_owned();
+        let deref = call.clone();
         let (paren, mut callee, mut arguments) = (deref.paren, deref.callee, deref.arguments);
         let callee: LiteralType = self.evaluate(&mut callee);
         let error_line = paren.line;

@@ -46,19 +46,19 @@ fn error(line: u32, message: String) {
 }
 
 ///Runs source string provided, may be multi-line string
-fn run(source: String) -> Result<i32, Error> {
+fn run(source: &str) -> Result<i32, Error> {
     let mut scanner = scanner::Scanner::new(source, None, Some(1));
-
+    
     //Scan in & Store token string
     let mut tokens: Vec<types::token::Token> = scanner.scan_tokens();
 
     //Push Final EOF token
-    tokens.push(types::token::Token {
-        token_type: types::TokenType::Eof,
-        lexeme: String::from(""),
-        literal: None,
-        line: scanner.line,
-    });
+    tokens.push(types::token::Token::new(
+        types::TokenType::Eof,
+        "",
+        None,
+        scanner.line,
+    ));
 
     // debug!("Tokenizing Done");
 
@@ -106,7 +106,7 @@ pub fn run_file(filepath: String) {
     let valid_source = source.unwrap();
 
     //Run the code
-    match run(valid_source) {
+    match run(&valid_source) {
         Ok(_) => {
             // exit(ExitCode::Okay as i32);
         }
@@ -130,7 +130,7 @@ pub fn run_prompt() {
         }
 
         //Core function of REPL
-        let result = run((*input).to_string());
+        let result = run(input);
 
         // Bad Path 2
         if let Err(err) = result {

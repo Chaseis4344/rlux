@@ -27,13 +27,13 @@ impl std::fmt::Display for Token {
 impl Token {
     pub fn new(
         token_type: TokenType,
-        lexeme: String,
+        lexeme: &str,
         literal: Option<LiteralType>,
         line: u32,
     ) -> Token {
         Token {
             token_type,
-            lexeme,
+            lexeme: lexeme.to_string(),
             literal,
             line,
         }

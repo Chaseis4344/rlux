@@ -5,8 +5,7 @@ use super::{
 use crate::{
     enviroment::Enviroment,
     types::{
-        statement::*,
-        *,
+        lux_functions::Functions, statement::*, *
     },
 };
 use std::{
@@ -17,9 +16,16 @@ use std::{
     panic::catch_unwind,
 };
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone)]
 pub(crate) struct UserFunction {
+    pub(crate) closure: Enviroment,
     pub(crate) declaration: Box<FunctionStatement>,
+}
+
+impl PartialEq for UserFunction {
+    fn eq(&self, other: &Self) -> bool {
+        self.declaration == other.declaration
+    }
 }
 
 impl Debug for UserFunction {
@@ -34,32 +40,38 @@ impl Callable for UserFunction {
         interpreter: &mut Interpreter,
         mut arguments: Vec<Expression>,
     ) -> Option<Expression> {
-        let mut function_enviroment: Enviroment = Enviroment {
-            enclosing: Some(Box::new(interpreter.globals.clone())),
-            variable_map: interpreter.enviroment.variable_map.clone(),
+
+        //Enabling Recursion
+        let function = UserFunction {
+            closure: *interpreter.enviroment.clone(),
+            declaration: Box::new(*self.declaration.clone()),
         };
-        let (params, body, function_name) = (
+
+               let (params, body, function_name) = (
             &self.declaration.parameters,
             self.declaration.body.clone(),
             &self.declaration.name.lexeme,
         );
+        
+        let mut enviroment: Enviroment = Enviroment {
+            enclosing: Some(Box::new(function.closure.clone())),
+            variable_map: function.closure.variable_map.clone(),
+        };
 
+        
         for i in 0..params.len() {
-            function_enviroment.define(
-                params[i].lexeme.clone(),
+            enviroment.define(
+                &params[i].lexeme,
                 interpreter.evaluate(&mut arguments[i]),
             );
         }
 
-        //Enabling Recursion
-        let function = crate::types::lux_functions::Functions::User(UserFunction {
-            declaration: Box::new(*self.declaration.clone()),
-        });
+        let function = Functions::User(function);
         //Define this function in it's own enviroment
-        function_enviroment.define(function_name.to_string(), LiteralType::Callable(function));
+        enviroment.define(function_name, LiteralType::Callable(function));
 
         // let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
-        let ret = catch_unwind(|| Interpreter::execute_block_in_env(body, function_enviroment));
+        let ret = catch_unwind(|| Interpreter::execute_block_in_env(body, *interpreter.enviroment.clone()));
 
         match ret {
             Err(thing) => {

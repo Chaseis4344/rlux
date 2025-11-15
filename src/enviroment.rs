@@ -14,7 +14,7 @@ pub struct Enviroment {
     pub(crate) variable_map: HashMap<String, LiteralType>,
 }
 
-impl Debug for Enviroment {
+impl Debug for Enviroment{
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         write!(
             f,
@@ -26,24 +26,22 @@ impl Debug for Enviroment {
 
 impl Enviroment {
     ///Defines a new variable and maps the value to the Literal Provided
-    pub(crate) fn define(&mut self, name: String, value: LiteralType) {
+    pub(crate) fn define(&mut self, name: &str, value: LiteralType) {
         {
-            let map = &mut self.variable_map;
-            map.insert(name.clone(), value);
+            self.variable_map.insert(name.to_string(), value);
         }
         // println!("Enviroment: {:?} defined: {name}",self);
     }
 
     ///Gets a defined variable, throws a runtime error if non is found
-    pub(crate) fn get(self, name: String) -> Result<LiteralType, VarError> {
-        let result = self.variable_map.get(&name);
+    pub(crate) fn get(&self, name: &str) -> Result<&LiteralType, VarError> {
 
-        if let Some(lit) = result {
+        if let Some(lit) = self.variable_map.get(name) {
             // println!("Gave {lit}");
-            return Ok(lit.to_owned());
+            return Ok(&lit);
         }
 
-        if let Some(underlying) = self.enclosing {
+        if let Some(ref underlying) = self.enclosing {
             // println!("Enclosing Checked");
             underlying.get(name)
         } else {
@@ -52,10 +50,10 @@ impl Enviroment {
     }
 
     /// Assigns value to variable, may be used to redfine existing varibles
-    pub(crate) fn assign(&mut self, name: String, value: LiteralType, line: u32) {
+    pub(crate) fn assign(&mut self, name: &str, value: LiteralType, line: u32) {
         use std::collections::hash_map::*;
 
-        if let Entry::Occupied(mut entry) = self.variable_map.entry(name.clone()) {
+        if let Entry::Occupied(mut entry) = self.variable_map.entry(name.to_string()) {
             entry.insert(value);
         } else if self.enclosing.is_some() {
             self.enclosing.as_mut().unwrap().assign(name, value, line);

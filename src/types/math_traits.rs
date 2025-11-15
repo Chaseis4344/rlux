@@ -73,7 +73,7 @@ impl std::ops::Add for LiteralType {
              */
             Self::String(left_string) => match rhs {
                 Self::String(right_string) => {
-                    LiteralType::String(left_string.to_owned() + &right_string.to_owned())
+                    LiteralType::String(left_string + &right_string)
                 }
                 Self::Boolean(boolean) => LiteralType::String(left_string + &boolean.to_string()),
                 Self::Number(num) => LiteralType::String(left_string + &num.to_string()),

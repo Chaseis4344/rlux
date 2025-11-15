@@ -11,15 +11,15 @@ use crate::{
     },
 };
 
-pub struct Scanner {
-    source: String,
+pub struct Scanner<'scanner> {
+    source: &'scanner str,
     current: u32,
     pub line: u32,
 }
 
 #[allow(clippy::manual_range_contains)]
-impl Scanner {
-    pub fn new(source: String, current: Option<u32>, line: Option<u32>) -> Scanner {
+impl Scanner<'_> {
+    pub fn new(source: &str, current: Option<u32>, line: Option<u32>) -> Scanner<'_> {
         init_value!(current, 0);
         init_value!(line, 1);
 
@@ -198,7 +198,7 @@ impl Scanner {
 
         new_literal!(
             TokenType::String,
-            result.to_owned(),
+            result.clone(),
             LiteralType::String(result),
             self.line
         )
