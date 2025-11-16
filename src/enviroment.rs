@@ -14,7 +14,7 @@ pub struct Enviroment {
     pub(crate) variable_map: HashMap<String, LiteralType>,
 }
 
-impl Debug for Enviroment{
+impl Debug for Enviroment {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         write!(
             f,
@@ -35,7 +35,6 @@ impl Enviroment {
 
     ///Gets a defined variable, throws a runtime error if non is found
     pub(crate) fn get(&self, name: &str) -> Result<&LiteralType, VarError> {
-
         if let Some(lit) = self.variable_map.get(name) {
             // println!("Gave {lit}");
             return Ok(&lit);

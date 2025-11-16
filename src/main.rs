@@ -48,7 +48,7 @@ fn error(line: u32, message: String) {
 ///Runs source string provided, may be multi-line string
 fn run(source: &str) -> Result<i32, Error> {
     let mut scanner = scanner::Scanner::new(source, None, Some(1));
-    
+
     //Scan in & Store token string
     let mut tokens: Vec<types::token::Token> = scanner.scan_tokens();
 
@@ -87,13 +87,13 @@ pub fn run_file(filepath: String) {
     }
 
     let unvalidated_extension = file_path.extension();
-    if let Some(extension) = unvalidated_extension  
-         && extension != "lux" {
-            //This panic is for user safety, we don't want to parse or compile the wrong type of
-            //file
-            panic!("Please provide a lux source file");
-        }
-    
+    if let Some(extension) = unvalidated_extension
+        && extension != "lux"
+    {
+        //This panic is for user safety, we don't want to parse or compile the wrong type of
+        //file
+        panic!("Please provide a lux source file");
+    }
 
     let source = fs::read_to_string(file_path);
 

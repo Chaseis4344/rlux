@@ -162,7 +162,7 @@ impl Scanner<'_> {
             if current_char == '\\' {
                 let next_char = self.peek();
                 match next_char {
-                    '"'  => {
+                    '"' => {
                         result.push(next_char);
                         //Over the Literal "
                         self.advance();
@@ -204,7 +204,6 @@ impl Scanner<'_> {
         )
     }
 
-  
     fn keywords(&mut self) -> Option<Token> {
         //!Reads word until whitespace or something illegal in an identifier and checks if it is
         //!reserved, if not creates an indentifier token
@@ -316,7 +315,7 @@ impl Scanner<'_> {
     }
 
     pub(crate) fn scan_tokens(&mut self) -> Vec<Token> {
-    //!Extract tokens from source, essentially a "start" or "do a thing" function
+        //!Extract tokens from source, essentially a "start" or "do a thing" function
         let mut tokens: Vec<Token> = vec![];
         while !self.is_at_end() {
             if let Some(current_token) = self.scan_token() {
@@ -327,11 +326,8 @@ impl Scanner<'_> {
     }
 }
 fn is_ascii_ident(ch: char) -> bool {
-        //!Defines the rules for what is allowed in an Identifier
-        (ch >= 'a' && ch <= 'z')
-            || (ch >= 'A' && ch <= 'Z')
-            || (ch >= '0' && ch <= '9')
-            || ch == '_'
+    //!Defines the rules for what is allowed in an Identifier
+    (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_'
 }
 
 #[allow(clippy::manual_range_contains)]

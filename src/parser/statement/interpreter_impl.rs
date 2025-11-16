@@ -54,8 +54,7 @@ impl StatementVisitor for Interpreter {
             LiteralType::Nil
         };
 
-        self.enviroment
-            .define(&var.name.lexeme.clone(), init);
+        self.enviroment.define(&var.name.lexeme.clone(), init);
 
         let var = var.clone();
         Statement::Variable(VariableStatement {
@@ -90,7 +89,7 @@ impl StatementVisitor for Interpreter {
         let (body, mut condition) = (*(unboxed.body), unboxed.condition);
 
         while Into::<bool>::into(self.evaluate(&mut condition)) {
-                self.execute(body.clone());
+            self.execute(body.clone());
         }
 
         Statement::While(return_thing)

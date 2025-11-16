@@ -72,9 +72,7 @@ impl std::ops::Add for LiteralType {
              *if left is String and Right is string, concatonate
              */
             Self::String(left_string) => match rhs {
-                Self::String(right_string) => {
-                    LiteralType::String(left_string + &right_string)
-                }
+                Self::String(right_string) => LiteralType::String(left_string + &right_string),
                 Self::Boolean(boolean) => LiteralType::String(left_string + &boolean.to_string()),
                 Self::Number(num) => LiteralType::String(left_string + &num.to_string()),
                 Self::Nil => LiteralType::String(left_string + &Self::Nil.to_string()),

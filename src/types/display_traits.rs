@@ -198,11 +198,7 @@ impl DisplayTrait for crate::types::statement::Statement {
                         value, ret.keyword
                     )
                 } else {
-                    write!(
-                        f,
-                        "(Return Statement: value:None, token:{}",
-                        ret.keyword
-                    )
+                    write!(f, "(Return Statement: value:None, token:{}", ret.keyword)
                 }
             }
             Self::Block(block) => {
