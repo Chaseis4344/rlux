@@ -18,5 +18,6 @@ pub(crate) trait Callable {
 pub(crate) enum Functions {
     Clock(clock::Clock),
     Print(print::Print),
+    Println(println::Println),
     User(user::UserFunction),
 }

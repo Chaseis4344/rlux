@@ -1,9 +1,10 @@
-use super::*;
+
 use crate::{
     macros::error_check,
     parser::Parser,
     types::token::Token,
 };
+use super::*;
 
 impl Parser {
     /*Statement Grammar is Here Down */

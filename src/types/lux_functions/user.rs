@@ -1,3 +1,4 @@
+
 use super::{
     Callable,
     Interpreter,
@@ -16,7 +17,9 @@ use std::{
     panic::catch_unwind,
 };
 
+
 #[derive(Clone)]
+/// This is the User-Defined Function Capability and encapsulates all non-native functions
 pub(crate) struct UserFunction {
     pub(crate) closure: Enviroment,
     pub(crate) declaration: Box<FunctionStatement>,
