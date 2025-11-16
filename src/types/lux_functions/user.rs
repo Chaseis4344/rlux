@@ -1,4 +1,3 @@
-
 use super::{
     Callable,
     Interpreter,
@@ -6,7 +5,9 @@ use super::{
 use crate::{
     enviroment::Enviroment,
     types::{
-        lux_functions::Functions, statement::*, *
+        lux_functions::Functions,
+        statement::*,
+        *,
     },
 };
 use std::{
@@ -16,7 +17,6 @@ use std::{
     },
     panic::catch_unwind,
 };
-
 
 #[derive(Clone)]
 /// This is the User-Defined Function Capability and encapsulates all non-native functions
@@ -43,30 +43,25 @@ impl Callable for UserFunction {
         interpreter: &mut Interpreter,
         mut arguments: Vec<Expression>,
     ) -> Option<Expression> {
-
         //Enabling Recursion
         let function = UserFunction {
             closure: *interpreter.enviroment.clone(),
             declaration: Box::new(*self.declaration.clone()),
         };
 
-               let (params, body, function_name) = (
+        let (params, body, function_name) = (
             &self.declaration.parameters,
             self.declaration.body.clone(),
             &self.declaration.name.lexeme,
         );
-        
+
         let mut enviroment: Enviroment = Enviroment {
             enclosing: Some(Box::new(function.closure.clone())),
             variable_map: function.closure.variable_map.clone(),
         };
 
-        
         for i in 0..params.len() {
-            enviroment.define(
-                &params[i].lexeme,
-                interpreter.evaluate(&mut arguments[i]),
-            );
+            enviroment.define(&params[i].lexeme, interpreter.evaluate(&mut arguments[i]));
         }
 
         let function = Functions::User(function);
@@ -74,7 +69,9 @@ impl Callable for UserFunction {
         enviroment.define(function_name, LiteralType::Callable(function));
 
         // let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
-        let ret = catch_unwind(|| Interpreter::execute_block_in_env(body, *interpreter.enviroment.clone()));
+        let ret = catch_unwind(|| {
+            Interpreter::execute_block_in_env(body, *interpreter.enviroment.clone())
+        });
 
         match ret {
             Err(thing) => {

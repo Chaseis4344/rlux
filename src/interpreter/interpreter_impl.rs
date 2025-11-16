@@ -5,6 +5,7 @@ use crate::{
         InterpreterVisitor,
     },
     types::{
+        self,
         Expression,
         LiteralType,
         TokenType,
@@ -15,9 +16,11 @@ use crate::{
         lux_functions::{
             Callable as CallableTrait,
             Functions,
-            Functions::Clock as OuterClock,
             clock::Clock,
-            print::Print,
+            print::{
+                Print,
+                Println,
+            },
         },
         statement::{
             ReturnStatement,
@@ -41,11 +44,13 @@ impl Interpreter {
             variable_map: map,
         };
         //Inject built-ins (native functions) into enviroment
-        let clock = OuterClock(Clock {});
-        let print = crate::types::lux_functions::Functions::Print(Print {});
+        let clock = Functions::Clock(Clock {});
+        let print = Functions::Print(Print {});
+        let println = Functions::Println(Println {});
 
         globals.define("clock", LiteralType::Callable(clock));
         globals.define("print", LiteralType::Callable(print));
+        globals.define("println", LiteralType::Callable(println));
 
         let enviroment = Box::new(globals.clone());
         Interpreter {
@@ -85,8 +90,6 @@ impl Interpreter {
         None
     }
     pub(crate) fn execute_block(&mut self, statements: Vec<Statement>) -> Option<ReturnStatement> {
-
-        
         //Wrap
         self.enviroment = Box::new(Enviroment {
             enclosing: Some(self.enviroment.clone()),
@@ -97,8 +100,8 @@ impl Interpreter {
         for statement in statements {
             self.execute(statement);
         }
-        
-        self.enviroment =  self.enviroment.enclosing.clone().unwrap();
+
+        self.enviroment = self.enviroment.enclosing.clone().unwrap();
         None
     }
 }
@@ -123,9 +126,12 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             TokenType::EqualEqual => LiteralType::Boolean(left == right),
             TokenType::BangEqual => LiteralType::Boolean(left != right),
             _ => {
-                crate::error(operator.line, "Operator not defined for this operation".to_string());
+                crate::error(
+                    operator.line,
+                    "Operator not defined for this operation".to_string(),
+                );
                 LiteralType::Nil
-            },
+            }
         }
     }
     fn visit_grouping(&mut self, group: &mut Grouping) -> LiteralType {
@@ -162,18 +168,20 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
                 LiteralType::Boolean(boolean) => LiteralType::Boolean(!boolean),
                 _ => right,
             },
-           _ => {
-                crate::error(unary.operator.line, "Operator not defined for this operation".to_string());
+            _ => {
+                crate::error(
+                    unary.operator.line,
+                    "Operator not defined for this operation".to_string(),
+                );
                 LiteralType::Nil
-            },
+            }
         }
     }
 
     fn visit_variable(&mut self, var: &mut Variable) -> LiteralType {
         //!Returns the value of a variable, will return NIL if nothing is found
         let name = &var.name.lexeme.clone();
-        let result: Result<LiteralType, std::env::VarError> =
-            self.enviroment.get(name).cloned();
+        let result: Result<LiteralType, std::env::VarError> = self.enviroment.get(name).cloned();
         // println!("{:?}", self.enviroment);
         if let Ok(item) = result {
             item

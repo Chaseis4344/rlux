@@ -26,16 +26,15 @@ impl Callable for Print {
     }
 }
 
-#[derive(Clone,Debug,PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct Println {}
 
 impl Callable for Println {
     fn call(
-            &mut self,
-            interpreter: &mut Interpreter,
-            arguments: Vec<Expression>,
-        ) -> Option<Expression> {
-        
+        &mut self,
+        interpreter: &mut Interpreter,
+        arguments: Vec<Expression>,
+    ) -> Option<Expression> {
         //We are garunteeing that only 1 argument will ever be passed
         let mut arg = arguments[0].clone();
         let printable: String = interpreter.evaluate(&mut arg).to_string();
@@ -46,4 +45,3 @@ impl Callable for Println {
         1
     }
 }
-
