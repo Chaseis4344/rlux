@@ -5,7 +5,6 @@ use crate::{
         InterpreterVisitor,
     },
     types::{
-        self,
         Expression,
         LiteralType,
         TokenType,
