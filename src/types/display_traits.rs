@@ -38,6 +38,7 @@ impl DisplayTrait for types::lux_functions::Functions {
             Self::User(u) => write!(f, "<fn {}>", u),
             Self::Clock(_) => write!(f, "<fn Clock>"),
             Self::Print(_) => write!(f, "<fn Print>"),
+            Self::Println(_) => write!(f, "<fn Println>"),
         }
     }
 }
@@ -203,9 +204,7 @@ impl DisplayTrait for crate::types::statement::Statement {
             }
             Self::Block(block) => {
                 for statement in block.statements {
-                    if let Err(e) = write!(f, "(Block Statement: inner:{})", statement) {
-                        return Err(e);
-                    }
+                   write!(f, "(Block Statement: inner:{})", statement)?                 
                 }
                 Ok(())
             }

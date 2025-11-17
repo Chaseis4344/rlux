@@ -1,24 +1,26 @@
 var a = 1;
 {
-  print("Expected: 1");
-  print("Actual: " + a);
+  println("Expected: 1");
+  println("Actual: " + a);
   var a = a + 2;
-  print("Expected: 3");
-  print("Actual: "+a);
-  print("");
+  println("Expected: 3");
+  println("Actual: "+a);
+  println("");
 }
 //Start doing function scope tests
 if (0==0) 
-print("Expected: 1");
-print("Actual: "+a);
+println("Expected: 1");
+println("Actual: "+a);
 
 var a = "global";
 {
   fun showA() {
-    print(a);
+    print(a+"\n");
   }
 
+  print("Expected: ")
   showA();
   var a = "block";
+  print("Actual: ")
   showA();
 }

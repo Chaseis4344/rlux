@@ -1,11 +1,11 @@
 var tern = 15;
 
-print("Comparison Test:");
-print("1>0 = "+ (1>0));
-print(1>0);
-print(1>=0);
-print(tern + 5 >= 10);
-print(tern);
+println("Comparison Test:");
+println("1>0 = "+ (1>0));
+println(1>0);
+println(1>=0);
+println(tern + 5 >= 10);
+println(tern);
 tern = tern -5;
-print(tern-1);
-print((tern-1) >0);
+println(tern-1);
+println((tern-1) >0);

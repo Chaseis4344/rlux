@@ -298,12 +298,35 @@ impl Parser {
             Ok(Expression::Variable(Box::new(Variable {
                 name: self.previous(),
             })))
-        } else {
+        } else if self.match_token_type(vec![TokenType::Fun]) {
+            let mut arguments: Vec<Expression> = vec![];
+
+            if !self.check(TokenType::RightParen) {
+                //Secretly a do while
+                while {
+                    //Body
+                    arguments.push(self.expression()?);
+
+                    //Then Eval Condition
+                    self.match_token_type(vec![TokenType::Comma])
+                } {}
+            }
+
+            let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
+            Ok(Expression::Lambda(
+                 Box::new(
+                     Lambda { 
+                         paren,
+                         arguments,
+                     }
+                 )
+         ))
+        }
+        else 
+        {
             Err(ParserError {
                 source: self.peek(),
-                cause: String::from(
-                    "Not in Parser AST: \'".to_owned() + &self.peek().lexeme + "\'",
-                ),
+                cause:  "Not in Parser AST: \'".to_owned() + &self.peek().lexeme + "\'",
             })
         }
     }

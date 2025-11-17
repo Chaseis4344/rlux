@@ -29,6 +29,7 @@ pub(crate) trait InterpreterVisitor<T> {
     fn visit_assignment(&mut self, assign: &mut Assignment) -> T;
     fn visit_logical(&mut self, logical: &mut Logical) -> T;
     fn visit_call(&mut self, call: &mut Call) -> T;
+    fn visit_lambda(&mut self, lambda: &mut Lambda) -> T;
 }
 
 pub(crate) trait Visitable<T> {
@@ -44,3 +45,4 @@ visitable_trait! {LiteralType,Variable,Expression}
 visitable_trait! {LiteralType,Assignment,Expression}
 visitable_trait! {LiteralType,Logical,Expression}
 visitable_trait! {LiteralType,Call,Expression}
+visitable_trait! {LiteralType,Lambda,Expression}

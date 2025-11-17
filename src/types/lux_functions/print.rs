@@ -38,7 +38,7 @@ impl Callable for Println {
         //We are garunteeing that only 1 argument will ever be passed
         let mut arg = arguments[0].clone();
         let printable: String = interpreter.evaluate(&mut arg).to_string();
-        print!("{printable}");
+        println!("{printable}");
         None
     }
     fn arity(&self) -> u64 {

@@ -1,3 +1,4 @@
+
 mod display_traits;
 pub mod expression;
 pub mod lux_functions;
@@ -81,6 +82,7 @@ pub enum Expression {
     Variable(Box<expression::Variable>),
     Assignment(Box<expression::Assignment>),
     Call(Box<expression::Call>),
+    Lambda(Box<expression::Lambda>), 
 }
 
 #[derive(Clone)]

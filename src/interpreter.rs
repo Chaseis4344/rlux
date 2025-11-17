@@ -28,6 +28,7 @@ impl interpreter_traits::Visitable<LiteralType> for Expression {
             Expression::Assignment(assign) => assign.accept(visitor),
             Expression::Logical(logic) => logic.accept(visitor),
             Expression::Call(call) => call.accept(visitor),
+            Expression::Lambda(lambda) => lambda.accept(visitor),
         }
     }
 }

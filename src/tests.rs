@@ -40,7 +40,7 @@ fn run_file_test(filepath: &str) {
     let valid_source = source.expect("Expected Valid Source");
 
     //Run the code
-    match run(valid_source) {
+    match run(&valid_source) {
         Ok(_) => {
             //exit(0);
         }

@@ -51,9 +51,16 @@ pub struct Logical {
     pub(crate) operator: Token,
 }
 
+///Used Internally for representing function calls
 #[derive(Clone, Debug, PartialEq)]
 pub struct Call {
     pub(crate) callee: Expression,
+    pub(crate) paren: Token,
+    pub(crate) arguments: Vec<Expression>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Lambda {
     pub(crate) paren: Token,
     pub(crate) arguments: Vec<Expression>,
 }

@@ -11,11 +11,10 @@ use crate::{
     },
 };
 use std::{
-    fmt::{
+    collections::HashMap, fmt::{
         Debug,
         Formatter,
-    },
-    panic::catch_unwind,
+    }, panic::catch_unwind
 };
 
 #[derive(Clone)]
@@ -44,11 +43,7 @@ impl Callable for UserFunction {
         mut arguments: Vec<Expression>,
     ) -> Option<Expression> {
         //Enabling Recursion
-        let function = UserFunction {
-            closure: *interpreter.enviroment.clone(),
-            declaration: Box::new(*self.declaration.clone()),
-        };
-
+        let function = self.clone();
         let (params, body, function_name) = (
             &self.declaration.parameters,
             self.declaration.body.clone(),
@@ -57,7 +52,7 @@ impl Callable for UserFunction {
 
         let mut enviroment: Enviroment = Enviroment {
             enclosing: Some(Box::new(function.closure.clone())),
-            variable_map: function.closure.variable_map.clone(),
+            variable_map: HashMap::new(),
         };
 
         for i in 0..params.len() {
@@ -70,7 +65,7 @@ impl Callable for UserFunction {
 
         // let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
         let ret = catch_unwind(|| {
-            Interpreter::execute_block_in_env(body, *interpreter.enviroment.clone())
+            Interpreter::execute_block_in_env(body, enviroment)
         });
 
         match ret {
