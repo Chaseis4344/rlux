@@ -7,14 +7,6 @@ macro_rules! debug {
     };
 }
 
-macro_rules! init_value {
-    ($default:ident , $val:literal) => {
-        let $default = match $default {
-            Some(thing) => thing,
-            None => $val,
-        };
-    };
-}
 
 ///Removes some of Syntactical ugliness in the Scanner
 macro_rules! new_character {
