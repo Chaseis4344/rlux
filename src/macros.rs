@@ -7,7 +7,6 @@ macro_rules! debug {
     };
 }
 
-
 ///Removes some of Syntactical ugliness in the Scanner
 macro_rules! new_character {
     ($token_type:expr, $string:expr, $line:expr) => {

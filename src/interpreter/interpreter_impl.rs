@@ -1,25 +1,43 @@
 use crate::{
-    enviroment::Enviroment, interpreter::{
+    enviroment::Enviroment,
+    interpreter::{
         Interpreter,
         InterpreterVisitor,
-    }, types::{
+    },
+    types::{
+        Expression,
+        LiteralType,
+        TokenType,
         expression::{
             Call,
             *,
-        }, lux_functions::{
-            clock::Clock, print::{
+        },
+        lux_functions::{
+            Callable as CallableTrait,
+            Functions,
+            clock::Clock,
+            print::{
                 Print,
                 Println,
-            }, Callable as CallableTrait, Functions
-        }, statement::{
+            },
+        },
+        statement::{
             ReturnStatement,
             Statement,
-        }, Expression, LiteralType, TokenType
-    }
+        },
+    },
 };
-use std::collections::HashMap;
-use rand_chacha::{self, rand_core::{SeedableRng,RngCore}};
-use std::time::SystemTime;
+use rand_chacha::{
+    self,
+    rand_core::{
+        RngCore,
+        SeedableRng,
+    },
+};
+use std::{
+    collections::HashMap,
+    time::SystemTime,
+};
 // fun -> LiteralType | fun
 
 impl Interpreter {
@@ -272,26 +290,27 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             LiteralType::Nil
         }
     }
-    
+
     fn visit_lambda(&mut self, lambda: &mut Lambda) -> LiteralType {
-        
-        let mut rand = rand_chacha::ChaCha8Rng::seed_from_u64(SystemTime::now().duration_since(UNIX_EPOCH).expect("Failure converting from SystemTime").as_nanos() as u64); 
-        let mut string_buf: &mut [u8] = &mut [0;4];
+        let mut rand = rand_chacha::ChaCha8Rng::seed_from_u64(
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("Failure converting from SystemTime")
+                .as_nanos() as u64,
+        );
+        let mut string_buf: &mut [u8] = &mut [0; 4];
         rand.fill_bytes(&mut string_buf);
-        let name:String = String::from_utf8_lossy(string_buf).to_string();
-        let name = Token{
+        let name: String = String::from_utf8_lossy(string_buf).to_string();
+        let name = Token {
             token_type: TokenType::Identifier,
             lexeme: name,
             literal: None,
-            line: lambda.paren.line
+            line: lambda.paren.line,
         };
         let (paren, mut arguments) = (lambda.paren, lambda.arguments);
         let mut eval_args = vec![];
         for argument in &mut arguments {
             eval_args.push(self.evaluate(argument));
         }
-
-
-               
     }
 }

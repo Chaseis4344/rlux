@@ -204,7 +204,7 @@ impl DisplayTrait for crate::types::statement::Statement {
             }
             Self::Block(block) => {
                 for statement in block.statements {
-                   write!(f, "(Block Statement: inner:{})", statement)?                 
+                    write!(f, "(Block Statement: inner:{})", statement)?
                 }
                 Ok(())
             }

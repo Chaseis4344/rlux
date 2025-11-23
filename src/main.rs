@@ -30,6 +30,26 @@ enum ExitCode {
     OSErr = 72,
 }
 
+fn main() {
+    //Collect arguments then run based on number of arguments
+    // let args: Vec<String> = env::args().collect();
+    let args = Args::parse();
+
+    //Runs file then an interactive prompt depending on command-line flags
+    //TODO: Intoduce a feature where the file can pass it's enviroment to the interactive shell,
+    //like Python
+
+    if let Some(filepath) = args.filepath {
+        run_file(filepath);
+    }
+
+    if args.interpret {
+        run_prompt();
+    }
+
+    exit(0);
+}
+
 #[allow(unused)]
 ///Sends runtime error report to user with specific additonal details
 fn report(line: u32, place: String, message: String) {
@@ -111,7 +131,7 @@ pub fn run_file(filepath: String) {
             // exit(ExitCode::Okay as i32);
         }
         Err(err) => {
-            println!("{err}");
+            // println!("{err}");
             // exit(ExitCode::GenerallyBad as i32);
         }
     };
@@ -123,7 +143,7 @@ pub fn run_prompt() {
         let input: &mut String = &mut String::new();
         let matcher = stdin().read_line(input);
 
-        //Bad Path 1
+        //Bad Path 1 - Readline err
         if let Err(err) = matcher {
             println!("{err}");
             exit(ExitCode::DataErr as i32);
@@ -132,7 +152,7 @@ pub fn run_prompt() {
         //Core function of REPL
         let result = run(input);
 
-        // Bad Path 2
+        // Bad Path 2 - REPL Returns an err
         if let Err(err) = result {
             println!("{err}");
             exit(ExitCode::DataErr as i32);
@@ -140,9 +160,7 @@ pub fn run_prompt() {
 
         //Check if we exit Normally
         let number = result.unwrap();
-        if number == 0 {
-            // exit(ExitCode::CommandLineErr as i32);
-        }
+        match number {}
     }
 }
 
@@ -162,24 +180,4 @@ struct Args {
     ///Filepath for .lux source file
     #[arg(short, long)]
     filepath: Option<String>,
-}
-
-fn main() {
-    //Collect arguments then run based on number of arguments
-    // let args: Vec<String> = env::args().collect();
-    let args = Args::parse();
-
-    //Runs file then an interactive prompt depending on command-line flags
-    //TODO: Intoduce a feature where the file can pass it's enviroment ot the interacttive shell,
-    //like Python
-
-    if let Some(filepath) = args.filepath {
-        run_file(filepath);
-    }
-
-    if args.interpret {
-        run_prompt();
-    }
-
-    exit(0);
 }

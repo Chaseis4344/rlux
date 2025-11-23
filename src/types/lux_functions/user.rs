@@ -11,10 +11,12 @@ use crate::{
     },
 };
 use std::{
-    collections::HashMap, fmt::{
+    collections::HashMap,
+    fmt::{
         Debug,
         Formatter,
-    }, panic::catch_unwind
+    },
+    panic::catch_unwind,
 };
 
 #[derive(Clone)]
@@ -64,9 +66,7 @@ impl Callable for UserFunction {
         enviroment.define(function_name, LiteralType::Callable(function));
 
         // let ret = Interpreter::execute_block_in_env( body.clone(), function_enviroment);
-        let ret = catch_unwind(|| {
-            Interpreter::execute_block_in_env(body, enviroment)
-        });
+        let ret = catch_unwind(|| Interpreter::execute_block_in_env(body, enviroment));
 
         match ret {
             Err(thing) => {

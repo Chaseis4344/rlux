@@ -312,21 +312,13 @@ impl Parser {
                 } {}
             }
 
-            let paren: Token = self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
-            Ok(Expression::Lambda(
-                 Box::new(
-                     Lambda { 
-                         paren,
-                         arguments,
-                     }
-                 )
-         ))
-        }
-        else 
-        {
+            let paren: Token =
+                self.consume(TokenType::RightParen, "Expect ')' after arguments ")?;
+            Ok(Expression::Lambda(Box::new(Lambda { paren, arguments })))
+        } else {
             Err(ParserError {
                 source: self.peek(),
-                cause:  "Not in Parser AST: \'".to_owned() + &self.peek().lexeme + "\'",
+                cause: "Not in Parser AST: \'".to_owned() + &self.peek().lexeme + "\'",
             })
         }
     }

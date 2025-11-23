@@ -20,17 +20,15 @@ pub struct Scanner<'scanner> {
 #[allow(clippy::manual_range_contains)]
 impl Scanner<'_> {
     pub fn new(source: &str, current: Option<u32>, line: Option<u32>) -> Scanner<'_> {
-        
         let mut current = current;
         if let None = current {
             current = Some(0);
-        } 
+        }
 
         let mut line = line;
         if let None = line {
             line = Some(1);
-        } 
-        
+        }
 
         Scanner {
             source,

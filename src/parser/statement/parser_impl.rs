@@ -1,12 +1,24 @@
-use std::{hash::Hash, time::{SystemTime, UNIX_EPOCH}};
+use std::{
+    hash::Hash,
+    time::{
+        SystemTime,
+        UNIX_EPOCH,
+    },
+};
 
-use rand_chacha::rand_core::{RngCore, SeedableRng};
+use rand_chacha::rand_core::{
+    RngCore,
+    SeedableRng,
+};
 
 use super::*;
 use crate::{
     macros::error_check,
     parser::Parser,
-    types::token::{self, Token},
+    types::token::{
+        self,
+        Token,
+    },
 };
 
 impl Parser {
@@ -211,10 +223,11 @@ impl Parser {
     }
 
     fn function_declaration(&mut self, kind: String) -> Result<Statement, ParserError> {
-        let mut name: Result<Token, ParserError> = self.consume(TokenType::Identifier, &format!("Expect {kind} name"));
+        let mut name: Result<Token, ParserError> =
+            self.consume(TokenType::Identifier, &format!("Expect {kind} name"));
         //Grab token and check if it's a left paren, if so treat as anonymous, otherwise send the
         //error back up
-        if let Err(err) = name{
+        if let Err(err) = name {
             if err.source.token_type == TokenType::LeftParen {
                 //Anonymous function name scheme
                 name = Ok(Parser::get_random_name_token(err.source));
@@ -225,7 +238,7 @@ impl Parser {
         //Either we will have a name after getting through or we won't
         let name = name.expect("Expected Name after checks");
         let mut parameters: Vec<Token> = vec![];
- 
+
         let _ = self.consume(TokenType::LeftParen, &format!("Expect ( after {kind}"));
         if !self.match_token_type(vec![TokenType::RightParen]) {
             while {
@@ -298,19 +311,22 @@ impl Parser {
             result
         }
     }
-    
-    fn get_random_name_token(token: Token) -> Token{
-        
-        let mut rand = rand_chacha::ChaCha8Rng::seed_from_u64(SystemTime::now().duration_since(UNIX_EPOCH).expect("Failure converting from SystemTime").as_nanos() as u64); 
-        let mut string_buf: &mut [u8] = &mut [0;4];
+
+    fn get_random_name_token(token: Token) -> Token {
+        let mut rand = rand_chacha::ChaCha8Rng::seed_from_u64(
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("Failure converting from SystemTime")
+                .as_nanos() as u64,
+        );
+        let mut string_buf: &mut [u8] = &mut [0; 4];
         rand.fill_bytes(&mut string_buf);
-        let name:String = String::from_utf8_lossy(string_buf).to_string();
-        Token{
+        let name: String = String::from_utf8_lossy(string_buf).to_string();
+        Token {
             token_type: TokenType::Identifier,
             lexeme: name,
             literal: None,
-            line: token.line
+            line: token.line,
         }
-
     }
 }
