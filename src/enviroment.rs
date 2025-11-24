@@ -37,7 +37,7 @@ impl Enviroment {
     pub(crate) fn get(&self, name: &str) -> Result<&LiteralType, VarError> {
         if let Some(lit) = self.variable_map.get(name) {
             // println!("Gave {lit}");
-            return Ok(&lit);
+            return Ok(lit);
         }
 
         if let Some(ref underlying) = self.enclosing {
@@ -57,7 +57,7 @@ impl Enviroment {
         } else if self.enclosing.is_some() {
             self.enclosing.as_mut().unwrap().assign(name, value, line);
         } else {
-            let _ = crate::error(line, format!("Assignement failed on {}.", name));
+            crate::error(line, format!("Assignement failed on {name}."));
         }
     }
 }

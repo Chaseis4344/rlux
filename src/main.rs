@@ -1,9 +1,6 @@
 use std::{
     fs,
-    io::{
-        Error,
-        stdin,
-    },
+    io::{Error, stdin},
     process::exit,
 };
 
@@ -160,7 +157,9 @@ pub fn run_prompt() {
 
         //Check if we exit Normally
         let number = result.unwrap();
-        match number {}
+        if number == ExitCode::DataErr as i32 {
+            exit(0);
+        }
     }
 }
 

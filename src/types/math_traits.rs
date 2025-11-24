@@ -61,8 +61,7 @@ impl std::ops::Add for LiteralType {
                 Self::Number(right_num) => LiteralType::Number(left_num + right_num),
                 _ => {
                     eprintln!(
-                        "Error: Type Mismatch! \n\tReturned {} from a Number while trying to add!",
-                        left_num
+                        "Error: Type Mismatch! \n\tReturned {left_num} from a Number while trying to add!"
                     );
                     LiteralType::Number(left_num)
                 }
@@ -78,8 +77,7 @@ impl std::ops::Add for LiteralType {
                 Self::Nil => LiteralType::String(left_string + &Self::Nil.to_string()),
                 Self::Callable(function) => {
                     eprintln!(
-                        "Error: Type Mismatch! \n\tCannot add {:?} function to {}!",
-                        function, left_string
+                        "Error: Type Mismatch! \n\tCannot add {function:?} function to {left_string}!"
                     );
                     LiteralType::String(String::from("Function"))
                 }
@@ -91,8 +89,7 @@ impl std::ops::Add for LiteralType {
              */
             _ => {
                 eprintln!(
-                    "Error: Type Mismatch! \n\tReturned \"{}\" while trying to add!",
-                    self
+                    "Error: Type Mismatch! \n\tReturned \"{self}\" while trying to add!"
                 );
                 self
             }

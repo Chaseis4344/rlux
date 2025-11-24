@@ -1,6 +1,5 @@
 use crate::{
     macros::{
-        init_value,
         new_character,
         new_literal,
     },
@@ -21,12 +20,12 @@ pub struct Scanner<'scanner> {
 impl Scanner<'_> {
     pub fn new(source: &str, current: Option<u32>, line: Option<u32>) -> Scanner<'_> {
         let mut current = current;
-        if let None = current {
+        if current.is_none() {
             current = Some(0);
         }
 
         let mut line = line;
-        if let None = line {
+        if line.is_none() {
             line = Some(1);
         }
 
@@ -120,7 +119,7 @@ impl Scanner<'_> {
 
             '"' => self.strings(),
             chara => {
-                crate::error(self.line, format!("Unexpected Token: '{}'", chara));
+                crate::error(self.line, format!("Unexpected Token: '{chara}'"));
                 None
             }
         }
@@ -194,7 +193,7 @@ impl Scanner<'_> {
             }
 
             if self.is_at_end() {
-                let _ = crate::error(self.line, String::from("Unterminated String"));
+                crate::error(self.line, String::from("Unterminated String"));
                 // in_string = false;
                 return None;
             }
@@ -334,7 +333,7 @@ impl Scanner<'_> {
 }
 fn is_ascii_ident(ch: char) -> bool {
     //!Defines the rules for what is allowed in an Identifier
-    (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_'
+    ch.is_ascii_lowercase() || ch.is_ascii_uppercase() || ch.is_ascii_digit() || ch == '_'
 }
 
 #[allow(clippy::manual_range_contains)]

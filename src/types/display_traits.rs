@@ -23,11 +23,11 @@ impl DisplayTrait for super::expression::Call {
 impl DisplayTrait for types::LiteralType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Number(num) => write!(f, "{}", num),
-            Self::Boolean(val) => write!(f, "{}", val),
-            Self::String(string) => write!(f, "{}", string),
+            Self::Number(num) => write!(f, "{num}"),
+            Self::Boolean(val) => write!(f, "{val}"),
+            Self::String(string) => write!(f, "{string}"),
             Self::Nil => write!(f, "NIL"),
-            Self::Callable(function) => write!(f, "{}", function),
+            Self::Callable(function) => write!(f, "{function}"),
         }
     }
 }
@@ -35,7 +35,7 @@ impl DisplayTrait for types::LiteralType {
 impl DisplayTrait for types::lux_functions::Functions {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::User(u) => write!(f, "<fn {}>", u),
+            Self::User(u) => write!(f, "<fn {u}>"),
             Self::Clock(_) => write!(f, "<fn Clock>"),
             Self::Print(_) => write!(f, "<fn Print>"),
             Self::Println(_) => write!(f, "<fn Println>"),
@@ -184,6 +184,9 @@ impl DisplayTrait for crate::types::Expression {
             Self::Call(call) => {
                 write!(f, "(Call: callee:{})", call.callee)
             }
+            Self::Lambda(lambda) => {
+                write!(f, "(Lambda: paren:{})",lambda.paren)
+            }
         }
     }
 }
@@ -204,7 +207,7 @@ impl DisplayTrait for crate::types::statement::Statement {
             }
             Self::Block(block) => {
                 for statement in block.statements {
-                    write!(f, "(Block Statement: inner:{})", statement)?
+                    write!(f, "(Block Statement: inner:{statement})")?
                 }
                 Ok(())
             }
@@ -244,7 +247,7 @@ impl DisplayTrait for crate::types::statement::Statement {
 impl DisplayTrait for crate::types::statement::ReturnStatement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         if let Some(val) = &self.value {
-            write!(f, "Ret:{}", val)
+            write!(f, "Ret:{val}")
         } else {
             write!(f, "None")
         }

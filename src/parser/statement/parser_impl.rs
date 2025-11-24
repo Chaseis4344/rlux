@@ -1,10 +1,7 @@
-use std::{
-    hash::Hash,
-    time::{
+use std::time::{
         SystemTime,
         UNIX_EPOCH,
-    },
-};
+    };
 
 use rand_chacha::rand_core::{
     RngCore,
@@ -15,10 +12,7 @@ use super::*;
 use crate::{
     macros::error_check,
     parser::Parser,
-    types::token::{
-        self,
-        Token,
-    },
+    types::token::Token,
 };
 
 impl Parser {
@@ -293,7 +287,7 @@ impl Parser {
             let result = self.variable_decalration();
 
             if let Err(err) = result {
-                println!("{}", err);
+                println!("{err}");
                 self.synchronize();
                 return Err(err);
             }
@@ -303,7 +297,7 @@ impl Parser {
             let result = self.statement();
 
             if let Err(err) = result {
-                println!("{}", err);
+                println!("{err}");
                 self.synchronize();
                 return Err(err);
             }
@@ -319,8 +313,8 @@ impl Parser {
                 .expect("Failure converting from SystemTime")
                 .as_nanos() as u64,
         );
-        let mut string_buf: &mut [u8] = &mut [0; 4];
-        rand.fill_bytes(&mut string_buf);
+        let string_buf: &mut [u8] = &mut [0; 4];
+        rand.fill_bytes(string_buf);
         let name: String = String::from_utf8_lossy(string_buf).to_string();
         Token {
             token_type: TokenType::Identifier,

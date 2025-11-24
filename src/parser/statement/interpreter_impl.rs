@@ -126,5 +126,4 @@ impl StatementVisitor for Interpreter {
         Statement::Function(function_statement.clone())
     }
 
-    fn visit_lambda() {}
 }

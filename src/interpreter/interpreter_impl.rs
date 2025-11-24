@@ -8,6 +8,7 @@ use crate::{
         Expression,
         LiteralType,
         TokenType,
+        token::Token,
         expression::{
             Call,
             *,
@@ -294,12 +295,12 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
     fn visit_lambda(&mut self, lambda: &mut Lambda) -> LiteralType {
         let mut rand = rand_chacha::ChaCha8Rng::seed_from_u64(
             SystemTime::now()
-                .duration_since(UNIX_EPOCH)
+                .duration_since(SystemTime::UNIX_EPOCH)
                 .expect("Failure converting from SystemTime")
                 .as_nanos() as u64,
         );
-        let mut string_buf: &mut [u8] = &mut [0; 4];
-        rand.fill_bytes(&mut string_buf);
+        let string_buf: &mut [u8] = &mut [0; 4];
+        rand.fill_bytes(string_buf);
         let name: String = String::from_utf8_lossy(string_buf).to_string();
         let name = Token {
             token_type: TokenType::Identifier,
@@ -307,10 +308,11 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
             literal: None,
             line: lambda.paren.line,
         };
-        let (paren, mut arguments) = (lambda.paren, lambda.arguments);
+        let (paren, mut arguments) = (lambda.paren.clone(), lambda.arguments.clone());
         let mut eval_args = vec![];
         for argument in &mut arguments {
             eval_args.push(self.evaluate(argument));
         }
+        todo!("Lambdas");
     }
 }

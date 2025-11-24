@@ -77,7 +77,6 @@ macro_rules! boolean_op {
 pub(crate) use boolean_op;
 pub(crate) use debug;
 pub(crate) use error_check;
-pub(crate) use init_value;
 pub(crate) use new_character;
 pub(crate) use new_literal;
 pub(crate) use visitable_trait_two_elements;
