@@ -1,12 +1,6 @@
 use super::RuntimeError;
-use crate::{
-    types,
-    types::lux_functions::user::UserFunction,
-};
-use std::{
-    error::Error,
-    fmt::Display as DisplayTrait,
-};
+use crate::{types, types::lux_functions::user::UserFunction};
+use std::{error::Error, fmt::Display as DisplayTrait};
 
 //Token Display implementation moved to token.rs because of private field implementation
 impl DisplayTrait for super::expression::Call {
@@ -185,7 +179,7 @@ impl DisplayTrait for crate::types::Expression {
                 write!(f, "(Call: callee:{})", call.callee)
             }
             Self::Lambda(lambda) => {
-                write!(f, "(Lambda: paren:{})",lambda.paren)
+                write!(f, "(Lambda: paren:{})", lambda.paren)
             }
         }
     }

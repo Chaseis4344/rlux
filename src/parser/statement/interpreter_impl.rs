@@ -1,9 +1,7 @@
 use crate::{
     interpreter::Interpreter,
-    parser::{
-        LiteralType,
-        statement::*,
-    },
+    parser::{LiteralType, statement::*},
+    types::TokenType::Else,
 };
 
 macro_rules! new_literal {
@@ -54,32 +52,26 @@ impl StatementVisitor for Interpreter {
             LiteralType::Nil
         };
 
-        self.enviroment.define(&var.name.lexeme.clone(), init);
+        let (name, initalizer) = (var.name.clone(), var.initalizer.clone());
+        self.enviroment.define(&name.lexeme, init);
 
-        let var = var.clone();
         Statement::Variable(VariableStatement {
-            name: var.name,
-            initalizer: var.initalizer,
+            name: name,
+            initalizer: initalizer,
         })
     }
     fn visit_if_statement(&mut self, if_statement: &mut IfStatement) -> Statement {
-        let unboxed = if_statement.clone();
-        let return_thing = unboxed.clone();
-        let mut condition = unboxed.condition;
-        let then_branch = *(unboxed.then_branch);
-        let else_branch = unboxed.else_branch;
+        let mut condition = if_statement.condition.clone();
 
         if self.evaluate(&mut condition).into() {
-            self.execute(then_branch.clone());
-
-            then_branch
-        } else if else_branch.is_some() {
-            let else_branch = else_branch.unwrap();
-            self.execute(else_branch.clone());
-
-            else_branch
+            let then_branch = if_statement.then_branch.clone();
+            self.execute(*then_branch.clone());
+            *then_branch
+        } else if let Some(else_branch_inner) = &*(if_statement.else_branch) {
+            self.execute(else_branch_inner.clone());
+            else_branch_inner.clone()
         } else {
-            Statement::If(return_thing)
+            Statement::If(if_statement.clone())
         }
     }
 
@@ -110,10 +102,7 @@ impl StatementVisitor for Interpreter {
         function_statement: &mut FunctionStatement,
     ) -> Statement {
         //! Define user function declarations
-        use crate::types::lux_functions::{
-            Functions,
-            user::UserFunction,
-        };
+        use crate::types::lux_functions::{Functions, user::UserFunction};
 
         let function_name = &function_statement.name.lexeme;
         let function = Functions::User(UserFunction {
@@ -125,5 +114,4 @@ impl StatementVisitor for Interpreter {
 
         Statement::Function(function_statement.clone())
     }
-
 }

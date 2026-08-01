@@ -1,44 +1,23 @@
 use crate::{
     enviroment::Enviroment,
-    interpreter::{
-        Interpreter,
-        InterpreterVisitor,
-    },
+    interpreter::{Interpreter, InterpreterVisitor},
     types::{
-        Expression,
-        LiteralType,
-        TokenType,
-        token::Token,
-        expression::{
-            Call,
-            *,
-        },
+        Expression, LiteralType, TokenType,
+        expression::{Call, *},
         lux_functions::{
-            Callable as CallableTrait,
-            Functions,
+            Callable as CallableTrait, Functions,
             clock::Clock,
-            print::{
-                Print,
-                Println,
-            },
+            print::{Print, Println},
         },
-        statement::{
-            ReturnStatement,
-            Statement,
-        },
+        statement::{ReturnStatement, Statement},
+        token::Token,
     },
 };
 use rand_chacha::{
     self,
-    rand_core::{
-        RngCore,
-        SeedableRng,
-    },
+    rand_core::{RngCore, SeedableRng},
 };
-use std::{
-    collections::HashMap,
-    time::SystemTime,
-};
+use std::{collections::HashMap, time::SystemTime};
 // fun -> LiteralType | fun
 
 impl Interpreter {
@@ -295,12 +274,12 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
     fn visit_lambda(&mut self, lambda: &mut Lambda) -> LiteralType {
         let mut rand = rand_chacha::ChaCha8Rng::seed_from_u64(
             SystemTime::now()
-                .duration_since(SystemTime::UNIX_EPOCH)
+                .duration_since(std::time::UNIX_EPOCH)
                 .expect("Failure converting from SystemTime")
                 .as_nanos() as u64,
         );
-        let string_buf: &mut [u8] = &mut [0; 4];
-        rand.fill_bytes(string_buf);
+        let mut string_buf: &mut [u8] = &mut [0; 4];
+        rand.fill_bytes(&mut string_buf);
         let name: String = String::from_utf8_lossy(string_buf).to_string();
         let name = Token {
             token_type: TokenType::Identifier,
@@ -313,6 +292,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         for argument in &mut arguments {
             eval_args.push(self.evaluate(argument));
         }
-        todo!("Lambdas");
+
+        todo!("Lambdas")
     }
 }

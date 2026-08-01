@@ -1,13 +1,6 @@
 use crate::{
-    macros::{
-        new_character,
-        new_literal,
-    },
-    types::{
-        LiteralType,
-        TokenType,
-        token::Token,
-    },
+    macros::{new_character, new_literal},
+    types::{LiteralType, TokenType, token::Token},
 };
 
 pub struct Scanner<'scanner> {
