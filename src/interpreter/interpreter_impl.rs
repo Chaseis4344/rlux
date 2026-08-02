@@ -271,6 +271,7 @@ impl InterpreterVisitor<LiteralType> for Interpreter {
         }
     }
 
+    #[allow(unused)]
     fn visit_lambda(&mut self, lambda: &mut Lambda) -> LiteralType {
         let mut rand = rand_chacha::ChaCha8Rng::seed_from_u64(
             SystemTime::now()

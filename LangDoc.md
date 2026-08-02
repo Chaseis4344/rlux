@@ -31,12 +31,12 @@ Note this may change or be innaccurate, depending on when I remeber to update th
   - `nil`; Literal, prints to "NIL", evalutaes to a unit variant under the hood
   - `and`; will return the result of `x && y` (x and y)
   - `or`; will return the result of `x || y` (x or y)
-  - `class`; TODO
+  - `class`; Will not be added for omission of OOP concepts
   - `fun`; Defines a function for later use, functions are stored in the same space as Variables, and both will overwrite each other as mangling and shadowing are not implemented currently
   - `for`; While Loop syntactical sugar, instatiates first statement, iterates using second and check if it should continue iteration with third
   - `return`; TODO
-  - `super`; TODO
-  - `this`; TODO
+  - `super`; Will not be added for omission of OOP concepts
+  - `this`; Will not be added for omission of OOP concepts
   - `while`; C-Style while loop, while(bool){}
 ### Native Functions 
   - clock(), takes no arguments and returns current Unix time in seconds as a Number
