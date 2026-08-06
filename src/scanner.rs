@@ -260,17 +260,17 @@ impl Scanner<'_> {
         let mut current_char: char = self.source.as_bytes()[(self.current - 1) as usize] as char;
         let mut result_string: String = String::from("");
 
-        while is_ascii_num(current_char) {
+        while current_char.is_ascii_digit() {
             result_string.push(current_char);
             current_char = self.advance();
         }
 
         //Decimal Stuff
-        if current_char == '.' && is_ascii_num(self.peek()) {
+        if current_char == '.' && self.peek().is_ascii_digit() {
             //Only let one decimal point be read in per number
             result_string.push('.');
             current_char = self.advance();
-            while is_ascii_num(current_char) {
+            while current_char.is_ascii_digit() {
                 result_string.push(current_char);
                 current_char = self.advance();
             }
@@ -282,7 +282,7 @@ impl Scanner<'_> {
         }
 
         //Undiscard next character if we have not used it
-        if !is_ascii_num(current_char) {
+        if !current_char.is_ascii_digit() {
             self.current -= 1;
         }
 
@@ -327,9 +327,4 @@ impl Scanner<'_> {
 fn is_ascii_ident(ch: char) -> bool {
     //!Defines the rules for what is allowed in an Identifier
     ch.is_ascii_lowercase() || ch.is_ascii_uppercase() || ch.is_ascii_digit() || ch == '_'
-}
-
-#[allow(clippy::manual_range_contains)]
-pub(crate) fn is_ascii_num(ch: char) -> bool {
-    ch >= '0' && ch <= '9'
 }

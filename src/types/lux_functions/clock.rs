@@ -1,26 +1,19 @@
-use super::{
-    Callable,
-    Expression,
-};
+use super::{Callable, Expression};
 use crate::{
     interpreter::Interpreter,
-    types::{
-        Expression::Literal,
-        LiteralType,
-        expression::Literal as LiteralStruct,
-    },
+    types::{Expression::Literal, LiteralType, expression::Literal as LiteralStruct},
 };
 use std::time::SystemTime;
 
 #[derive(Clone, Debug, PartialEq)]
+/// Exposes Clock logic from OS to the language
 pub(crate) struct Clock {}
 
-#[allow(unused_variables)]
 impl Callable for Clock {
     fn call(
         &mut self,
-        interpreter: &mut Interpreter,
-        arguments: Vec<Expression>,
+        _interpreter: &mut Interpreter,
+        _arguments: Vec<Expression>,
     ) -> Option<Expression> {
         Some(Literal(Box::new(LiteralStruct {
             value: LiteralType::Number(
