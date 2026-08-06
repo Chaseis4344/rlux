@@ -1,5 +1,4 @@
 #![allow(unused_imports, unused_macros)]
-
 macro_rules! debug {
     ($e:expr) => {
         #[cfg(debug_assertions)]
@@ -8,7 +7,7 @@ macro_rules! debug {
 }
 
 ///Removes some of Syntactical ugliness in the Scanner
-macro_rules! new_character {
+macro_rules! new_token {
     ($token_type:expr, $string:expr, $line:expr) => {
         Some(Token::new($token_type, &$string, None, $line))
     };
@@ -77,6 +76,6 @@ macro_rules! boolean_op {
 pub(crate) use boolean_op;
 pub(crate) use debug;
 pub(crate) use error_check;
-pub(crate) use new_character;
 pub(crate) use new_literal;
+pub(crate) use new_token;
 pub(crate) use visitable_trait_two_elements;

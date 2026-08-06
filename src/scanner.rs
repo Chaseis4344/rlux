@@ -1,5 +1,5 @@
 use crate::{
-    macros::{new_character, new_literal},
+    macros::{new_literal, new_token},
     types::{LiteralType, TokenType, token::Token},
 };
 
@@ -52,64 +52,62 @@ impl Scanner<'_> {
                     None
                 } else {
                     //Literal Slash
-                    new_character!(TokenType::Slash, "/", self.line)
+                    new_token!(TokenType::Slash, "/", self.line)
                 }
             }
-            '(' => new_character!(TokenType::LeftParen, "(", self.line),
-            ')' => new_character!(TokenType::RightParen, ")", self.line),
-            '{' => new_character!(TokenType::LeftBrace, "{", self.line),
-            '}' => new_character!(TokenType::RightBrace, "}", self.line),
-            '.' => new_character!(TokenType::Dot, ".", self.line),
-            '-' => new_character!(TokenType::Minus, "-", self.line),
-            '+' => new_character!(TokenType::Plus, "+", self.line),
-            ';' => new_character!(TokenType::Semicolon, ";", self.line),
-            '*' => new_character!(TokenType::Star, "*", self.line),
-            '?' => new_character!(TokenType::Question, "?", self.line),
-            ':' => new_character!(TokenType::Colon, ":", self.line),
-            ',' => new_character!(TokenType::Comma, ",", self.line),
+            '(' => new_token!(TokenType::LeftParen, "(", self.line),
+            ')' => new_token!(TokenType::RightParen, ")", self.line),
+            '{' => new_token!(TokenType::LeftBrace, "{", self.line),
+            '}' => new_token!(TokenType::RightBrace, "}", self.line),
+            '.' => new_token!(TokenType::Dot, ".", self.line),
+            '-' => new_token!(TokenType::Minus, "-", self.line),
+            '+' => new_token!(TokenType::Plus, "+", self.line),
+            ';' => new_token!(TokenType::Semicolon, ";", self.line),
+            '*' => new_token!(TokenType::Star, "*", self.line),
+            '?' => new_token!(TokenType::Question, "?", self.line),
+            ':' => new_token!(TokenType::Colon, ":", self.line),
+            ',' => new_token!(TokenType::Comma, ",", self.line),
             '!' => {
                 if self.peek() == '=' {
                     //Discard and return combo character
                     let _ = self.advance();
-                    new_character!(TokenType::BangEqual, "!=", self.line)
+                    new_token!(TokenType::BangEqual, "!=", self.line)
                 } else {
-                    new_character!(TokenType::Bang, "!", self.line)
+                    new_token!(TokenType::Bang, "!", self.line)
                 }
             }
             '=' => {
                 if self.peek() == '=' {
                     //Discard and return combo character
                     let _ = self.advance();
-                    new_character!(TokenType::EqualEqual, "==", self.line)
+                    new_token!(TokenType::EqualEqual, "==", self.line)
                 } else {
-                    new_character!(TokenType::Equal, "=", self.line)
+                    new_token!(TokenType::Equal, "=", self.line)
                 }
             }
             '<' => {
                 if self.peek() == '=' {
                     //Discard and return combo character
                     let _ = self.advance();
-                    new_character!(TokenType::LessEqual, "<=", self.line)
+                    new_token!(TokenType::LessEqual, "<=", self.line)
                 } else {
-                    new_character!(TokenType::Less, "<", self.line)
+                    new_token!(TokenType::Less, "<", self.line)
                 }
             }
             '>' => {
                 if self.peek() == '=' {
                     //Discard "=" and return combo character
                     let _ = self.advance();
-                    new_character!(TokenType::GreaterEqual, ">=", self.line)
+                    new_token!(TokenType::GreaterEqual, ">=", self.line)
                 } else {
                     //We don't advance here so the scanner can pull it in as something else on the
                     //next iteration
-                    new_character!(TokenType::Greater, ">", self.line)
+                    new_token!(TokenType::Greater, ">", self.line)
                 }
             }
 
             'a'..='z' | 'A'..='Z' | '_' => self.keywords(),
-
             '0'..='9' => self.numbers(),
-
             '"' => self.strings(),
             chara => {
                 crate::error(self.line, format!("Unexpected Token: '{chara}'"));
@@ -220,19 +218,19 @@ impl Scanner<'_> {
         //Match to keywords, if we don't have the keyword reserved, then its
         //probably a variable
         match matching.as_str() {
-            "and" => new_character!(TokenType::And, word_built.as_str(), self.line),
-            "class" => new_character!(TokenType::Class, word_built.as_str(), self.line),
-            "else" => new_character!(TokenType::Else, word_built.as_str(), self.line),
-            "fun" => new_character!(TokenType::Fun, word_built.as_str(), self.line),
-            "for" => new_character!(TokenType::For, word_built.as_str(), self.line),
-            "if" => new_character!(TokenType::If, word_built.as_str(), self.line),
-            "or" => new_character!(TokenType::Or, word_built.as_str(), self.line),
-            // "print" => new_character!(TokenType::Print, word_built.as_str(), self.line),
-            "return" => new_character!(TokenType::Return, word_built.as_str(), self.line),
-            "super" => new_character!(TokenType::Super, word_built.as_str(), self.line),
-            "this" => new_character!(TokenType::This, word_built.as_str(), self.line),
-            "var" => new_character!(TokenType::Var, word_built.as_str(), self.line),
-            "while" => new_character!(TokenType::While, word_built.as_str(), self.line),
+            "and" => new_token!(TokenType::And, word_built.as_str(), self.line),
+            "class" => new_token!(TokenType::Class, word_built.as_str(), self.line),
+            "else" => new_token!(TokenType::Else, word_built.as_str(), self.line),
+            "fun" => new_token!(TokenType::Fun, word_built.as_str(), self.line),
+            "for" => new_token!(TokenType::For, word_built.as_str(), self.line),
+            "if" => new_token!(TokenType::If, word_built.as_str(), self.line),
+            "or" => new_token!(TokenType::Or, word_built.as_str(), self.line),
+            // "print" => new_token!(TokenType::Print, word_built.as_str(), self.line),
+            "return" => new_token!(TokenType::Return, word_built.as_str(), self.line),
+            "super" => new_token!(TokenType::Super, word_built.as_str(), self.line),
+            "this" => new_token!(TokenType::This, word_built.as_str(), self.line),
+            "var" => new_token!(TokenType::Var, word_built.as_str(), self.line),
+            "while" => new_token!(TokenType::While, word_built.as_str(), self.line),
             "nil" => new_literal!(
                 TokenType::Nil,
                 word_built.as_str(),
@@ -251,7 +249,7 @@ impl Scanner<'_> {
                 LiteralType::Boolean(true),
                 self.line
             ),
-            _ => new_character!(TokenType::Identifier, word_built, self.line),
+            _ => new_token!(TokenType::Identifier, word_built, self.line),
         }
     }
 
