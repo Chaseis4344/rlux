@@ -31,8 +31,6 @@ impl Scanner<'_> {
 
     //Advance the cursor then return resulting token
     fn scan_token(&mut self) -> Option<Token> {
-        //!Basically a shitty hashmap, but too much time invested to make in a functional style,
-        //!plus that is wayyyyy too unwieldy
         match self.advance() {
             ' ' | '\t' | '\r' => {
                 /* White Space goes here*/
